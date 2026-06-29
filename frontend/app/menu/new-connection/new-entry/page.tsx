@@ -1,0 +1,13 @@
+import EntryForm from "./entry-form";
+
+const NewEntry = () => {
+  return (
+    <div className="bg-base-300  flex flex-col items-center justify-center">
+      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-15 px-4  min-h-screen">
+        <EntryForm />
+      </main>
+    </div>
+  );
+};
+
+export default NewEntry;

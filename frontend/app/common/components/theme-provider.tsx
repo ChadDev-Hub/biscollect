@@ -1,6 +1,6 @@
 "use client"
 import {createContext, useContext, ReactNode, Dispatch, SetStateAction, useEffect, useState} from "react"
-import {themeChange} from "theme-change"
+
 
 type Props = {
   children: ReactNode
@@ -14,13 +14,12 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 const ThemeProvider = ({children}: Props) => {
-  const [theme, setTheme] = useState<string>("emerald");
+  const [theme, setTheme] = useState<string>("lighttheme");
 
   // INITIAL THEME LOADS
   useEffect(() => {
-    themeChange(false);
     const setInitialTheme = () => {
-      const userPreferredTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "synthwave" : "emerald";
+      const userPreferredTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "darktheme" : "lighttheme";
       setTheme(userPreferredTheme);
     }
     setInitialTheme();

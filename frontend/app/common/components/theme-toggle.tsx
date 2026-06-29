@@ -6,7 +6,7 @@ const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
   const handleChange = () => {
     setTheme(() => {
-      return theme === "emerald" ? "synthwave" : "emerald";
+      return theme === "lighttheme" ? "darktheme" : "lighttheme";
     });
   };
 
@@ -14,7 +14,7 @@ const ThemeToggle = () => {
     // theme toggle
     <label className="swap swap-rotate">
       <input
-        checked={theme === "synthwave"}
+        checked={theme === "darktheme"}
         title="Theme Toggle"
         onChange={handleChange}
         type="checkbox"
