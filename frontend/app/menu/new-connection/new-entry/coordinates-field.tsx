@@ -20,13 +20,23 @@ const CoordinatesField = ({ register, setValue, latitudeError, control }: Props)
     setIslocating(true);
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
-      setValue("latitude", latitude);
-      setValue("longitude", longitude);
+      setValue("latitude", latitude, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+      setValue("longitude", longitude, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
     });
   };
   useEffect(() => {
     if (latWatch && lonWatch) {
-      setIslocating(false);
+      queueMicrotask(() => {
+        setIslocating(false);
+      })
     }
   },[latWatch,lonWatch]);
   return (

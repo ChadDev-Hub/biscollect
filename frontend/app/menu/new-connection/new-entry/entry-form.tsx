@@ -5,7 +5,8 @@ import { NewConnectionType } from "@/types/new-connection";
 import CoordinatesField from "./coordinates-field";
 import ImageField from "@/app/common/components/image-field";
 import { useState } from "react";
-import {Undo2} from 'lucide-react'
+import { Undo2 } from "lucide-react";
+import {db} from "@/lib/db";
 const EntryForm = () => {
   const [step, setStep] = useState(0);
   const {
@@ -14,121 +15,129 @@ const EntryForm = () => {
     handleSubmit,
     setValue,
     control,
-  } = useForm<NewConnectionType>(
-    {mode:"all"}
-  );
-  const onSubmit: SubmitHandler<NewConnectionType> = (data) => {
-    console.log(data);
-  };
+  } = useForm<NewConnectionType>({ mode: "all" });
 
+  
+  const onSubmit: SubmitHandler<NewConnectionType> = async(data) => {
+    const transaction = (await db).transaction("new_connections", "readwrite");
+    const store = transaction.objectStore("new_connections");
+    await store.add({
+      uuid: crypto.randomUUID(),
+      ...data
+    })
+  };
 
   const handleReturn = () => {
     if (step > 0) {
       setStep(step - 1);
     }
-  }
+  };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col p-4 gap-4 bg-base-200 card w-full max-w-lg shadow-md"
     >
-      <label>
-        <button onClick={handleReturn} title="return" type="button" className="btn btn-ghost">
+      <label className="flex items-center justify-between gap-2">
+        <button
+          onClick={handleReturn}
+          title="return"
+          type="button"
+          className="btn btn-ghost"
+        >
           <Undo2 className="size-6" />
         </button>
+        <h3 className="text-lg font-bold">New Connection Entry</h3>
       </label>
 
       {/* Consumer Name */}
       {step === 0 && (
-        <InputField
-          name="consumer_name"
-          register={register}
-          label="Consumer Name"
-          required={true}
-          error={errors.consumer_name?.message}
-        />
+        <>
+          <InputField
+            name="consumer_name"
+            register={register}
+            label="Consumer Name"
+            required={true}
+            error={errors.consumer_name?.message}
+          />
+
+          <InputField
+            name="meter_serial_no"
+            register={register}
+            label="Meter Serial Number"
+            required={true}
+            error={errors.meter_serial_no?.message}
+          />
+        </>
       )}
-      {/* Meter Serial Number */}
+
       {step === 1 && (
-        <InputField
-          name="meter_serial_no"
-          register={register}
-          label="Meter Serial Number"
-          required={true}
-          error={errors.meter_serial_no?.message}
-        />
-      )}
+        <>
+          <InputField
+            name="meter_brand"
+            register={register}
+            label="Meter Brand"
+            required={true}
+            error={errors.meter_brand?.message}
+          />
 
-      {/* METER BRAND */}
-      {step === 2 && (
-        <InputField
-          name="meter_brand"
-          register={register}
-          label="Meter Brand"
-          required={true}
-          error={errors.meter_brand?.message}
-        />
-      )}
-
-      {/* Meter Sealed */}
-      {step === 3 && (
-        <InputField
-          name="meter_sealed"
-          register={register}
-          label="Meter Sealed"
-          required={true}
-          error={errors.meter_sealed?.message}
-        />
+          <InputField
+            name="meter_sealed"
+            register={register}
+            label="Meter Sealed"
+            required={true}
+            error={errors.meter_sealed?.message}
+          />
+        </>
       )}
 
       {/* Initial Reading */}
-      {step === 4 && (
-        <InputField
-          name="initial_reading"
-          register={register}
-          label="Initial Reading"
-          required={true}
-          error={errors.initial_reading?.message}
-          inputType="number"
-        />
-      )}
+      {step === 2 && (
+        <>
+          <InputField
+            name="initial_reading"
+            register={register}
+            label="Initial Reading"
+            required={true}
+            error={errors.initial_reading?.message}
+            inputType="number"
+          />
 
-      {/* MULTIPLIER */}
-      {step === 5 && (
-        <InputField
-          name="multiplier"
-          register={register}
-          label="Multiplier"
-          required={true}
-          error={errors.multiplier?.message}
-          inputType="number"
-        />
+          <InputField
+            name="multiplier"
+            register={register}
+            label="Multiplier"
+            required={true}
+            error={errors.multiplier?.message}
+            inputType="number"
+          />
+        </>
       )}
 
       {/* ACCOMPLISHED BY */}
-      {step === 6 && (
-        <InputField
-          name="accomplished_by"
-          register={register}
-          label="Accomplished By"
-          required={true}
-          error={errors.accomplished_by?.message}
-        />
+      {step === 3 && (
+        <>
+          <InputField
+            name="accomplished_by"
+            register={register}
+            label="Accomplished By"
+            required={true}
+            error={errors.accomplished_by?.message}
+          />
+
+          <InputField
+            name="remarks"
+            register={register}
+            label="Remarks"
+            required={false}
+          />
+        </>
       )}
 
       {/* REMARKS */}
-      {step === 7 && (
-        <InputField
-          name="remarks"
-          register={register}
-          label="Remarks"
-          required={false}
-        />
-      )}
 
       {/* COORDINATES */}
-      {step === 8 && (
+      {step === 4 && (
         <CoordinatesField
           register={register}
           setValue={setValue}
@@ -138,10 +147,10 @@ const EntryForm = () => {
       )}
 
       {/* IMAGE FIELD */}
-      {step === 9 && <ImageField register={register} control={control} />}
-      {step < 9 ? (
+      {step === 5 && <ImageField register={register} control={control} />}
+      {step < 5 ? (
         <button
-          disabled={!isValid} 
+          disabled={!isValid}
           type="button"
           className="btn btn-primary"
           onClick={() => setStep(step + 1)}
