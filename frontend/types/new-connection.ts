@@ -1,6 +1,7 @@
 
 
 export type NewConnectionType = {
+    date_accomplished: string;
     consumer_name: string;
     meter_serial_no: string;
     meter_brand: string;

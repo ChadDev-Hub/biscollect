@@ -4,11 +4,17 @@ import InputField from "./input-field";
 import { NewConnectionType } from "@/types/new-connection";
 import CoordinatesField from "./coordinates-field";
 import ImageField from "@/app/common/components/image-field";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Undo2 } from "lucide-react";
 import {db} from "@/lib/db";
 const EntryForm = () => {
   const [step, setStep] = useState(0);
+  const [uniqueid, setUniqueid] = useState("");
+  const [success, setSuccess] = useState(false);
+  useEffect(() => {
+    queueMicrotask(() => setUniqueid(crypto.randomUUID()))
+  },[])
+
   const {
     register,
     formState: { errors, isValid },
@@ -17,14 +23,18 @@ const EntryForm = () => {
     control,
   } = useForm<NewConnectionType>({ mode: "all" });
 
+
   
   const onSubmit: SubmitHandler<NewConnectionType> = async(data) => {
     const transaction = (await db).transaction("new_connections", "readwrite");
     const store = transaction.objectStore("new_connections");
-    await store.add({
-      uuid: crypto.randomUUID(),
+    const result = await store.put({
+      uuid: uniqueid,
       ...data
     })
+    if (result == uniqueid) {
+      setSuccess(true);
+    }
   };
 
   const handleReturn = () => {
@@ -40,6 +50,7 @@ const EntryForm = () => {
     >
       <label className="flex items-center justify-between gap-2">
         <button
+          disabled={step === 0}
           onClick={handleReturn}
           title="return"
           type="button"
