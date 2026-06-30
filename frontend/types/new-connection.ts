@@ -1,6 +1,7 @@
 
 
 export type NewConnectionType = {
+    uuid?: string;
     date_accomplished: string;
     consumer_name: string;
     meter_serial_no: string;

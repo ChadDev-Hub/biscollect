@@ -13,12 +13,15 @@ const DateField = ({register, error}: Props) => {
   return (
     <section className="flex flex-col gap-2">
         <label>
-
+            <span className="label font-bold">
+                <span className="">Date Accomplished</span>
+                <span className=" text-red-500">*</span>
+            </span>
         </label>
         <input {...register("date_accomplished", {required: {
             value: true,
             message: "Date Accomplished is Required"
-        }})} title="date" type="date" className="input"/>
+        }})} title="date" type="date" className="input w-full"/>
         {error && <span className="text-red-500 italic text-xs">{error}</span>}
     </section>
   )

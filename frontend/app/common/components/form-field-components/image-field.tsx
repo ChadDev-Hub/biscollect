@@ -8,16 +8,17 @@ import Image from "next/image";
 type Props = {
   register: UseFormRegister<NewConnectionType>;
   control: Control<NewConnectionType>;
+  error?: string;
 };
 
-const ImageField = ({ register, control }: Props) => {
+const ImageField = ({ register, control, error }: Props) => {
   const image = useWatch({ name: "image", control: control });
   const file = image?.[0];
   return (
     <section className="flex flex-col w-full gap-2 items-center justify-center">
       <label className="cursor-pointer   text-slate-300/45">
         <input
-          {...register("image")}
+          {...register("image", {required: {value: true, message: "Image is Required"}})}
           type="file"
           accept="image/*"
           className="hidden"
@@ -35,6 +36,9 @@ const ImageField = ({ register, control }: Props) => {
           )}
         </div>
       </label>
+      <p>
+        {error && <span className="text-red-500 italic text-xs">{error}</span>}
+      </p>
     </section>
   );
 };

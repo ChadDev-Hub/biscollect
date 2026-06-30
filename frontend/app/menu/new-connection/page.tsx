@@ -1,19 +1,18 @@
-import ToolsNavar from '../../common/components/tools-navbar';
+import ToolsNavar from "../../common/components/tools-navbar";
+import NewConnectionContainer from "./new-connection-container";
 
 
-
-type Props = {}
-
-const NewConnection = (props: Props) => {
+const NewConnection = () => {
   return (
-    <div className="bg-base-300  flex flex-col items-center justify-center">
-        <ToolsNavar />
-        <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-15 px-4  min-h-screen">
+    <div className="bg-base-300 min-h-screen  flex flex-col items-center">
+      <ToolsNavar />
+      <main className="grid grid-cols-1  w-full max-w-2xl place-content-center place-items-center justify-between py-15 px-4">
+       
+          <NewConnectionContainer  />
         
-        
-        </main>
+      </main>
     </div>
-  )
-}
+  );
+};
 
 export default NewConnection;

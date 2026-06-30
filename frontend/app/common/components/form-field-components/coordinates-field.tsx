@@ -1,18 +1,30 @@
 "use client";
 import { NewConnectionType } from "@/types/new-connection";
-import { UseFormRegister, UseFormSetValue, useWatch, Control } from "react-hook-form";
+import {
+  UseFormRegister,
+  UseFormSetValue,
+  useWatch,
+  Control,
+} from "react-hook-form";
 import { LocateFixed } from "lucide-react";
 import { useState, useEffect } from "react";
-
+import { LucideIcon } from "lucide-react";
 
 type Props = {
+  Icon: LucideIcon;
   register: UseFormRegister<NewConnectionType>;
   setValue: UseFormSetValue<NewConnectionType>;
   latitudeError?: string;
   control: Control<NewConnectionType>;
 };
 
-const CoordinatesField = ({ register, setValue, latitudeError, control }: Props) => {
+const CoordinatesField = ({
+  register,
+  setValue,
+  latitudeError,
+  control,
+  Icon,
+}: Props) => {
   const [islocating, setIslocating] = useState(false);
   const latWatch = useWatch({ name: "latitude", control: control });
   const lonWatch = useWatch({ name: "longitude", control: control });
@@ -36,9 +48,9 @@ const CoordinatesField = ({ register, setValue, latitudeError, control }: Props)
     if (latWatch && lonWatch) {
       queueMicrotask(() => {
         setIslocating(false);
-      })
+      });
     }
-  },[latWatch,lonWatch]);
+  }, [latWatch, lonWatch]);
   return (
     <section className="flex flex-col gap-2">
       <label htmlFor="" className="label font-bold">
@@ -47,28 +59,33 @@ const CoordinatesField = ({ register, setValue, latitudeError, control }: Props)
       </label>
       <div className="w-full grid grid-cols-2 gap-2 place-items-center">
         <div className="flex flex-col gap-2">
-          <input
-            readOnly
-            {...register("latitude", {
-              required: { value: true, message: "Latitude is Required" },
-            })}
-            type="number"
-            placeholder="Latitude"
-            className="input w-full"
-          />
-          <input
-            readOnly
-            {...register("longitude", {
-              required: { value: true, message: "Longitude is Required" },
-            })}
-            type="number"
-            placeholder="Longitude"
-            className="input w-full"
-          />
-          {
-            latitudeError  && 
+          <label className="input">
+            <Icon className="text-base-content size-6" />
+            <input
+              readOnly
+              {...register("latitude", {
+                required: { value: true, message: "Latitude is Required" },
+              })}
+              type="number"
+              placeholder="Latitude"
+              className="grow w-full"
+            />
+          </label>
+          <label className="input w-full">
+            <Icon className="text-base-content size-6" />
+            <input
+              readOnly
+              {...register("longitude", {
+                required: { value: true, message: "Longitude is Required" },
+              })}
+              type="number"
+              placeholder="Longitude"
+              className="grow"
+            />
+          </label>
+          {latitudeError && (
             <span className="text-red-500 italic text-xs">{latitudeError}</span>
-          }
+          )}
         </div>
 
         <button
