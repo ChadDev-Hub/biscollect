@@ -5,13 +5,15 @@ import { UseFormRegister } from "react-hook-form";
 import { NewConnectionType } from "@/types/new-connection";
 
 type Props = {
-    register: UseFormRegister<NewConnectionType>
-    error?: string
+    register: UseFormRegister<NewConnectionType>;
+    error?: string;
+    step?: number;
+    maxStep?: number
 }
 
-const DateField = ({register, error}: Props) => {
+const DateField = ({register, error, step, maxStep}: Props) => {
   return (
-    <section className="flex flex-col gap-2">
+    <section className={`flex flex-col gap-2 ${step === maxStep ? "block" : "hidden"}`}>
         <label>
             <span className="label font-bold">
                 <span className="">Date Accomplished</span>

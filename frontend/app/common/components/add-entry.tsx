@@ -2,9 +2,9 @@
 import { CirclePlus } from "lucide-react";
 import {usePathname} from "next/navigation";
 import Link from "next/link";
-type Props = {};
 
-const AddEntries = (props: Props) => {
+
+const AddEntries = () => {
     const currentPath = usePathname();
   return (
     <Link

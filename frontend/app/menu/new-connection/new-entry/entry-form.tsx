@@ -6,7 +6,7 @@ import CoordinatesField from "../../../common/components/form-field-components/c
 import ImageField from "@/app/common/components/form-field-components/image-field";
 import { useState, useEffect } from "react";
 import { Undo2 } from "lucide-react";
-import { db } from "@/lib/db";
+import { getDB } from "@/lib/db";
 import FormButton from "../../../common/components/form-button";
 import DateField from "../../../common/components/form-field-components/date-field";
 import {
@@ -35,17 +35,23 @@ const EntryForm = () => {
     handleSubmit,
     setValue,
     control,
-  } = useForm<NewConnectionType>({ mode: "all" });
+  } = useForm<NewConnectionType>({ mode: "all", shouldUnregister: false });
 
   const onSubmit: SubmitHandler<NewConnectionType> = async (data) => {
-    const transaction = (await db).transaction("new_connections", "readwrite");
-    const store = transaction.objectStore("new_connections");
-    const result = await store.put({
-      uuid: uniqueid,
-      ...data,
-    });
-    if (result === uniqueid) {
+    try {
+      const db = await getDB();
+      const transaction = db.transaction("new_connections", "readwrite");
+      const store = transaction.objectStore("new_connections");
+      await store.put({
+        uuid: uniqueid,
+        ...data,
+        is_synced: false,
+      });
+
+      await transaction.done;
       setSuccess(true);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -57,10 +63,13 @@ const EntryForm = () => {
 
   return (
     <form
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && step < 5) e.preventDefault();
+      }}
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col p-4 gap-4 bg-base-200 card w-full max-w-lg shadow-md"
     >
-      <label className="flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-2">
         <button
           disabled={step === 0}
           onClick={handleReturn}
@@ -71,9 +80,9 @@ const EntryForm = () => {
           <Undo2 className="size-6" />
         </button>
         <h3 className="text-lg font-bold">New Connection Entry</h3>
-      </label>
+      </div>
       {success ? (
-        <SubmitCompletion returnPath={`/menu/new-connection/${uniqueid}`} />
+        <SubmitCompletion returnPath={`/menu/new-connection`} />
       ) : (
         <>
           {/* Consumer Name */}
@@ -184,11 +193,7 @@ const EntryForm = () => {
 
           {/* IMAGE FIELD */}
           {step === 5 && (
-            <ImageField
-              register={register}
-              control={control}
-              error={errors.image?.message}
-            />
+            <ImageField control={control} error={errors.image?.message} />
           )}
 
           {/* SUBMIT BUTTON */}

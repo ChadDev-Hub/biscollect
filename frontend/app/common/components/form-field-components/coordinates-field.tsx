@@ -16,6 +16,8 @@ type Props = {
   setValue: UseFormSetValue<NewConnectionType>;
   latitudeError?: string;
   control: Control<NewConnectionType>;
+  maxStep?: number;
+  step?: number;
 };
 
 const CoordinatesField = ({
@@ -24,6 +26,8 @@ const CoordinatesField = ({
   latitudeError,
   control,
   Icon,
+  maxStep,
+  step,
 }: Props) => {
   const [islocating, setIslocating] = useState(false);
   const latWatch = useWatch({ name: "latitude", control: control });
@@ -52,7 +56,7 @@ const CoordinatesField = ({
     }
   }, [latWatch, lonWatch]);
   return (
-    <section className="flex flex-col gap-2">
+    <section className={`flex flex-col gap-2 ${maxStep === step ? "block" : "hidden"}`}>
       <label htmlFor="" className="label font-bold">
         <span className="">Geolocation</span>
         <span className=" text-red-500">*</span>

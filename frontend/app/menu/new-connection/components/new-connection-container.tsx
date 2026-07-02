@@ -1,22 +1,23 @@
 "use client";
-import { use, useState, useEffect } from "react";
-import { db } from "@/lib/db";
+import {  useState, useEffect } from "react";
+import { getDB } from "@/lib/db";
 import Card from "@/app/common/components/card";
 import { NewConnectionType } from "@/types/new-connection";
 
 const NewConnectionContainer = () => {
-  const idb = use(db);
-  const [entries, setEntries] = useState<NewConnectionType[]>();
 
+  const [entries, setEntries] = useState<NewConnectionType[]>();
+  console.log("entries", entries);
   useEffect(() => {
     const getAllEntries = async () => {
+      const idb = await getDB();
       const transaction = idb.transaction("new_connections", "readwrite");
       const store = transaction.objectStore("new_connections");
       const result = await store.getAll();
-      setEntries(result);
+      setEntries(result.reverse());
     };
     getAllEntries();
-  }, [idb]);
+  }, []);
 
   return (
     <div className="flex flex-col justify-center items-center gap-2 w-full">
@@ -28,6 +29,8 @@ const NewConnectionContainer = () => {
           name={entry.consumer_name}
           meter_serial_no={entry.meter_serial_no}
           meter_brand={entry.meter_brand}
+          type="NC"
+          is_synced={entry.is_synced}
         />
       ))}
     </div>

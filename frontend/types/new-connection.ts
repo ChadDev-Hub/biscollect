@@ -3,6 +3,7 @@
 export type NewConnectionType = {
     uuid?: string;
     date_accomplished: string;
+    account_no: string;
     consumer_name: string;
     meter_serial_no: string;
     meter_brand: string;
@@ -13,6 +14,7 @@ export type NewConnectionType = {
     accomplished_by: string;
     latitude: number;
     longitude: number;
-    image: FileList;
+    image: File;
+    is_synced: boolean;
 }
 

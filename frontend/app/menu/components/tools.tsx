@@ -14,7 +14,7 @@ const Tool = ({ label, icon, route }: toolType) => {
     <Link
       href={route}
       type="button"
-      className="flex btn-neutral btn rounded-2xl flex-col   min-h-32 items-center justify-center p-4 cursor-pointer shadow-md"
+      className="flex btn-neutral btn rounded-2xl flex-col   min-h-32 items-center justify-center p-4 cursor-pointer shadow-md bg-linear-to-r from-primary/20   via-neutral/10 to-primary/20"
     >
       <div className="border-neutral-content border p-4 rounded-full">
         {icon}
