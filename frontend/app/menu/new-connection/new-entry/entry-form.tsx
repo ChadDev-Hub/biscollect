@@ -36,14 +36,14 @@ const EntryForm = () => {
     setValue,
     control,
   } = useForm<NewConnectionType>({ mode: "all", shouldUnregister: false });
-
+  
   const onSubmit: SubmitHandler<NewConnectionType> = async (data) => {
     try {
       const db = await getDB();
       const transaction = db.transaction("new_connections", "readwrite");
-      const store = transaction.objectStore("new_connections");
+    const store = transaction.objectStore("new_connections");
       await store.put({
-        uuid: uniqueid,
+      uuid: uniqueid,
         ...data,
         is_synced: false,
       });
@@ -85,113 +85,113 @@ const EntryForm = () => {
         <SubmitCompletion returnPath={`/menu/new-connection`} />
       ) : (
         <>
-          {/* Consumer Name */}
-          {step === 0 && (
-            <>
+      {/* Consumer Name */}
+      {step === 0 && (
+        <>
               <DateField register={register} />
-              <InputField
+          <InputField
                 Icon={User}
-                name="consumer_name"
-                register={register}
-                label="Consumer Name"
-                required={true}
-                error={errors.consumer_name?.message}
-              />
+            name="consumer_name"
+            register={register}
+            label="Consumer Name"
+            required={true}
+            error={errors.consumer_name?.message}
+          />
             </>
           )}
 
           {step === 1 && (
             <>
-              <InputField
+          <InputField
                 Icon={Hash}
-                name="meter_serial_no"
-                register={register}
-                label="Meter Serial Number"
-                required={true}
-                error={errors.meter_serial_no?.message}
-              />
+            name="meter_serial_no"
+            register={register}
+            label="Meter Serial Number"
+            required={true}
+            error={errors.meter_serial_no?.message}
+          />
 
-              <InputField
+          <InputField
                 Icon={WholeWord}
-                name="meter_brand"
-                register={register}
-                label="Meter Brand"
-                required={true}
-                error={errors.meter_brand?.message}
-              />
+            name="meter_brand"
+            register={register}
+            label="Meter Brand"
+            required={true}
+            error={errors.meter_brand?.message}
+          />
 
-              <InputField
+          <InputField
                 Icon={Tag}
-                name="meter_sealed"
-                register={register}
-                label="Meter Sealed"
-                required={true}
-                error={errors.meter_sealed?.message}
-              />
-            </>
-          )}
+            name="meter_sealed"
+            register={register}
+            label="Meter Sealed"
+            required={true}
+            error={errors.meter_sealed?.message}
+          />
+        </>
+      )}
 
-          {/* Initial Reading */}
-          {step === 2 && (
-            <>
-              <InputField
+      {/* Initial Reading */}
+      {step === 2 && (
+        <>
+          <InputField
                 Icon={Binary}
-                name="initial_reading"
-                register={register}
-                label="Initial Reading"
-                required={true}
-                error={errors.initial_reading?.message}
-                inputType="number"
-              />
+            name="initial_reading"
+            register={register}
+            label="Initial Reading"
+            required={true}
+            error={errors.initial_reading?.message}
+            inputType="number"
+          />
 
-              <InputField
+          <InputField
                 Icon={Asterisk}
-                name="multiplier"
-                register={register}
-                label="Multiplier"
-                required={true}
-                error={errors.multiplier?.message}
-                inputType="number"
-              />
-            </>
-          )}
+            name="multiplier"
+            register={register}
+            label="Multiplier"
+            required={true}
+            error={errors.multiplier?.message}
+            inputType="number"
+          />
+        </>
+      )}
 
-          {/* ACCOMPLISHED BY */}
-          {step === 3 && (
-            <>
-              <InputField
+      {/* ACCOMPLISHED BY */}
+      {step === 3 && (
+        <>
+          <InputField
                 Icon={User}
-                name="accomplished_by"
-                register={register}
-                label="Accomplished By"
-                required={true}
-                error={errors.accomplished_by?.message}
-              />
+            name="accomplished_by"
+            register={register}
+            label="Accomplished By"
+            required={true}
+            error={errors.accomplished_by?.message}
+          />
 
-              <InputField
+          <InputField
                 Icon={NotebookPen}
-                name="remarks"
-                register={register}
-                label="Remarks"
-                required={false}
-              />
-            </>
-          )}
+            name="remarks"
+            register={register}
+            label="Remarks"
+            required={false}
+          />
+        </>
+      )}
 
-          {/* REMARKS */}
+      {/* REMARKS */}
 
-          {/* COORDINATES */}
-          {step === 4 && (
-            <CoordinatesField
+      {/* COORDINATES */}
+      {step === 4 && (
+        <CoordinatesField
               Icon={MapPinned}
-              register={register}
-              setValue={setValue}
-              control={control}
-              latitudeError={errors.latitude?.message}
-            />
-          )}
+          register={register}
+          setValue={setValue}
+          control={control}
+          latitudeError={errors.latitude?.message}
+        />
+      )}
 
-          {/* IMAGE FIELD */}
+      {/* IMAGE FIELD */}
           {step === 5 && (
             <ImageField control={control} error={errors.image?.message} />
           )}

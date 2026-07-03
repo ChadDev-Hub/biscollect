@@ -13,6 +13,10 @@ type Props = {
   Icon: LucideIcon;
   maxStep?: number;
   step?: number;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: RegExp;
+  patternMessage?: string;
 };
 
 const InputField = ({
@@ -25,9 +29,16 @@ const InputField = ({
   Icon,
   maxStep,
   step,
+  minLength,
+  maxLength,
+  pattern,
+  patternMessage
+
 }: Props) => {
   return (
-    <section className={`w-full flex flex-col gap-2 ${maxStep === step ? "block" : "hidden"}`}>
+    <section
+      className={`w-full flex flex-col gap-2 ${maxStep === step ? "block" : "hidden"}`}
+    >
       <label className="label font-bold">
         <span className="">{label}</span>
         {required && <span className=" text-red-500">*</span>}
@@ -38,6 +49,24 @@ const InputField = ({
         <input
           {...register(name, {
             required: { value: required, message: `${label} is Required` },
+            ...(minLength && {
+              minLength: {
+                value: minLength,
+                message: `${label} must be at least ${minLength} characters long`,
+              },
+            }),
+            ...(maxLength && {
+              maxLength: {
+                value: maxLength,
+                message: `${label} must be at most ${maxLength} characters long`,
+              },
+            }),
+            ...(pattern && {
+              pattern: {
+                value: pattern,
+                message: `${patternMessage}`,
+              },
+            })
           })}
           type={inputType || "text"}
           className="grow"

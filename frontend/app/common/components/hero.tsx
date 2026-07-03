@@ -1,13 +1,23 @@
 "use client";
 import Link from "next/link";
 import { ToolCase } from "lucide-react";
+import Image from "next/image";
 
 const Hero = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-4 w-full">
-      <div className="p-4 bg-neutral rounded-2xl shadow-xl backdrop-blur-sm animate-bounce">
-        <ToolCase className="size-20 text-neutral-content" />
+      <div className="bg-neutral rounded-2xl shadow-xl backdrop-blur-sm p-4 animate-pulse">
+        <div className="p-4 relative rounded-box ">
+        <Image
+          src="/favicon.svg"
+          alt="BisCollect Logo"
+          fill
+          className="object-contain "
+        />
       </div>
+
+      </div>
+      
 
       <h1 className="text-3xl font-bold text-center">
         Welcome to BISCOLLECT
