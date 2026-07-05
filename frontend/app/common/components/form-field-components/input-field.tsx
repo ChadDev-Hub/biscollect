@@ -1,11 +1,10 @@
 "use client";
 
-import { UseFormRegister, FieldPath } from "react-hook-form";
-import { NewConnectionType } from "@/types/new-connection";
+import { UseFormRegister, FieldPath, FieldValues } from "react-hook-form";
 import { LucideIcon } from "lucide-react";
-type Props = {
-  name: FieldPath<NewConnectionType>;
-  register: UseFormRegister<NewConnectionType>;
+type Props<T extends FieldValues> = {
+  name: FieldPath<T>;
+  register: UseFormRegister<T>;
   label: string;
   required: boolean;
   error?: string;
@@ -19,7 +18,7 @@ type Props = {
   patternMessage?: string;
 };
 
-const InputField = ({
+const InputField =<T extends FieldValues> ({
   name,
   register,
   label,
@@ -34,7 +33,7 @@ const InputField = ({
   pattern,
   patternMessage
 
-}: Props) => {
+}: Props<T>) => {
   return (
     <section
       className={`w-full flex flex-col gap-2 ${maxStep === step ? "block" : "hidden"}`}

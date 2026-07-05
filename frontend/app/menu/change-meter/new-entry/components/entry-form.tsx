@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { NewConnectionType } from "@/types/new-connection";
+import { ChangeMeterType } from "@/types/change-meter";
 import InputField from "../../../../common/components/form-field-components/input-field";
 import { Zap, User, Undo2 } from "lucide-react";
 import DateField from "../../../../common/components/form-field-components/date-field";
@@ -14,7 +14,7 @@ const EntryForm = () => {
     register,
     formState: { errors, isValid },
     handleSubmit,
-  } = useForm<NewConnectionType>({ mode: "all", shouldUnregister: false });
+  } = useForm<ChangeMeterType>({ mode: "all", shouldUnregister: false });
 
   const handleReturn = () => {
     if (step > 0) {
@@ -22,7 +22,9 @@ const EntryForm = () => {
     }
   };
 
-  const onSubmit: SubmitHandler<NewConnectionType> = async (data) => {};
+  const onSubmit: SubmitHandler<ChangeMeterType> = async (data) => {
+    console.log(data)
+  };
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -74,6 +76,12 @@ const EntryForm = () => {
                 label="Consumer Name"
                 error={errors.consumer_name?.message}
               />
+
+
+
+              {
+               
+              }
             </>
           )}
         </>
