@@ -2,6 +2,7 @@
 
 import { UseFormRegister, FieldPath, FieldValues } from "react-hook-form";
 import { LucideIcon } from "lucide-react";
+
 type Props<T extends FieldValues> = {
   name: FieldPath<T>;
   register: UseFormRegister<T>;

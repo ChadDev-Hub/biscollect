@@ -1,19 +1,46 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { ChangeMeterType } from "@/types/change-meter";
 import InputField from "../../../../common/components/form-field-components/input-field";
-import { Zap, User, Undo2 } from "lucide-react";
+import {
+  Zap,
+  User,
+  Undo2,
+  Cpu,
+  Hash,
+  Binary,
+  Tag,
+  NotebookPen,
+  MapPinned,
+} from "lucide-react";
 import DateField from "../../../../common/components/form-field-components/date-field";
 import FormButton from "../../../../common/components/form-button";
 import SubmitCompletion from "../../../../common/components/submit-completion";
+import CoordinatesField from "../../../../common/components/form-field-components/coordinates-field";
+import ImageField from "../../../../common/components/form-field-components/image-field";
+import { getDB } from "../../../../../lib/db";
+
 const EntryForm = () => {
+  const [uuid, setUuid] = useState("");
   const [step, setStep] = useState(0);
   const [success, setSuccess] = useState(false);
+
+  // GENERATE UUID ON INTIAL LOAD
+  useEffect(() => {
+    const SetUUID = async () => {
+      const uuid = crypto.randomUUID();
+      setUuid(uuid);
+    };
+    SetUUID();
+  }, []);
+
   const {
     register,
     formState: { errors, isValid },
     handleSubmit,
+    setValue,
+    control,
   } = useForm<ChangeMeterType>({ mode: "all", shouldUnregister: false });
 
   const handleReturn = () => {
@@ -23,7 +50,20 @@ const EntryForm = () => {
   };
 
   const onSubmit: SubmitHandler<ChangeMeterType> = async (data) => {
-    console.log(data)
+    try {
+      const db = await getDB();
+      const transaction = db.transaction("change_meters", "readwrite");
+      const store = transaction.objectStore("change_meters");
+      await store.put({
+        uuid: uuid,
+        ...data,
+        is_synced: false,
+      });
+      await transaction.done;
+      setSuccess(true);
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <form
@@ -43,16 +83,13 @@ const EntryForm = () => {
         <h3 className="text-lg font-bold">Change Meter Entry</h3>
       </div>
       {success ? (
-        <SubmitCompletion returnPath={`/menu/new-connection`} />
+        <SubmitCompletion returnPath={`/menu/change-meter`} />
       ) : (
         <>
           {step === 0 && (
             <>
               {/* DATE ACCOMPLISHED */}
-              <DateField
-                register={register}
-                error={errors.date_accomplished?.message}
-              />
+              <DateField register={register} />
 
               {/* ACCOUNT NUMBER */}
               <InputField
@@ -76,18 +113,131 @@ const EntryForm = () => {
                 label="Consumer Name"
                 error={errors.consumer_name?.message}
               />
-
-
-
-              {
-               
-              }
             </>
+          )}
+          {step === 1 && (
+            <>
+              {/* PULL OUT METER BRAND */}
+              <InputField
+                required={true}
+                inputType="text"
+                name="pull_out_meter"
+                label="Pull Out Meter Brand"
+                register={register}
+                Icon={Cpu}
+                error={errors.pull_out_meter?.message}
+              />
+
+              {/* PULL OUT METER SERIAL NUMBER */}
+              <InputField
+                required={true}
+                inputType="text"
+                name="pull_out_meter_serial_no"
+                label="Pull Out Meter Serial Number"
+                register={register}
+                Icon={Hash}
+                error={errors.pull_out_meter_serial_no?.message}
+              />
+
+              <InputField
+                register={register}
+                Icon={Binary}
+                required={true}
+                inputType="number"
+                name="pull_out_reading"
+                label="Pull Out Meter Reading"
+                error={errors.pull_out_reading?.message}
+              />
+            </>
+          )}
+          {step === 2 && (
+            <>
+              {/* NEW METER BRAND */}
+              <InputField
+                required={true}
+                register={register}
+                name="new_meter_brand"
+                label="New Meter Brand"
+                Icon={Cpu}
+                error={errors.new_meter_brand?.message}
+              />
+              {/* NEW METER SERIAL NUMBER */}
+              <InputField
+                required={true}
+                register={register}
+                name="new_meter_serial_no"
+                label="New Meter Serial Number"
+                Icon={Hash}
+                error={errors.new_meter_serial_no?.message}
+              />
+
+              {/* METER SEALED */}
+              <InputField
+                required={true}
+                register={register}
+                name="meter_sealed"
+                label="Meter Sealed"
+                Icon={Tag}
+                error={errors.meter_sealed?.message}
+              />
+              {/* INITIAL READING */}
+
+              <InputField
+                required={true}
+                register={register}
+                name="initial_reading"
+                label="Initial Reading"
+                Icon={Binary}
+                error={errors.meter_sealed?.message}
+              />
+            </>
+          )}
+
+          {step === 3 && (
+            <>
+              {/* ACCOMPLISHED BY */}
+
+              <InputField
+                required={true}
+                register={register}
+                name="accomplished_by"
+                label="Accomplished By"
+                Icon={User}
+                error={errors.accomplished_by?.message}
+              />
+              <InputField
+                register={register}
+                required={false}
+                name="remarks"
+                label="Remarks"
+                Icon={NotebookPen}
+              />
+            </>
+          )}
+          {
+            // COORDINATES
+            step === 4 && (
+              <CoordinatesField
+                setValue={setValue}
+                control={control}
+                register={register}
+                Icon={MapPinned}
+              />
+            )
+          }
+
+          {step === 5 && (
+            <ImageField
+              control={control}
+              error={errors.image?.message}
+              maxStep={5}
+              step={step}
+            />
           )}
         </>
       )}
 
-      <FormButton maxStep={2} step={step} setStep={setStep} isValid={isValid} />
+      <FormButton maxStep={5} step={step} setStep={setStep} isValid={isValid} />
     </form>
   );
 };

@@ -1,5 +1,6 @@
-import React from "react";
+"use client";
 import { Calendar, User, Hash, Cpu, CloudAlert, CloudCheck } from "lucide-react";
+import {useSearchParams} from "next/navigation";
 
 type Props = {
   uuid?: string;
@@ -22,6 +23,8 @@ export default function MeterAccomplishedCard({
   type,
   is_synced,
 }: Props) {
+  const searchParams = useSearchParams();
+  
   return (
     <div
       key={uuid}
@@ -112,7 +115,7 @@ export default function MeterAccomplishedCard({
 
       {/* Action Button Option */}
       <div className="card-actions justify-end mt-5">
-        <button className="btn btn-primary btn-sm btn-block normal-case font-medium gap-2 shadow-md shadow-primary/10">
+        <button type="button" className="btn btn-primary btn-sm btn-block normal-case font-medium gap-2 shadow-md shadow-primary/10">
           View Full Details
         </button>
       </div>

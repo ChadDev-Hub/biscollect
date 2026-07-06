@@ -12,6 +12,7 @@ type toolType = {
 const Tool = ({ label, icon, route }: toolType) => {
   return (
     <Link
+      prefetch
       href={route}
       type="button"
       className="flex btn-neutral btn rounded-2xl flex-col   min-h-32 items-center justify-center p-4 cursor-pointer shadow-md bg-linear-to-r from-primary/20   via-neutral/10 to-primary/20"

@@ -1,25 +1,24 @@
 "use client";
 
-import {  useWatch, Control, Controller } from "react-hook-form";
-import { NewConnectionType } from "@/types/new-connection";
+import {  useWatch, Control, Controller, FieldValues, Path } from "react-hook-form";
 import { Image as LucideImage } from "lucide-react";
 import Image from "next/image";
 
-type Props = {
-  control: Control<NewConnectionType>;
+type Props<T extends FieldValues> = {
+  control: Control<T>;
   error?: string;
   maxStep?: number;
   step?: number;
 };
 
-const ImageField = ({  control, error, maxStep, step }: Props) => {
-  const image = useWatch({ name: "image", control: control });
+const ImageField =<T extends FieldValues> ({  control, error, maxStep, step }: Props<T>) => {
+  const image = useWatch({ name: "image" as Path<T>, control: control });
 
   return (
     <section className={`flex flex-col w-full gap-2 items-center justify-center ${step === maxStep ? "block" : "hidden"}`}>
       <label className="cursor-pointer   text-slate-300/45">
       <Controller
-          name="image"
+          name={"image" as Path<T>}
           control={control}
           rules={{required: {value: true, message: "Image is Required"}}}
           render={({ field }) => (

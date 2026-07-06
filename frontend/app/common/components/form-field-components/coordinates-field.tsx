@@ -1,26 +1,30 @@
 "use client";
-import { NewConnectionType } from "@/types/new-connection";
 import {
   UseFormRegister,
   UseFormSetValue,
   useWatch,
   Control,
+  Path,
+  FieldValues,
+  PathValue,
 } from "react-hook-form";
 import { LocateFixed } from "lucide-react";
 import { useState, useEffect } from "react";
 import { LucideIcon } from "lucide-react";
 
-type Props = {
+
+
+type Props<T extends FieldValues> ={
   Icon: LucideIcon;
-  register: UseFormRegister<NewConnectionType>;
-  setValue: UseFormSetValue<NewConnectionType>;
+  register: UseFormRegister<T>;
+  setValue: UseFormSetValue<T>;
   latitudeError?: string;
-  control: Control<NewConnectionType>;
+  control: Control<T>;
   maxStep?: number;
   step?: number;
 };
 
-const CoordinatesField = ({
+const CoordinatesField =<T extends FieldValues> ({
   register,
   setValue,
   latitudeError,
@@ -28,20 +32,20 @@ const CoordinatesField = ({
   Icon,
   maxStep,
   step,
-}: Props) => {
+}: Props<T>) => {
   const [islocating, setIslocating] = useState(false);
-  const latWatch = useWatch({ name: "latitude", control: control });
-  const lonWatch = useWatch({ name: "longitude", control: control });
+  const latWatch = useWatch({ name: "latitude" as Path<T> , control: control });
+  const lonWatch = useWatch({ name: "longitude" as Path<T> , control: control });
   const handleGetLocation = () => {
     setIslocating(true);
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
-      setValue("latitude", latitude, {
+      setValue("latitude" as Path<T> , latitude as PathValue<T,Path<T>> , {
         shouldValidate: true,
         shouldDirty: true,
         shouldTouch: true,
       });
-      setValue("longitude", longitude, {
+      setValue("longitude" as Path<T>,  longitude as PathValue<T,Path<T>>, {
         shouldValidate: true,
         shouldDirty: true,
         shouldTouch: true,
@@ -67,7 +71,7 @@ const CoordinatesField = ({
             <Icon className="text-base-content size-6" />
             <input
               readOnly
-              {...register("latitude", {
+              {...register("latitude" as Path<T> , {
                 required: { value: true, message: "Latitude is Required" },
               })}
               type="number"
@@ -79,7 +83,7 @@ const CoordinatesField = ({
             <Icon className="text-base-content size-6" />
             <input
               readOnly
-              {...register("longitude", {
+              {...register("longitude" as Path<T>, {
                 required: { value: true, message: "Longitude is Required" },
               })}
               type="number"
