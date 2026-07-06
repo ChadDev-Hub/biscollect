@@ -17,6 +17,7 @@ type Props<T extends FieldValues> = {
   maxLength?: number;
   pattern?: RegExp;
   patternMessage?: string;
+  isDisabled?: boolean
 };
 
 const InputField =<T extends FieldValues> ({
@@ -32,7 +33,8 @@ const InputField =<T extends FieldValues> ({
   minLength,
   maxLength,
   pattern,
-  patternMessage
+  patternMessage,
+  isDisabled
 
 }: Props<T>) => {
   return (
@@ -44,9 +46,15 @@ const InputField =<T extends FieldValues> ({
         {required && <span className=" text-red-500">*</span>}
       </label>
 
-      <label className="input w-full  ">
-        <Icon className="text-base-content size-6" />
+      <label className="input w-full px-1 ">
+        <div className="py-2">
+            <div className="bg-base-200 p-2 rounded-full">
+              <Icon className="text-primary size-4" />
+            </div>
+        </div>
+        
         <input
+          disabled={isDisabled}
           {...register(name, {
             required: { value: required, message: `${label} is Required` },
             ...(minLength && {
