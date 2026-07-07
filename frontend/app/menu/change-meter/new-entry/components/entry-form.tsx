@@ -4,6 +4,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { ChangeMeterType } from "@/types/change-meter";
 import InputField from "../../../../common/components/form-field-components/input-field";
 import {
+  Calendar,
   Zap,
   User,
   Undo2,
@@ -14,7 +15,6 @@ import {
   NotebookPen,
   MapPinned,
 } from "lucide-react";
-import DateField from "../../../../common/components/form-field-components/date-field";
 import FormButton from "../../../../common/components/form-button";
 import SubmitCompletion from "../../../../common/components/submit-completion";
 import CoordinatesField from "../../../../common/components/form-field-components/coordinates-field";
@@ -89,7 +89,15 @@ const EntryForm = () => {
           {step === 0 && (
             <>
               {/* DATE ACCOMPLISHED */}
-              <DateField register={register} />
+              <InputField
+                inputType="date"
+                required={true}
+                Icon={Calendar}
+                name="date_accomplished"
+                register={register}
+                label="Date Accomplished"
+                error={errors.date_accomplished?.message}
+              />
 
               {/* ACCOUNT NUMBER */}
               <InputField
@@ -173,7 +181,7 @@ const EntryForm = () => {
 
               {/* METER SEALED */}
               <InputField
-                required={true}
+                required={false}
                 register={register}
                 name="meter_sealed"
                 label="Meter Sealed"
@@ -222,6 +230,7 @@ const EntryForm = () => {
                 control={control}
                 register={register}
                 Icon={MapPinned}
+                latitudeError={errors.lat?.message}
               />
             )
           }
@@ -230,8 +239,6 @@ const EntryForm = () => {
             <ImageField
               control={control}
               error={errors.image?.message}
-              maxStep={5}
-              step={step}
             />
           )}
         </>

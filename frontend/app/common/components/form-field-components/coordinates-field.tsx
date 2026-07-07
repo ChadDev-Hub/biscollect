@@ -20,8 +20,7 @@ type Props<T extends FieldValues> ={
   setValue: UseFormSetValue<T>;
   latitudeError?: string;
   control: Control<T>;
-  maxStep?: number;
-  step?: number;
+  is_disabled?: boolean
 };
 
 const CoordinatesField =<T extends FieldValues> ({
@@ -30,26 +29,33 @@ const CoordinatesField =<T extends FieldValues> ({
   latitudeError,
   control,
   Icon,
-  maxStep,
-  step,
+  is_disabled = false
 }: Props<T>) => {
   const [islocating, setIslocating] = useState(false);
-  const latWatch = useWatch({ name: "latitude" as Path<T> , control: control });
-  const lonWatch = useWatch({ name: "longitude" as Path<T> , control: control });
+  const latWatch = useWatch({ name: "lat" as Path<T> , control: control });
+  const lonWatch = useWatch({ name: "lon" as Path<T> , control: control });
   const handleGetLocation = () => {
     setIslocating(true);
     navigator.geolocation.getCurrentPosition((position) => {
-      const { latitude, longitude } = position.coords;
-      setValue("latitude" as Path<T> , latitude as PathValue<T,Path<T>> , {
+      const { latitude, longitude, accuracy } = position.coords;
+     
+      setValue("lat" as Path<T> , latitude as PathValue<T,Path<T>> , {
         shouldValidate: true,
         shouldDirty: true,
         shouldTouch: true,
       });
-      setValue("longitude" as Path<T>,  longitude as PathValue<T,Path<T>>, {
+      setValue("lon" as Path<T>,  longitude as PathValue<T,Path<T>>, {
         shouldValidate: true,
         shouldDirty: true,
         shouldTouch: true,
       });
+    }, () => {
+      setIslocating(false)
+      alert("Please alllow location access");
+      ;
+    },
+    {
+      enableHighAccuracy: true
     });
   };
   useEffect(() => {
@@ -60,7 +66,7 @@ const CoordinatesField =<T extends FieldValues> ({
     }
   }, [latWatch, lonWatch]);
   return (
-    <section className={`flex flex-col gap-2 ${maxStep === step ? "block" : "hidden"}`}>
+    <section className={`flex flex-col gap-2 `}>
       <label htmlFor="" className="label font-bold">
         <span className="">Geolocation</span>
         <span className=" text-red-500">*</span>
@@ -70,8 +76,9 @@ const CoordinatesField =<T extends FieldValues> ({
           <label className="input">
             <Icon className="text-base-content size-6" />
             <input
+              disabled={is_disabled}
               readOnly
-              {...register("latitude" as Path<T> , {
+              {...register("lat" as Path<T> , {
                 required: { value: true, message: "Latitude is Required" },
               })}
               type="number"
@@ -82,8 +89,9 @@ const CoordinatesField =<T extends FieldValues> ({
           <label className="input w-full">
             <Icon className="text-base-content size-6" />
             <input
+              disabled={is_disabled}
               readOnly
-              {...register("longitude" as Path<T>, {
+              {...register("lon" as Path<T>, {
                 required: { value: true, message: "Longitude is Required" },
               })}
               type="number"
@@ -97,11 +105,12 @@ const CoordinatesField =<T extends FieldValues> ({
         </div>
 
         <button
+          disabled={is_disabled}
           data-tip="Get Location"
           title="Get Location"
           onClick={handleGetLocation}
           type="button"
-          className="btn btn-primary btn-circle bg-blue-700 tooltip tooltip-left tooltip-info"
+          className={`btn ${is_disabled ? "btn-disabled" : "bg-blue-600"} btn-circle  tooltip tooltip-left tooltip-info`}
         >
           <LocateFixed
             className={`text-neutral-content ${islocating ? "animate-spin" : ""}`}

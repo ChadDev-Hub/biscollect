@@ -30,6 +30,9 @@ export default function MeterAccomplishedCard({
     case "/menu/change-meter":
       detailLink = `/menu/change-meter/full-detail?uuid=${uuid}`;
       break;
+    case "/menu/new-connection":
+      detailLink= `/menu/new-connection/full-detail?uuid=${uuid}`;
+      break;
     default:
       break;
   }

@@ -14,8 +14,8 @@ export type ChangeMeterType = {
     initial_reading: number;
     remarks: string;
     accomplished_by: string;
-    latitude: number;
-    longitude: number;
+    lat: number;
+    lon: number;
     image: File;
     is_synced: boolean;
 }

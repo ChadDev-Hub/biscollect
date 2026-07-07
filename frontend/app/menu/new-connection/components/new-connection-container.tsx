@@ -7,7 +7,7 @@ import { NewConnectionType } from "@/types/new-connection";
 const NewConnectionContainer = () => {
 
   const [entries, setEntries] = useState<NewConnectionType[]>();
-  console.log("entries", entries);
+  
   useEffect(() => {
     const getAllEntries = async () => {
       const idb = await getDB();

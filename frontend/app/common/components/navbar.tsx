@@ -10,6 +10,8 @@ const NavBarTitle = () =>{
             return "New Connection"
         case "/menu/new-connection/new-entry":
             return "New Connection (new entry)"
+        case "/menu/new-connection/full-detail":
+            return "New Connection (full detail)"
         case "/menu/change-meter":
             return "Change Meter"
         case "/menu/change-meter/new-entry":

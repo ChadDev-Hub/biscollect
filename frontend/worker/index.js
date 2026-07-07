@@ -1,5 +1,5 @@
 import { clientsClaim } from "workbox-core";
-import {OfflinePages} from "./lib/offline-page";
+import {OfflinePages} from "../lib/offline-page";
 clientsClaim();
 
 

@@ -1,6 +1,6 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
-import InputField from "../../../common/components/form-field-components/input-field";
+import InputField from '../../../common/components/form-field-components/input-field';
 import { NewConnectionType } from "@/types/new-connection";
 import CoordinatesField from "../../../common/components/form-field-components/coordinates-field";
 import ImageField from "@/app/common/components/form-field-components/image-field";
@@ -8,8 +8,9 @@ import { useState, useEffect } from "react";
 import { Undo2 } from "lucide-react";
 import { getDB } from "@/lib/db";
 import FormButton from "../../../common/components/form-button";
-import DateField from "../../../common/components/form-field-components/date-field";
+
 import {
+  Calendar,
   User,
   Hash,
   Cpu,
@@ -88,7 +89,20 @@ const EntryForm = () => {
           {/* Consumer Name */}
           {step === 0 && (
             <>
-              <DateField register={register} />
+              {/* Date Accomplished */}
+              <InputField
+                
+                Icon={Calendar}
+                name="date_accomplished"
+                register={register}
+                label="Date Accomplished"
+                inputType="date"
+                required={true}
+                error={errors.date_accomplished?.message}
+              />
+
+
+              {/* Consumer Name */}
               <InputField
                 Icon={User}
                 name="consumer_name"
@@ -125,7 +139,7 @@ const EntryForm = () => {
                 name="meter_sealed"
                 register={register}
                 label="Meter Sealed"
-                required={true}
+                required={false}
                 error={errors.meter_sealed?.message}
               />
             </>
@@ -187,7 +201,7 @@ const EntryForm = () => {
               register={register}
               setValue={setValue}
               control={control}
-              latitudeError={errors.latitude?.message}
+              latitudeError={errors.lat?.message}
             />
           )}
 
