@@ -19,11 +19,11 @@ import {
 import EditButton from "../../../../common/components/edit-button";
 import CoordinatesField from '../../../../common/components/form-field-components/coordinates-field';
 import ImageField from "@/app/common/components/form-field-components/image-field";
-type Props = {
-  uuid: string;
-};
+import { useSearchParams } from 'next/navigation';
 
-const DetailForm = ({ uuid }: Props) => {
+const DetailForm = () => {
+  const searchParams = useSearchParams();
+  const uuid = searchParams.get("uuid");
   const [editMode, setEditMode] = useState(false);
   const {
     register,
@@ -39,7 +39,7 @@ const DetailForm = ({ uuid }: Props) => {
       const transaction = idb.transaction("new_connections", "readwrite");
       const store = transaction.objectStore("new_connections");
       const index = store.index("uuid");
-      const result = await index.get(uuid);
+      const result = await index.get(uuid ?? "");
       reset(result);
     };
     getEntry();

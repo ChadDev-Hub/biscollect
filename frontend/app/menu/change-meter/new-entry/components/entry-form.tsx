@@ -41,6 +41,7 @@ const EntryForm = () => {
     handleSubmit,
     setValue,
     control,
+    reset
   } = useForm<ChangeMeterType>({ mode: "all", shouldUnregister: false });
 
   const handleReturn = () => {
@@ -65,6 +66,15 @@ const EntryForm = () => {
       console.error(error);
     }
   };
+
+  // HANDLE NEW ENTRY
+  const handleNewEntry = () => {
+    setSuccess(false);
+    setStep(0);
+    reset();
+    setUuid(crypto.randomUUID());
+    
+  }
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -83,7 +93,7 @@ const EntryForm = () => {
         <h3 className="text-lg font-bold">Change Meter Entry</h3>
       </div>
       {success ? (
-        <SubmitCompletion returnPath={`/menu/change-meter`} />
+        <SubmitCompletion onNewEntry={handleNewEntry} returnPath={`/menu/change-meter`} />
       ) : (
         <>
           {step === 0 && (
@@ -241,10 +251,11 @@ const EntryForm = () => {
               error={errors.image?.message}
             />
           )}
+          <FormButton maxStep={5} step={step} setStep={setStep} isValid={isValid} />
         </>
       )}
 
-      <FormButton maxStep={5} step={step} setStep={setStep} isValid={isValid} />
+      
     </form>
   );
 };

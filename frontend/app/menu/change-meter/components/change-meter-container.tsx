@@ -16,6 +16,10 @@ const ChangeMeterContainer = () => {
             setEntries(result.reverse());
         }
         getAllEntries();
+        window.addEventListener("change-meter-updated", getAllEntries);
+        return () => {
+            window.removeEventListener("change-meter-updated", getAllEntries);
+        }
     },[])
 
   return (

@@ -1,0 +1,34 @@
+services:
+  biscollect-prod-standalone:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: chaddevhub/biscollect:prod
+    container_name: biscollect-prod  
+    ports:
+      - "3002:3002"
+
+  biscollect-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    image: chaddevhub/biscollect:dev
+    container_name: biscollect-dev
+    environment:
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /app
+          ignore:
+            - node_modules/
+            - .next/
+        - action: rebuild
+          path: package.json
+    ports:
+      - "3002:3002"
