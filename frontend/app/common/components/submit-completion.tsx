@@ -1,20 +1,16 @@
 "use client";
 
 import { CircleCheck } from "lucide-react";
-
+import Link from "next/link";
 type Props = {
   returnPath: string;
+  onNewEntry: () => void
 };
 const SubmitCompletion = (
-  {returnPath}: Props
+  {returnPath, onNewEntry}: Props
 ) => {
-  const handleViewEntry = () => {
-    window.location.href = returnPath;
-  };
 
-  const handleNewEntry = () => {
-    window.location.reload();
-  };
+  
   return (
     <div className="flex flex-col items-center justify-center gap-4 w-full">
       <div role="alert" className="alert alert-success">
@@ -23,15 +19,15 @@ const SubmitCompletion = (
       </div>
 
       <div className="flex gap-4 justify-space-between">
-        <button
+        <Link
+          href={returnPath}
           type="button"
-          onClick={handleViewEntry}
           className="btn btn-secondary"
         >
           View Entry
-        </button>
+        </Link>
         <button
-          onClick={handleNewEntry}
+          onClick={onNewEntry}
           type="button"
           className="btn btn-primary"
         >

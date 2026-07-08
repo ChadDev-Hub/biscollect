@@ -1,3 +1,4 @@
+"use client";
 import ToolsNavar from "../../common/components/tools-navbar";
 import NewConnectionContainer from "./components/new-connection-container";
 

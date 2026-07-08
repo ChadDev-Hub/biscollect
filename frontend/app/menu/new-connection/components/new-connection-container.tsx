@@ -17,6 +17,10 @@ const NewConnectionContainer = () => {
       setEntries(result.reverse());
     };
     getAllEntries();
+    window.addEventListener("new-connection-updated", getAllEntries);
+    return () => {
+      window.removeEventListener("new-connection-updated", getAllEntries);
+    };
   }, []);
 
   return (

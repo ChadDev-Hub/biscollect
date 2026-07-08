@@ -2,6 +2,7 @@
 "use client"
 import ThemeToggle from "./theme-toggle"
 import {usePathname} from "next/navigation"
+import NetWorkBadge from './network-badge';
 
 const NavBarTitle = () =>{
     const path = usePathname()
@@ -31,7 +32,8 @@ const NavBar = () => {
                 <NavBarTitle/>
             </h1>
         </div>
-        <div className="flex-none">
+        <div className="flex-none flex gap-2 items-center">
+            <NetWorkBadge/>
             <ThemeToggle/>
         </div>
     </nav>

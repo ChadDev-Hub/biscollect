@@ -1,3 +1,4 @@
+"use client"
 import Tools from "./components/tools"
 import Header from "../common/components/header"
 const Menu = () => {

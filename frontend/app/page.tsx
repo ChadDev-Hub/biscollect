@@ -1,3 +1,4 @@
+"use client";
 import Header from "./common/components/header";
 import Hero from "./common/components/hero";
 import InstallationPrompt from "./common/components/installation-prompt";

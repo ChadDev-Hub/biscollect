@@ -18,3 +18,9 @@ export type NewConnectionType = {
     is_synced: boolean;
 }
 
+
+export type NewConnectionResponseType = {
+    uuid: string;
+    is_synced: boolean;
+}
+

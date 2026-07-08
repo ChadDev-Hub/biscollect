@@ -36,6 +36,7 @@ const EntryForm = () => {
     handleSubmit,
     setValue,
     control,
+    reset
   } = useForm<NewConnectionType>({ mode: "all", shouldUnregister: false });
 
   const onSubmit: SubmitHandler<NewConnectionType> = async (data) => {
@@ -62,6 +63,13 @@ const EntryForm = () => {
     }
   };
 
+  const handleNewEntry = () => {
+    setSuccess(false);
+    setStep(0);
+    reset();
+    setUniqueid(crypto.randomUUID());
+  };
+
   return (
     <form
       onKeyDown={(e) => {
@@ -83,7 +91,7 @@ const EntryForm = () => {
         <h3 className="text-lg font-bold">New Connection Entry</h3>
       </div>
       {success ? (
-        <SubmitCompletion returnPath={`/menu/new-connection`} />
+        <SubmitCompletion onNewEntry={handleNewEntry} returnPath={`/menu/new-connection`} />
       ) : (
         <>
           {/* Consumer Name */}

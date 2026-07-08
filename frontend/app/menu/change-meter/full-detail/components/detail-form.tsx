@@ -8,14 +8,15 @@ import InputField from "../../../../common/components/form-field-components/inpu
 import EditButton from "../../../../common/components/edit-button";
 import CoordinatesField from '../../../../common/components/form-field-components/coordinates-field';
 import ImageField from "@/app/common/components/form-field-components/image-field";
-import {useRouter} from "next/navigation";
-type Props = {
-  uuid: string;
-};
+import { useRouter, useSearchParams } from 'next/navigation';
 
-const DetailForm = ({ uuid }: Props) => {
+
+
+const DetailForm = () => {
   const [editMode, setEditMode] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const uuid = searchParams.get("uuid");
   const {
     register,
     formState: { errors},
@@ -30,7 +31,7 @@ const DetailForm = ({ uuid }: Props) => {
       const transaction = idb.transaction("change_meters", "readwrite");
       const store = transaction.objectStore("change_meters");
       const index = store.index("uuid");
-      const result = await index.get(uuid);
+      const result = await index.get(uuid ?? "");
       reset(result);
     };
     getEntry();
