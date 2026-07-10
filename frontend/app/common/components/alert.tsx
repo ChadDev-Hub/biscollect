@@ -3,7 +3,7 @@
 import { CircleCheck, TriangleAlert, CircleAlert, CircleX } from "lucide-react";
 import { useState, createContext, useEffect, useContext } from "react";
 
-type Alerts = "success" | "warning" | "error" | "info";
+export type Alerts = "success" | "warning" | "error" | "info";
 type Props = {
   children: React.ReactNode;
 };

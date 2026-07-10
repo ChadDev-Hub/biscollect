@@ -28,7 +28,7 @@ const NavBar = () => {
   return (
     <nav className="navbar w-full bg-base-100 shadow-sm px-4">
         <div className="flex-1">
-            <h1 className="text-lg font-bold text-primary">
+            <h1 className="text-xs font-bold text-primary">
                 <NavBarTitle/>
             </h1>
         </div>

@@ -1,19 +1,15 @@
 "use client";
 import Link from "next/link";
 import { ToolCase } from "lucide-react";
-import Image from "next/image";
+
+
 
 const Hero = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-4 w-full">
       <div className="bg-neutral rounded-2xl shadow-xl backdrop-blur-sm p-4 animate-pulse">
         <div className="p-4 relative rounded-box ">
-        <Image
-          src="/favicon.svg"
-          alt="BisCollect Logo"
-          fill
-          className="object-contain "
-        />
+          <ToolCase className="size-10 text-orange-500" />
       </div>
 
       </div>
@@ -27,12 +23,13 @@ const Hero = () => {
       </p>
       {/* CTA Button */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-        <Link href="/menu" type="button" className="group btn relative px-8 py-3.5 font-semibold text-sm bg-neutral">
+        
+          <Link href="/menu" type="button" className="group btn relative px-8 py-3.5 font-semibold text-sm bg-neutral">
           <span className="text-white font-bold">Get Started</span>
           <span className="inline-block text-white transition-transform group-hover:translate-x-1">
             →
           </span>
-        </Link>
+        </Link> 
       </div>
     </div>
   );

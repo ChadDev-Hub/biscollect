@@ -1,5 +1,13 @@
 "use client";
-import { Calendar, User, Hash, Cpu, CloudAlert, CloudCheck } from "lucide-react";
+import {
+  Calendar,
+  User,
+  Hash,
+  Cpu,
+  CloudAlert,
+  CloudCheck,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -31,12 +39,12 @@ export default function MeterAccomplishedCard({
       detailLink = `/menu/change-meter/full-detail?uuid=${uuid}`;
       break;
     case "/menu/new-connection":
-      detailLink= `/menu/new-connection/full-detail?uuid=${uuid}`;
+      detailLink = `/menu/new-connection/full-detail?uuid=${uuid}`;
       break;
     default:
       break;
   }
-  
+
   return (
     <div
       key={uuid}
@@ -51,19 +59,20 @@ export default function MeterAccomplishedCard({
           <User className="w-5 h-5" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-base-content tracking-wide mt-0.5">
+          <h3 className="text-[12px] font-bold text-base-content tracking-wide mt-0.5">
             {name}
           </h3>
         </div>
         {/* TYPE BADGE */}
-        <div className="badge justify-self-end badge-info">{type}</div>
+        <div className="badge badge-xs justify-self-end badge-info">{type}</div>
 
         {/* SYNC INDICATOR */}
         <div className="flex-1 flex justify-end items-center">
           <button
-          className="btn btn-ghost btn-circle tooltip tooltip-left tooltip-info"
-          title={is_synced ? "Synced" : "Not Synced"}
-          data-tip={is_synced ? "Synced" : "Not Synced"}>
+            className="btn btn-ghost btn-circle tooltip tooltip-left tooltip-info"
+            title={is_synced ? "Synced" : "Not Synced"}
+            data-tip={is_synced ? "Synced" : "Not Synced"}
+          >
             {is_synced ? (
               <CloudCheck className="w-5 h-5 text-success" />
             ) : (
@@ -86,7 +95,7 @@ export default function MeterAccomplishedCard({
             <div className="text-[10px] uppercase tracking-wider font-semibold text-base-content/40">
               Brand
             </div>
-            <div className="text-sm font-bold text-base-content">
+            <div className="text-[12px] font-bold text-base-content">
               {meter_brand}
             </div>
           </div>
@@ -101,7 +110,7 @@ export default function MeterAccomplishedCard({
             <div className="text-[10px] uppercase tracking-wider font-semibold text-base-content/40">
               Serial No.
             </div>
-            <div className="text-sm font-mono font-bold text-base-content">
+            <div className="text-[12px] font-mono font-bold text-base-content">
               {meter_serial_no}
             </div>
           </div>
@@ -126,10 +135,23 @@ export default function MeterAccomplishedCard({
       </div>
 
       {/* Action Button Option */}
-      <div className="card-actions justify-end mt-5">
-        <Link href={detailLink} type="button" className="btn btn-primary btn-sm btn-block normal-case font-medium gap-2 shadow-md shadow-primary/10">
-          View Full Details
-        </Link>
+      <div className="card-actions justify-end items-center mt-5">
+        
+          {/* DELETE BUTTON */}
+          <button
+            title="Delete"
+            className="btn btn-circle shadow-md btn-dash btn-error btn-soft"
+          >
+            <Trash2 className="text-error size-6" />
+          </button>
+          {/* FULL DETAIL BUTTON */}
+          <Link
+            href={detailLink}
+            type="button"
+            className="btn btn-primary btn-sm  normal-case font-medium gap-2 shadow-md shadow-primary/10"
+          >
+            View Full Details
+          </Link>
       </div>
     </div>
   );

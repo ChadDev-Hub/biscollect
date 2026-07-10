@@ -21,7 +21,7 @@ const Tool = ({ label, icon, route, isCommingSoon }: toolType) => {
       <div className="border-neutral-content border p-4 rounded-full">
         {icon}
       </div>
-      {isCommingSoon && <span className="absolute badge-xs glass text-xs z-10 top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2 badge badge-info badge-outline">Coming Soon</span>}
+      {isCommingSoon && <span className="absolute badge-lg glass text-[0.5rem] z-10 top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2 badge badge-info badge-outline">Coming Soon</span>}
       <label className="text-xs font-bold text-neutral-content">{label}</label>
     </Link>
   );

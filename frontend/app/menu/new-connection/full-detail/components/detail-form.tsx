@@ -57,6 +57,7 @@ const DetailForm = () => {
       });
       await transaction.done;
       setEditMode(false);
+      window.dispatchEvent(new Event("new-connection-updated"));
     } catch (error) {
       console.error(error);
     }
@@ -108,16 +109,6 @@ const DetailForm = () => {
           isDisabled={!editMode}
         />
       </div>
-      {/* Meter Sealed */}
-      <InputField
-        register={register}
-        name="meter_sealed"
-        error={errors.meter_sealed?.message}
-        required={true}
-        Icon={Binary}
-        label="Meter Sealed"
-        isDisabled={!editMode}
-      />
       {/* METER SEALED */}
       <InputField
         register={register}

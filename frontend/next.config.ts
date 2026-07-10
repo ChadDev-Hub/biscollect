@@ -1,5 +1,6 @@
-import type { NextConfig } from "next";
+
 import withPWA from "next-pwa";
+import {NextConfig} from "next"
 
 const withPWAConfig = withPWA({
   dest: "public",
@@ -68,9 +69,14 @@ const withPWAConfig = withPWA({
     },
   ],
 });
-
 const nextConfig: NextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
+  experimental:{
+    serverActions:{
+      bodySizeLimit: "30mb"
+    }
+  }
 };
+
 
 export default withPWAConfig(nextConfig);

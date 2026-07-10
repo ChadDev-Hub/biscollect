@@ -8,13 +8,12 @@ import InputField from "../../../../common/components/form-field-components/inpu
 import EditButton from "../../../../common/components/edit-button";
 import CoordinatesField from '../../../../common/components/form-field-components/coordinates-field';
 import ImageField from "@/app/common/components/form-field-components/image-field";
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 
 
 const DetailForm = () => {
   const [editMode, setEditMode] = useState(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const uuid = searchParams.get("uuid");
   const {
@@ -48,7 +47,7 @@ const DetailForm = () => {
       );
       await transaction.done;
       setEditMode(false);
-      router.refresh();
+      window.dispatchEvent(new Event("change-meter-updated"));
     } catch (error) {
       console.error(error);
     }

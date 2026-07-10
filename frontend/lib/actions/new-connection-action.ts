@@ -1,5 +1,3 @@
-
-
 "use server"
 import { NewConnectionResponseType} from '../../types/new-connection';
 const baseUrl = process.env.BASESERVERURL
