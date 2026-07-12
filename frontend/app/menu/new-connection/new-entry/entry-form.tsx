@@ -1,6 +1,6 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
-import InputField from '../../../common/components/form-field-components/input-field';
+import InputField from "../../../common/components/form-field-components/input-field";
 import { NewConnectionType } from "@/types/new-connection";
 import CoordinatesField from "../../../common/components/form-field-components/coordinates-field";
 import ImageField from "@/app/common/components/form-field-components/image-field";
@@ -36,7 +36,7 @@ const EntryForm = () => {
     handleSubmit,
     setValue,
     control,
-    reset
+    reset,
   } = useForm<NewConnectionType>({ mode: "all", shouldUnregister: false });
 
   const onSubmit: SubmitHandler<NewConnectionType> = async (data) => {
@@ -45,9 +45,12 @@ const EntryForm = () => {
       const transaction = db.transaction("new_connections", "readwrite");
       const store = transaction.objectStore("new_connections");
       await store.put({
-        uuid: uniqueid,
         ...data,
+        uuid: uniqueid,
         is_synced: false,
+        is_deleted: false,
+        datetime_synced: null,
+        datetime_deleted: null,
       });
 
       await transaction.done;
@@ -91,7 +94,10 @@ const EntryForm = () => {
         <h3 className="text-lg font-bold">New Connection Entry</h3>
       </div>
       {success ? (
-        <SubmitCompletion onNewEntry={handleNewEntry} returnPath={`/menu/new-connection`} />
+        <SubmitCompletion
+          onNewEntry={handleNewEntry}
+          returnPath={`/menu/new-connection`}
+        />
       ) : (
         <>
           {/* Consumer Name */}
@@ -99,7 +105,6 @@ const EntryForm = () => {
             <>
               {/* Date Accomplished */}
               <InputField
-                
                 Icon={Calendar}
                 name="date_accomplished"
                 register={register}
@@ -108,7 +113,6 @@ const EntryForm = () => {
                 required={true}
                 error={errors.date_accomplished?.message}
               />
-
 
               {/* Consumer Name */}
               <InputField

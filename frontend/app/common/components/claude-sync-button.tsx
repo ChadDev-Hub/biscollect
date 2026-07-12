@@ -15,6 +15,7 @@ type SyncTableProps<T extends Record<string, unknown>> = {
   api: (form: FormData) => Promise<{
     uuid: string;
     is_synced: boolean;
+    datetime_synced: string;
   }>;
 };
 const SyncTable = async <T extends Record<string, unknown>>({
@@ -42,6 +43,7 @@ const SyncTable = async <T extends Record<string, unknown>>({
         ...entry,
         uuid: res.uuid,
         is_synced: true,
+        datetime_synced: res.datetime_synced
       });
     } catch (error) {
       console.error(error);
@@ -62,15 +64,26 @@ const ClaudeSyncButton = () => {
         setLoading(true);
         const db = await getDB();
         const result = await db.getAll("new_connections");
+        const countUnsynced = result.filter(
+          (entry) => !entry.is_synced
+        ).length;
+        // IF ALL ENTRIES ARE SYNCED
+        if (countUnsynced === 0) {
+          setLoading(false);
+          showAlert("All entries are synced", "info");
+          return;
+        }
         const syncRes = await SyncTable({
           entries: result,
           store: "new_connections",
           api: SyncNewConnection,
           showAlert
         })
-        console.log(syncRes);
+        if (syncRes) {
+          window.dispatchEvent(new Event("new_connections-updated"));
+          showAlert("Synced successfully", "success");
+        }
         setLoading(false);
-        window.dispatchEvent(new Event("new-connection-updated"));
       };
       break;
     case "/menu/change-meter":
@@ -78,15 +91,26 @@ const ClaudeSyncButton = () => {
         setLoading(true);
         const db = await getDB();
         const result = await db.getAll("change_meters");
+        const countUnsynced = result.filter(
+          (entry) => !entry.is_synced
+        );
+        // IF ALL ENTRIES ARE SYNCED
+        if (countUnsynced.length === 0) {
+          setLoading(false);
+          showAlert("All entries are synced", "info");
+          return;
+        }
         const syncRes = await SyncTable({
           entries: result,
           store: "change_meters",
           api: SyncChangeMeter,
           showAlert
         })
-        console.log(syncRes);
+        if (syncRes) {
+          window.dispatchEvent(new Event("change_meters-updated"));
+          showAlert("Synced successfully", "success");
+        }
         setLoading(false);
-        window.dispatchEvent(new Event("change-meter-updated"));
       };
       break;
     default:

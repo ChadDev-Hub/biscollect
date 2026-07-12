@@ -6,19 +6,19 @@ import {
   Cpu,
   CloudAlert,
   CloudCheck,
-  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
+import Delete from "./delete";
 type Props = {
-  uuid?: string;
+  uuid: string;
   date: string;
   name: string;
   meter_serial_no: string;
   meter_brand: string;
   type: Type;
   is_synced: boolean;
+  datetime_synced: string | null;
 };
 
 type Type = "CM" | "NC";
@@ -31,20 +31,24 @@ export default function MeterAccomplishedCard({
   meter_brand,
   type,
   is_synced,
+  datetime_synced
 }: Props) {
   const currentPath = usePathname();
+  let store = "";
   let detailLink = "";
   switch (currentPath) {
     case "/menu/change-meter":
       detailLink = `/menu/change-meter/full-detail?uuid=${uuid}`;
+      store = "change_meters";
       break;
     case "/menu/new-connection":
       detailLink = `/menu/new-connection/full-detail?uuid=${uuid}`;
+      store = "new_connections";
       break;
     default:
       break;
   }
-
+  
   return (
     <div
       key={uuid}
@@ -68,17 +72,22 @@ export default function MeterAccomplishedCard({
 
         {/* SYNC INDICATOR */}
         <div className="flex-1 flex justify-end items-center">
-          <button
+          <div
             className="btn btn-ghost btn-circle tooltip tooltip-left tooltip-info"
             title={is_synced ? "Synced" : "Not Synced"}
-            data-tip={is_synced ? "Synced" : "Not Synced"}
           >
+            <div className="tooltip-content">
+              <div className="p-2 text-center">
+                <h1 className="text-sm font-bold">{is_synced ? "Synced" : "Not Synced"}</h1>
+                <p className="text-xs italic">{is_synced ? `${datetime_synced}` : ""}</p>
+              </div>
+            </div>
             {is_synced ? (
               <CloudCheck className="w-5 h-5 text-success" />
             ) : (
               <CloudAlert className="w-5 h-5 text-warning" />
             )}
-          </button>
+          </div>
         </div>
       </div>
 
@@ -138,12 +147,7 @@ export default function MeterAccomplishedCard({
       <div className="card-actions justify-end items-center mt-5">
         
           {/* DELETE BUTTON */}
-          <button
-            title="Delete"
-            className="btn btn-circle shadow-md btn-dash btn-error btn-soft"
-          >
-            <Trash2 className="text-error size-6" />
-          </button>
+          <Delete store={store} uuid={uuid} />
           {/* FULL DETAIL BUTTON */}
           <Link
             href={detailLink}

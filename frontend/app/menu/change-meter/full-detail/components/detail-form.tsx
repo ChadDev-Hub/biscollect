@@ -47,7 +47,7 @@ const DetailForm = () => {
       );
       await transaction.done;
       setEditMode(false);
-      window.dispatchEvent(new Event("change-meter-updated"));
+      window.dispatchEvent(new Event("change_meters-updated"));
     } catch (error) {
       console.error(error);
     }

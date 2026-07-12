@@ -56,9 +56,12 @@ const EntryForm = () => {
       const transaction = db.transaction("change_meters", "readwrite");
       const store = transaction.objectStore("change_meters");
       await store.put({
-        uuid: uuid,
         ...data,
+        uuid: uuid,
         is_synced: false,
+        is_deleted: false,
+        datetime_synced: null,
+        datetime_deleted: null,
       });
       await transaction.done;
       setSuccess(true);
@@ -73,7 +76,6 @@ const EntryForm = () => {
     setStep(0);
     reset();
     setUuid(crypto.randomUUID());
-    
   }
   return (
     <form

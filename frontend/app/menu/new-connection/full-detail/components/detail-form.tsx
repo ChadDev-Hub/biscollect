@@ -57,7 +57,7 @@ const DetailForm = () => {
       });
       await transaction.done;
       setEditMode(false);
-      window.dispatchEvent(new Event("new-connection-updated"));
+      window.dispatchEvent(new Event("new_connections-updated"));
     } catch (error) {
       console.error(error);
     }

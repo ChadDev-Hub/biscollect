@@ -1,8 +1,9 @@
 
 "use client"
-import ThemeToggle from "./theme-toggle"
+
 import {usePathname} from "next/navigation"
 import NetWorkBadge from './network-badge';
+import DropDownSettings from './drop-down/drop-down-settings';
 
 const NavBarTitle = () =>{
     const path = usePathname()
@@ -34,7 +35,7 @@ const NavBar = () => {
         </div>
         <div className="flex-none flex gap-2 items-center">
             <NetWorkBadge/>
-            <ThemeToggle/>
+            <DropDownSettings/>
         </div>
     </nav>
   )

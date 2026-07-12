@@ -13,12 +13,14 @@ const ChangeMeterContainer = () => {
             const transaction = idb.transaction("change_meters", "readwrite");
             const store = transaction.objectStore("change_meters");
             const result = await store.getAll();
-            setEntries(result.reverse());
+            const reverse = result.reverse();
+
+            setEntries(reverse.filter((entry: ChangeMeterType) => !entry.is_deleted));
         }
         getAllEntries();
-        window.addEventListener("change-meter-updated", getAllEntries);
+        window.addEventListener("change_meters-updated", getAllEntries);
         return () => {
-            window.removeEventListener("change-meter-updated", getAllEntries);
+            window.removeEventListener("change_meters-updated", getAllEntries);
         }
     },[])
 
@@ -34,6 +36,7 @@ const ChangeMeterContainer = () => {
             meter_brand={entry.new_meter_brand}
             type="CM"
             is_synced={entry.is_synced}
+            datetime_synced={entry.datetime_synced}
             />
         ))}
     </div>

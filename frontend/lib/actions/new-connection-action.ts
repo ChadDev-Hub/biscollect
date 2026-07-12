@@ -1,6 +1,6 @@
-"use server"
-import { NewConnectionResponseType} from '../../types/new-connection';
-const baseUrl = process.env.BASESERVERURL
+
+import {SyncResponseType} from "@/types/response";
+const baseUrl = process.env.NEXT_PUBLIC_BASESERVERURL
 
 export async function SyncNewConnection(newConnection: FormData) {
     const res = await fetch(`${baseUrl}/v1/new_connection/sync`, {
@@ -11,5 +11,5 @@ export async function SyncNewConnection(newConnection: FormData) {
     if(!res.ok) {
         throw new Error(result.detail ?? "Failed to sync new connection");
     }
-    return result as NewConnectionResponseType;
+    return result as SyncResponseType;
 }

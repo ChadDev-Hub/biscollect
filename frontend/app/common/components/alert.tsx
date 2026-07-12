@@ -56,7 +56,7 @@ const Alert = ({ children }: Props) => {
       {isShow && (
         <div
           role="alert"
-          className={`alert alert-soft alert-${alertType}  z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}
+          className={`alert alert-soft alert-${alertType} w-full max-w-xs text-center  z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}
         >
           {svg()}
           <span>{text}</span>

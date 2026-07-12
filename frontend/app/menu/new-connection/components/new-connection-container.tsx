@@ -14,12 +14,14 @@ const NewConnectionContainer = () => {
       const transaction = idb.transaction("new_connections", "readwrite");
       const store = transaction.objectStore("new_connections");
       const result = await store.getAll();
-      setEntries(result.reverse());
+      const reverse = result.reverse();
+      setEntries(reverse.filter((entry: NewConnectionType) => !entry.is_deleted));
+    
     };
     getAllEntries();
-    window.addEventListener("new-connection-updated", getAllEntries);
+    window.addEventListener("new_connections-updated", getAllEntries);
     return () => {
-      window.removeEventListener("new-connection-updated", getAllEntries);
+      window.removeEventListener("new_connections-updated", getAllEntries);
     };
   }, []);
 
@@ -35,6 +37,7 @@ const NewConnectionContainer = () => {
           meter_brand={entry.meter_brand}
           type="NC"
           is_synced={entry.is_synced}
+          datetime_synced={entry.datetime_synced}
         />
       ))}
     </div>

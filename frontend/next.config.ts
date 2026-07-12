@@ -71,11 +71,11 @@ const withPWAConfig = withPWA({
 });
 const nextConfig: NextConfig = {
   reactStrictMode: false,
-  experimental:{
+  experimental: {
     serverActions:{
-      bodySizeLimit: "30mb"
+      bodySizeLimit: '50mb'
     }
-  }
+  },
 };
 
 
