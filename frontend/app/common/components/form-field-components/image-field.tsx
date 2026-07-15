@@ -42,6 +42,7 @@ const ImageField = <T extends FieldValues>({
               type="file"
               accept="image/*"
               className="hidden"
+              capture
             />
           )}
         />
