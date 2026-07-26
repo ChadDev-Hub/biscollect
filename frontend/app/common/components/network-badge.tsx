@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import { useOnline } from "./hooks/online-provider";
 import { Globe, GlobeOff, Loader } from "lucide-react";
 

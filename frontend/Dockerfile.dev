@@ -1,6 +1,6 @@
-ARG NODE_VERSION=24.14.0-slim
 
-FROM node:${NODE_VERSION} as dev
+
+FROM node:trixie as dev
 
 
 WORKDIR /app
@@ -31,6 +31,6 @@ RUN chown -R node:node .
 USER node
 
 
-EXPOSE 3002
+EXPOSE 3003
 
 CMD ["sh","-c","npm run dev"]

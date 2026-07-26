@@ -16,16 +16,18 @@ services:
       dockerfile: Dockerfile.dev
     image: chaddevhub/biscollect:dev
     container_name: biscollect-dev
+    env_file:
+      - "frontend/.env.dev"
     environment:
       WATCHPACK_POLLING: "true"
       CHOKIDAR_USEPOLLING: "true"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
+    # volumes:
+    #   - ./frontend:/app
+    #   - /app/node_modules
     develop:
       watch:
         - action: sync
-          path: .
+          path: ./frontend
           target: /app
           ignore:
             - node_modules/
@@ -33,4 +35,4 @@ services:
         - action: rebuild
           path: package.json
     ports:
-      - "3003:3002"
+      - "3003:3003"

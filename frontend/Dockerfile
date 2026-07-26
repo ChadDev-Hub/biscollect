@@ -1,4 +1,4 @@
-FROM node:24-alpine3.22 AS dependencies
+FROM node:trixie AS dependencies
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
 
 RUN npm install
 
-FROM node:24-alpine3.22 AS builder
+FROM node:trixie AS builder
 
 WORKDIR /app
 
@@ -16,14 +16,14 @@ COPY . .
 
 RUN npm run build
 
-FROM node:24-alpine3.22 AS runner
+FROM node:trixie AS runner
 
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S -D -u 1001 -G nodejs nextjs
+RUN groupadd --system --gid 1001  nodejs
+RUN useradd --system --uid 1001 --gid nodejs nextjs
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules

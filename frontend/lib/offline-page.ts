@@ -2,6 +2,7 @@
 
 export const OfflinePages = [
   "/",
+  "/google-login",
   "/menu",
   "/menu/new-connection",
   "/menu/new-connection/new-entry",
@@ -9,4 +10,5 @@ export const OfflinePages = [
   "/menu/change-meter",
   "/menu/change-meter/new-entry",
   "/menu/change-meter/full-detail",
+
 ];

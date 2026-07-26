@@ -37,7 +37,7 @@ const CoordinatesField =<T extends FieldValues> ({
   const handleGetLocation = () => {
     setIslocating(true);
     navigator.geolocation.getCurrentPosition((position) => {
-      const { latitude, longitude, accuracy } = position.coords;
+      const { latitude, longitude} = position.coords;
      
       setValue("lat" as Path<T> , latitude as PathValue<T,Path<T>> , {
         shouldValidate: true,
