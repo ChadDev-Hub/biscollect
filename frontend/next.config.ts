@@ -66,7 +66,9 @@ const withPWAConfig = withPWA({
       options: {
         cacheName: "images",
       },
+      
     },
+    
   ],
 });
 const nextConfig: NextConfig = {
@@ -76,6 +78,14 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '50mb'
     }
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+    ]
+  }
 };
 
 

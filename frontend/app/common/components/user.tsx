@@ -3,43 +3,73 @@
 import { useEffect, useState } from "react";
 import { useOnline } from "@/app/common/components/hooks/online-provider";
 import { GetUser } from "@/lib/actions/user";
+import {CircleUser} from "lucide-react"
+import Image from "next/image";
+
 type UserInfoType = {
-  name: string | null;
-  profile: string | null;
+  id: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  photo: string | null;
 };
 
 const User = () => {
   const { isOnline } = useOnline();
   const [userInfo, setUserInfo] = useState<UserInfoType>({
-    name: null,
-    profile: null,
+    id: null,
+    last_name: null,
+    first_name: null,
+    photo: null,
   });
   useEffect(() => {
     // Function TO SET USER INFO
-    const setInfo = async (name: string | null, profile: string | null) => {
+    const setInfo = async ({
+      id,
+      first_name,
+      last_name,
+      photo,
+    }: UserInfoType) => {
       setUserInfo({
-        name: name,
-        profile: profile,
+        id: id,
+        first_name: first_name,
+        last_name: last_name,
+        photo: photo,
       });
     };
     if (!isOnline) {
-      const userName = window.localStorage.getItem("user_name");
-      const userProfile = window.localStorage.getItem("user_profile");
-      if (userName && userProfile) {
-        setInfo(userName, userProfile);
+      const user = JSON.parse(
+        localStorage.getItem("User") ?? "null",
+      ) as UserInfoType | null;
+
+      if (user) {
+        setInfo({ ...user });
       }
     } else {
       const callGetUser = async () => {
         const user = await GetUser();
-        setInfo(user.name, user.profile);
-        window.localStorage.setItem("user_name", user.name || "");
-        window.localStorage.setItem("user_profile", user.profile || "");
+        setInfo({ ...user });
+        window.localStorage.setItem("User", JSON.stringify(user));
       };
       callGetUser();
     }
   }, [isOnline]);
-  console.log(userInfo);
-  return <div>User</div>;
+  return (
+    <div>
+      <div className={`avatar aura ${isOnline? "text-green-500": "text-neutral-500"} aura-glow`}>
+        <div className="relative size-9 rounded-full overflow-hidden">
+          {userInfo.photo ? (
+            <Image
+              src={userInfo.photo}
+              alt="User Profile"
+              fill
+              className="object-cover"
+            />
+          ): <CircleUser className="size-9 text-primary-content"/>}
+        </div>
+      </div>
+      <p>{userInfo.first_name}</p>
+    </div>
+  );
 };
 
 export default User;
