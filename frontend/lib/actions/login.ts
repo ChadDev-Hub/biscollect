@@ -3,7 +3,6 @@ const baseUrl = process.env.NEXT_PUBLIC_BASESERVERURL
 type resultType = {
     url: string;
 }
-
 type errorType = {
     code: number;
     detail: string;
@@ -11,7 +10,7 @@ type errorType = {
 export async function Login(data: FormData) {
     const params = new URLSearchParams();
     params.append("secret", data.get("secret") as string);
-    const res = await fetch(`${baseUrl}/v1/auth/google/validate?${params}`, {
+    const res = await fetch(`${baseUrl}/v1/biscollect/validate?${params}`, {
         method: "POST",
     });
     const result = await res.json();

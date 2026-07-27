@@ -3,7 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import GoogleIcon from "./googleIcon";
 import { useOnline } from "../../../app/common/components/hooks/online-provider";
 import { useAlert } from '@/app/common/components/alert';
-import {Login }from "@/lib/actions/login";
+import { Login } from "@/lib/actions/login"
 import {useRouter} from "next/navigation";
 type FormType = {
   secretKey: string;

@@ -2,6 +2,8 @@
 import ThemeToggle from "../theme-toggle";
 import { EllipsisVertical } from "lucide-react";
 import GoogleLoginButton from "../../../google-login/components/login";
+import User from '../user';
+
 const DropDownSettings = () => {
   return (
     <div className="dropdown dropdown-end">
@@ -12,6 +14,9 @@ const DropDownSettings = () => {
         tabIndex={-1}
         className="dropdown-content menu gap-2 bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
       >
+        <li>
+          <User />
+        </li>
         <li>
           <ThemeToggle />
         </li>

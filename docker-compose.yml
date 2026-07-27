@@ -21,14 +21,13 @@ services:
     environment:
       WATCHPACK_POLLING: "true"
       CHOKIDAR_USEPOLLING: "true"
-    # volumes:
-    #   - ./frontend:/app
-    #   - /app/node_modules
+
     develop:
       watch:
         - action: sync
           path: ./frontend
           target: /app
+          initial_sync: true
           ignore:
             - node_modules/
             - .next/
