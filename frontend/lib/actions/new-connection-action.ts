@@ -1,15 +1,12 @@
-
-import {SyncResponseType} from "@/types/response";
-const baseUrl = process.env.NEXT_PUBLIC_BASESERVERURL
+import api from "./interceptor";
+import { SyncResponseType } from "@/types/response";
 
 export async function SyncNewConnection(newConnection: FormData) {
-    const res = await fetch(`${baseUrl}/v1/new_connection/sync`, {
-        method: "PUT",
-        body: newConnection,
-    });
-    const result = await res.json();
-    if(!res.ok) {
-        throw new Error(result.detail ?? "Failed to sync new connection");
-    }
-    return result as SyncResponseType;
+  try {
+    const res = await api.put("/v1/new_connection/sync", newConnection);
+    const success = res.data as SyncResponseType;
+    return success;
+  } catch (error) {
+    throw new Error((error as Error).message);
+  }
 }

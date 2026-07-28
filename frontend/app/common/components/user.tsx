@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useOnline } from "@/app/common/components/hooks/online-provider";
 import { GetUser } from "@/lib/actions/user";
-import {CircleUser} from "lucide-react"
+import { CircleUser } from "lucide-react";
 import Image from "next/image";
 
 type UserInfoType = {
@@ -36,6 +36,8 @@ const User = () => {
         photo: photo,
       });
     };
+
+    // IF NOT ONLINE CHECK IF USER IN LOCAL STORAGE
     if (!isOnline) {
       const user = JSON.parse(
         localStorage.getItem("User") ?? "null",
@@ -44,18 +46,31 @@ const User = () => {
       if (user) {
         setInfo({ ...user });
       }
-    } else {
-      const callGetUser = async () => {
+      return;
+    }
+    const loginStatus = localStorage.getItem("LoginStatus");
+    if (loginStatus !== "true") {
+      return;
+    }
+
+    const callGetUser = async () => {
+      try {
         const user = await GetUser();
         setInfo({ ...user });
         window.localStorage.setItem("User", JSON.stringify(user));
-      };
-      callGetUser();
-    }
+        localStorage.setItem("LoginStatus", "true");
+      } catch (error) {
+        console.log(error);
+        setUserInfo({ id: null, first_name: null, last_name: null, photo: null });
+      }
+    };
+    callGetUser();
   }, [isOnline]);
   return (
     <div>
-      <div className={`avatar aura ${isOnline? "text-green-500": "text-neutral-500"} aura-glow`}>
+      <div
+        className={`avatar aura ${isOnline ? "text-green-500" : "text-neutral-500"} aura-glow`}
+      >
         <div className="relative size-9 rounded-full overflow-hidden">
           {userInfo.photo ? (
             <Image
@@ -63,8 +78,11 @@ const User = () => {
               alt="User Profile"
               fill
               className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
-          ): <CircleUser className="size-9 text-primary-content"/>}
+          ) : (
+            <CircleUser className="size-9 text-primary-content" />
+          )}
         </div>
       </div>
       <p>{userInfo.first_name}</p>

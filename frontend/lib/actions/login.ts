@@ -1,29 +1,16 @@
-
-const baseUrl = process.env.NEXT_PUBLIC_BASESERVERURL
+import api from "./interceptor";
 type resultType = {
     url: string;
 }
-type errorType = {
-    code: number;
-    detail: string;
-}
+
 export async function Login(data: FormData) {
     const params = new URLSearchParams();
     params.append("secret", data.get("secret") as string);
-    const res = await fetch(`${baseUrl}/v1/biscollect/validate?${params}`, {
-        method: "POST",
-    });
-    const result = await res.json();
-    if(!res.ok) {
-        const error = result as errorType;
-        switch (error.code) {
-            case 401:
-                throw new Error("Invalid secret key");
-            default:
-                throw new Error(error.detail ?? "Failed to login");
-        }
+    const res = await api.post("/v1/biscollect/validate",null,{params});
+    if (res.status === 401) {
+        throw new Error("Invalid secret key");
     }
-    const success = result as resultType;
+    const success = res.data as resultType;
    
     return success
 }

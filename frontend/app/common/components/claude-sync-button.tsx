@@ -45,12 +45,14 @@ const SyncTable = async <T extends Record<string, unknown>>({
         is_synced: true,
         datetime_synced: res.datetime_synced
       });
-    } catch (error) {
-      console.error(error);
-      showAlert("Failed to sync entry", "error");
+      showAlert("Synced successfully", "success");
+      return true
+    } catch  {
+      showAlert("Faile to Sync Please Re-Login to Google", "error");
+      return false
     }
   }
-  return true;
+  return false
 };
 const ClaudeSyncButton = () => {
   const [loading, setLoading] = useState(false);
@@ -81,7 +83,6 @@ const ClaudeSyncButton = () => {
         })
         if (syncRes) {
           window.dispatchEvent(new Event("new_connections-updated"));
-          showAlert("Synced successfully", "success");
         }
         setLoading(false);
       };

@@ -41,22 +41,11 @@ const Hero = () => {
             </Link>
           </div>
         ) : (
-          <div className="aura">
-            <Link
-              href="/menu"
-              type="button"
-              className={`group btn relative px-8 py-3.5 font-semibold text-sm bg-neutral`}
-            >
-              <span className="text-white font-bold">Get Started</span>
-              <span className="inline-block text-white transition-transform group-hover:translate-x-1">
-                →
-              </span>
-            </Link>
-          </div>
-          // <label className="group flex flex-col items-center gap-2 justify-center">
-          //   <p className="skeleton skeleton-text">Preparing Services</p>
-          //   <Loader className="animate-spin text-primary" />
-          // </label>
+          // {/* FOR PRODUCTION */}
+          <label className="group flex flex-col items-center gap-2 justify-center">
+            <p className="skeleton skeleton-text">Preparing Services</p>
+            <Loader className="animate-spin text-primary" />
+          </label>
         )}
       </div>
     </div>

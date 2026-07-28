@@ -22,10 +22,12 @@ const Loginform = () => {
         if (results.url) {
             router.push(results.url);
         }
+        localStorage.setItem("LoginStatus", "true");
     }
     catch (error) {
         console.error(error);
         showAlert((error as Error).message, "error");
+        localStorage.setItem("LoginStatus", "false");
     }
   };
   return (
