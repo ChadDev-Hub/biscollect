@@ -168,6 +168,8 @@ const EntryForm = () => {
                 required={true}
                 error={errors.initial_reading?.message}
                 inputType="number"
+                pattern={/^\d+(\.\d+)?$/}
+                patternMessage="Please Input A Valid Number"
               />
 
               <InputField

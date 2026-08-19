@@ -10,5 +10,5 @@ export const OfflinePages = [
   "/menu/change-meter",
   "/menu/change-meter/new-entry",
   "/menu/change-meter/full-detail",
-
+  "/menu/construction",
 ];

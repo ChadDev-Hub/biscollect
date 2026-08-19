@@ -2,14 +2,13 @@
 
 import { UseFormRegister, FieldPath, FieldValues } from "react-hook-form";
 import { LucideIcon } from "lucide-react";
-
 type Props<T extends FieldValues> = {
   name: FieldPath<T>;
   register: UseFormRegister<T>;
   label: string;
   required: boolean;
   error?: string;
-  inputType?: string;
+  inputType?: "text" | "number" | "date";
   Icon: LucideIcon;
   maxStep?: number;
   step?: number;
@@ -17,7 +16,9 @@ type Props<T extends FieldValues> = {
   maxLength?: number;
   pattern?: RegExp;
   patternMessage?: string;
-  isDisabled?: boolean
+  isDisabled?: boolean;
+  listOptionId?:string;
+  listOption?: string[];
 };
 
 const InputField =<T extends FieldValues> ({
@@ -34,8 +35,9 @@ const InputField =<T extends FieldValues> ({
   maxLength,
   pattern,
   patternMessage,
-  isDisabled
-
+  isDisabled,
+  listOption,
+  listOptionId
 }: Props<T>) => {
   return (
     <section
@@ -54,7 +56,9 @@ const InputField =<T extends FieldValues> ({
         </div>
         
         <input
+          list={listOptionId}
           disabled={isDisabled}
+          
           {...register(name, {
             required: { value: required, message: `${label} is Required` },
             ...(minLength && {
@@ -79,6 +83,11 @@ const InputField =<T extends FieldValues> ({
           type={inputType || "text"}
           className="grow"
         />
+        <datalist id={listOptionId}>
+          {listOption?.map((option) => (
+            <option key={option} value={option} />
+          ))}
+        </datalist>
       </label>
 
       {error && <span className="text-red-500 italic text-xs">{error}</span>}

@@ -159,6 +159,7 @@ const EntryForm = () => {
                 error={errors.pull_out_meter_serial_no?.message}
               />
 
+              {/* PULL OUT METER READING */}
               <InputField
                 register={register}
                 Icon={Binary}
@@ -167,6 +168,8 @@ const EntryForm = () => {
                 name="pull_out_reading"
                 label="Pull Out Meter Reading"
                 error={errors.pull_out_reading?.message}
+                pattern={/^\d+(\.\d+)?$/}
+                patternMessage="Please enter a valid number"
               />
             </>
           )}
@@ -203,11 +206,14 @@ const EntryForm = () => {
               {/* INITIAL READING */}
 
               <InputField
+                inputType="number"
                 required={true}
                 register={register}
                 name="initial_reading"
                 label="Initial Reading"
                 Icon={Binary}
+                pattern={/^\d+(\.\d+)?$/}
+                patternMessage="Please enter a valid number"
                 error={errors.meter_sealed?.message}
               />
             </>

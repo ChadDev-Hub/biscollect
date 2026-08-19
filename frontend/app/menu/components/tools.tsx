@@ -44,7 +44,6 @@ const Tools = () => {
         route="/menu/construction"
         label="Construction"
         icon={<UtilityPole className="text-neutral-content size-6" />}
-        isCommingSoon
       />
       <Tool
         route="/menu/maintenance"

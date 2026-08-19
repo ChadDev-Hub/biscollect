@@ -20,6 +20,12 @@ const NavBarTitle = () =>{
             return "Change Meter (new entry)"
         case "/menu/change-meter/full-detail":
             return "Change Meter (full detail)"
+        case "/menu/construction":
+            return "Construction"
+        case "/menu/construction/new-entry":
+            return "Construction (new entry)"
+        case "/menu/construction/full-detail":
+            return "Construction (full detail)"
         default:
             return "BISCOLLECT"
     }
