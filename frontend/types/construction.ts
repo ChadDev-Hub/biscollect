@@ -1,9 +1,12 @@
 
 
 export type LineConstructionType = {
- activity: string;
- type: "line extension" | "new line";
- line_type:"primary" | "secondary" | "underbuilt";
+ uuid: string;
+ date_accomplished: string;   
+ activity: "Line Construction";
+ type: "Line Extension" | "New Line";
+ line_type:"Primary" | "Secondary" | "Underbuilt";
+ description: string;
  phasing: string;
  pole_assembly: string;
  conductor: string;
@@ -11,4 +14,8 @@ export type LineConstructionType = {
  lat: number;
  lon: number;
  image: File;
+ is_synced: boolean;
+ datetime_synced?: string;
+ is_deleted?: boolean;
+ datetime_deleted?: string;
 }

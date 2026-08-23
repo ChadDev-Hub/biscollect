@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import ReturnButton from "../../../common/components/return-menu";
+import ReturnButton from "../../../../common/components/return-menu";
 import LineConstructionEntryForm from "./component/entry-form";
 
 const NewEntry = () => {

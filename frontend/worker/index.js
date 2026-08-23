@@ -1,7 +1,7 @@
 import { clientsClaim } from "workbox-core";
 import { OfflinePages } from "../lib/offline-page";
-import process from "next/dist/build/webpack/loaders/resolve-url-loader/lib/postcss";
 
+const BaseUrl = "http://localhost:8000";
 clientsClaim();
 
 self.addEventListener("fetch", (event) => {
@@ -16,8 +16,10 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
-const CONDUCTOR_URL = "http://localhost:8000/v1/wire/conductor";
+const CONDUCTOR_URL = `${BaseUrl}/v1/wire/conductor`;
 const CONDUCOT_CACHE_NAME = "gis-data-conductor";
+const NEUTRAL_CONCENTRIC_WIRE = `${BaseUrl}/v1/wire/neutral`
+const NEUTRAL_CONCENTRIC_WIRE_CACHE_NAME = "gis-data-neutral-concentric-wire"
 self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
@@ -63,7 +65,7 @@ self.addEventListener("install", (event) => {
         const response = await fetch(CONDUCTOR_URL, {
           cache: "no-cache",
         });
-        console.log("Conducotor reponse",
+        console.log("Conductor reponse",
           response.status,
           response.statusText
         );
@@ -78,6 +80,32 @@ self.addEventListener("install", (event) => {
       } catch (err) {
         console.error("Failed:", CONDUCTOR_URL, err);
       }
+      
+
+      // CACHE NEUTRAL CONCENTRIC WIRE DATA
+
+      try {
+        console.log("Caching neutral concentric wire data...");
+        const response = await fetch(NEUTRAL_CONCENTRIC_WIRE, {
+          cache: "no-cache",
+        });
+        console.log("Neutral concentric wire reponse",
+          response.status,
+          response.statusText
+        );
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch conductor data: ${response.status}`
+          );
+        }
+        const neutralConcentricWireCache = await caches.open(NEUTRAL_CONCENTRIC_WIRE_CACHE_NAME);
+        await neutralConcentricWireCache.put(NEUTRAL_CONCENTRIC_WIRE, response.clone());
+        console.log("Neutral concentric wire data cached.");
+      } catch (err) {
+        console.error("Failed:", NEUTRAL_CONCENTRIC_WIRE, err);
+      }
+
+
       const clients = await self.clients.matchAll({
         type: "window",
         includeUncontrolled: true,

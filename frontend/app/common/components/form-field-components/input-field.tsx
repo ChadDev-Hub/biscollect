@@ -9,7 +9,7 @@ type Props<T extends FieldValues> = {
   required: boolean;
   error?: string;
   inputType?: "text" | "number" | "date";
-  Icon: LucideIcon;
+  Icon?: LucideIcon;
   maxStep?: number;
   step?: number;
   minLength?: number;
@@ -19,6 +19,7 @@ type Props<T extends FieldValues> = {
   isDisabled?: boolean;
   listOptionId?:string;
   listOption?: string[];
+  hidden?: boolean
 };
 
 const InputField =<T extends FieldValues> ({
@@ -37,7 +38,8 @@ const InputField =<T extends FieldValues> ({
   patternMessage,
   isDisabled,
   listOption,
-  listOptionId
+  listOptionId,
+  hidden
 }: Props<T>) => {
   return (
     <section
@@ -51,14 +53,14 @@ const InputField =<T extends FieldValues> ({
       <label className="input w-full px-1 ">
         <div className="py-2">
             <div className="bg-base-200 p-2 rounded-full">
-              <Icon className="text-primary size-4" />
+              {Icon && <Icon className="text-primary size-4" />}
             </div>
         </div>
         
         <input
           list={listOptionId}
           disabled={isDisabled}
-          
+          hidden={hidden}
           {...register(name, {
             required: { value: required, message: `${label} is Required` },
             ...(minLength && {

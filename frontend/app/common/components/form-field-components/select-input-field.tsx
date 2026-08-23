@@ -9,6 +9,7 @@ type Props<T extends FieldValues> = {
   required: boolean;
   options: string[];
   error?: string;
+  disabled?: boolean
 }
 
 const SelectInputField = <T extends FieldValues> ({
@@ -17,7 +18,8 @@ const SelectInputField = <T extends FieldValues> ({
   label,
   required,
   options,
-  error
+  error,
+  disabled
 }: Props<T>) => {
   return (
     <section className="w-full space-y-2 ">
@@ -26,7 +28,7 @@ const SelectInputField = <T extends FieldValues> ({
         {required && <span className=" text-red-500">*</span>}
       </label>
 
-      <select defaultValue="" className="select select-bordered w-full" {...register(name, {required:{ value: required, message: `${label} is required`}})}>
+      <select disabled={disabled} defaultValue="" className="select select-bordered w-full" {...register(name, {required:{ value: required, message: `${label} is required`}})}>
         <option value="" disabled={true}>Select {label}</option>
         {options.map((option, index) => (
           <option key={index}>{option}</option>

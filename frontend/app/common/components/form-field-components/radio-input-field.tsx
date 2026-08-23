@@ -10,6 +10,7 @@ type Props<T extends FieldValues> = {
   error?: string;
   className?: string;
   selected?: string
+  isDisabled?: boolean
 };
 
 const CheckBoxFieldOption = <T extends FieldValues>({
@@ -20,7 +21,8 @@ const CheckBoxFieldOption = <T extends FieldValues>({
   options,
   error,
   className,
-  selected
+  selected,
+  isDisabled
 }: Props<T>) => {
   
   return (
@@ -32,11 +34,15 @@ const CheckBoxFieldOption = <T extends FieldValues>({
       <div className={className}>
         {options.map((option, index) => (
           <div key={index} className="flex gap-4">
-            <label key={option} className={`flex ${selected === option ?   "ring-secondary bg-secondary" : "ring-neutral-600"} cursor-pointer items-center gap-2 p-2 shadow  ring-1 rounded-xs text-center place-content-center text-xs min-w-25`}>
+            <label key={option} className={`flex ${ selected === option ?  ` ${isDisabled ? 
+              "ring-neutral-600 bg-neutral-400 cursor-not-allowed" : "ring-secondary bg-secondary cursor-pointer"
+            }`  : "ring-neutral-600"}     items-center gap-2 p-2 shadow  ring-1 rounded-xs text-center place-content-center text-xs min-w-25`}>
               <input
+                disabled ={isDisabled}
                 hidden
                 type="radio"
                 
+           
                 {...register(name, {
                   required: {
                     value: required,

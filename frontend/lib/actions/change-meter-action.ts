@@ -1,6 +1,6 @@
 import api from "./interceptor";
 import { SyncResponseType } from "@/types/response";
-const baseUrl = process.env.NEXT_PUBLIC_BASESERVERURL;
+
 
 export async function SyncChangeMeter(changeMeter: FormData) {
   try {

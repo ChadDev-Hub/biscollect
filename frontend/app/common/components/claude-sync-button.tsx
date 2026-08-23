@@ -7,6 +7,7 @@ import { getDB } from "@/lib/db";
 import { useOnline } from "@/app/common/components/hooks/online-provider";
 import { useAlert, Alerts } from "@/app/common/components/alert";
 import { SyncChangeMeter } from "@/lib/actions/change-meter-action";
+import { SyncLineConstruction } from "@/lib/actions/line-construction";
 
 type SyncTableProps<T extends Record<string, unknown>> = {
   entries: T[];
@@ -113,6 +114,32 @@ const ClaudeSyncButton = () => {
         }
         setLoading(false);
       };
+      break;
+    case "/menu/construction/line-construction":
+      handleSync = async () => {
+        setLoading(true);
+        const db = await getDB();
+        const result = await db.getAll("line_constructions");
+        const countUnsynced = result.filter(
+          (entry) => !entry.is_synced
+        ).length;
+        // IF ALL ENTRIES ARE SYNCED
+        if (countUnsynced === 0) {
+          setLoading(false);
+          showAlert("All entries are synced", "info");
+          return;
+        }
+        const syncRes = await SyncTable({
+          entries: result,
+          store: "line_constructions",
+          api: SyncLineConstruction,
+          showAlert
+        })
+        if (syncRes) {
+          window.dispatchEvent(new Event("line_constructions-updated"));
+        }
+        setLoading(false);
+      }
       break;
     default:
       break;

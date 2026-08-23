@@ -17,7 +17,7 @@ const FormButton = ({ maxStep, step, setStep, isValid }: Props) => {
   };
   return (
     <>
-      {step < 5 ? (
+      {step < maxStep ? (
         <button
           disabled={!isValid}
           type="button"

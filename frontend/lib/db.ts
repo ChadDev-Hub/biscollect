@@ -28,8 +28,16 @@ export function getDB() {
         }
 
         if (oldVersion < 2) {
-          if (!db.objectStoreNames.contains("constructions")) {
-            const store = db.createObjectStore("constructions", {
+          if (!db.objectStoreNames.contains("line_constructions")) {
+            const store = db.createObjectStore("line_constructions", {
+              keyPath: "id",
+              autoIncrement: true,
+            });
+            store.createIndex("uuid", "uuid", { unique: true });
+          }
+
+          if (!db.objectStoreNames.contains("transformer_constructions")){
+            const store = db.createObjectStore("transformer_constructions", {
               keyPath: "id",
               autoIncrement: true,
             });

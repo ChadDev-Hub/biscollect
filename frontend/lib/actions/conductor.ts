@@ -7,3 +7,11 @@ export const GetConductorName = async () => {
         return await data.json() as ConductorName[]
     }
 }
+
+export const GetNeutralName = async () => {
+    const cache = await window.caches.open("gis-data-neutral-concentric-wire");
+    const data = await cache.match(`${baseUrl}/v1/wire/neutral`);
+    if (data){
+        return await data.json() as ConductorName[]
+    }
+}
