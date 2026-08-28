@@ -8,6 +8,6 @@ export async function SyncChangeMeter(changeMeter: FormData) {
     const result = res.data;
     return result as SyncResponseType;
   } catch (error) {
-    throw new Error((error as Error).message);
+    throw error
   }
 }

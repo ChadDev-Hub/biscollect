@@ -127,7 +127,7 @@ const DetailForm = () => {
         name="pull_out_reading"
         label ="Pullout Reading"
         error={errors.pull_out_reading?.message}
-        inputType="text"
+        inputType="number"
         Icon={Binary}
         isDisabled={!editMode}
         />
@@ -167,7 +167,7 @@ const DetailForm = () => {
         name="initial_reading"
         label="Initial Reading"
         error={errors.initial_reading?.message}
-        inputType="text"
+        inputType="number"
         Icon={Binary}
         isDisabled={!editMode}
       />

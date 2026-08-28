@@ -78,6 +78,7 @@ const LineConstrucitonEntryForm = () => {
   const onSubmit: SubmitHandler<LineConstructionType> = async (data) => {
     const cleanedData = DataCleaner({
       ...data,
+      const_uuid: crypto.randomUUID(),
       uuid: crypto.randomUUID(),
       is_synced: false,
       is_deleted: false,
@@ -206,8 +207,9 @@ const LineConstrucitonEntryForm = () => {
                 register={register}
                 label="Conductor"
                 required={true}
-                options={conductors.map((conductor) => conductor.name)}
+                options={conductors}
                 error={errors.conductor?.message}
+                valueasNumber={true}
               />
 
               {/* NEUTRAL WIRE TYPE */}
@@ -216,7 +218,8 @@ const LineConstrucitonEntryForm = () => {
                 name="neutral"
                 required={false}
                 label="Neutral-Concentric Wire"
-                options={neutral.map((neutral) => neutral.name)}
+                options={neutral}
+                valueasNumber={true}
               />
             </>
           )}

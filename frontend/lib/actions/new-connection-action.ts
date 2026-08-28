@@ -7,6 +7,6 @@ export async function SyncNewConnection(newConnection: FormData) {
     const success = res.data as SyncResponseType;
     return success;
   } catch (error) {
-    throw new Error((error as Error).message);
+    throw error;
   }
 }

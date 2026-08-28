@@ -21,7 +21,9 @@ RUN --mount=type=cache,target=/root/.npm \
     echo "No lockfile found." && exit 1; \
   fi
 
-COPY . /app
+COPY . .
+
+RUN npm run build
 
 ENV WATCHPACK_POLLING=true
 ENV HOSTNAME="0.0.0.0"

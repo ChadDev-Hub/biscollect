@@ -14,7 +14,7 @@ type Props = {
   uuid: string;
   is_synced: boolean;
   title: Title;
-  date_accomplished: Date;
+  date_accomplished: string;
   description?: string;
   datetime_synced?: string;
   information: Information[];
@@ -28,7 +28,7 @@ type Title = {
 
 type Information = {
   label: string;
-  value: string;
+  value: string | number;
   icon: Icon;
 };
 
@@ -65,7 +65,7 @@ const ConstructionCard = ({
 
             <label className="text-xs font-bold text-base-content label ">
               <CalendarDays className="inline-block mr-1 size-3 " />
-              {new Date(date_accomplished).toLocaleDateString()}
+              {date_accomplished}
             </label>
           </div>
 

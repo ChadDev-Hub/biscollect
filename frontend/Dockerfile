@@ -10,7 +10,7 @@ FROM node:trixie AS builder
 
 WORKDIR /app
 
-COPY --from=dependencies /app/node_modules ./node_modules
+COPY --from=dependencies /app/node_modules ./node_modules 
 
 COPY . .
 

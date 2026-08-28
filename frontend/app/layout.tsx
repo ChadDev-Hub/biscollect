@@ -7,6 +7,9 @@ import ServiceWorkerRegister from "./common/components/serviceworker-register";
 import type { Viewport } from "next";
 import OnlineContextProvider from "./common/components/hooks/online-provider";
 import Alert from "./common/components/alert";
+import ProgressProvider from "./common/components/hooks/progress";
+import StackingAlert from "./common/components/stacking-alert";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,16 +23,18 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "BisCollect",
-  description: "A simple way to collect data in the field and sync it to the cloud.",
+  description:
+    "A simple way to collect data in the field and sync it to the cloud.",
   manifest: "/manifest.webmanifest",
   authors: {
     name: "Richard Rojo Jr.",
-    url: "https://github.com/ChadDev-Hub"
+    url: "https://github.com/ChadDev-Hub",
   },
   openGraph: {
-    type:"website",
+    type: "website",
     title: "BisCollect",
-    description: "A simple way to collect data in the field and sync it to the cloud.",
+    description:
+      "A simple way to collect data in the field and sync it to the cloud.",
     url: "https://biscollect.biselco79.com",
     siteName: "BisCollect",
     images: [
@@ -45,12 +50,8 @@ export const metadata: Metadata = {
       },
     ],
     locale: "en-US",
-  }
-  
+  },
 };
-
-
-
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -71,14 +72,18 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ServiceWorkerRegister />
-        <Alert>
-          <OnlineContextProvider>
-            <ThemeProvider>
-              <Navbar />
-              {children}
-            </ThemeProvider>
-          </OnlineContextProvider>
-        </Alert>
+        <StackingAlert>
+          <Alert>
+            <OnlineContextProvider>
+              <ThemeProvider>
+                <ProgressProvider>
+                  <Navbar />
+                  {children}
+                </ProgressProvider>
+              </ThemeProvider>
+            </OnlineContextProvider>
+          </Alert>
+        </StackingAlert>
       </body>
     </html>
   );

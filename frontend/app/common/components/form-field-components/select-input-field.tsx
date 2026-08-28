@@ -1,15 +1,17 @@
 
 "use client";
 import { UseFormRegister, FieldPath, FieldValues } from "react-hook-form";
+import { ConductorName } from '../../../../types/conductor-wire';
 
 type Props<T extends FieldValues> = {
   name: FieldPath<T>;
   register: UseFormRegister<T>;
   label: string;
   required: boolean;
-  options: string[];
+  options: string[] | ConductorName[];
   error?: string;
-  disabled?: boolean
+  disabled?: boolean;
+  valueasNumber?: boolean;
 }
 
 const SelectInputField = <T extends FieldValues> ({
@@ -19,7 +21,8 @@ const SelectInputField = <T extends FieldValues> ({
   required,
   options,
   error,
-  disabled
+  disabled,
+  valueasNumber
 }: Props<T>) => {
   return (
     <section className="w-full space-y-2 ">
@@ -28,10 +31,12 @@ const SelectInputField = <T extends FieldValues> ({
         {required && <span className=" text-red-500">*</span>}
       </label>
 
-      <select disabled={disabled} defaultValue="" className="select select-bordered w-full" {...register(name, {required:{ value: required, message: `${label} is required`}})}>
+      <select disabled={disabled} defaultValue="" className="select select-bordered w-full" {...register(name, {
+        valueAsNumber: valueasNumber ?? false,
+        required:{ value: required, message: `${label} is required`}})}>
         <option value="" disabled={true}>Select {label}</option>
         {options.map((option, index) => (
-          <option key={index}>{option}</option>
+          <option key={index} value={typeof option === "string" ? option : option.id} >{typeof option === "string" ? option: option.name}</option>
         ))}
       </select>
 

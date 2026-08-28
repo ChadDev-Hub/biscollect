@@ -1,7 +1,8 @@
 import { clientsClaim } from "workbox-core";
 import { OfflinePages } from "../lib/offline-page";
 
-const BaseUrl = "http://localhost:8000";
+const BaseUrl = process.env.NEXT_PUBLIC_BASESERVERURL
+
 clientsClaim();
 
 self.addEventListener("fetch", (event) => {
@@ -29,9 +30,7 @@ self.addEventListener("install", (event) => {
       for (let i = 0; i < total; i++) {
         const page = OfflinePages[i];
         try {
-          const response = await fetch(page, {
-            cache: "no-cache",
-          });
+          const response = await fetch(page);
           if (!response.ok) {
             console.log(
               `Failed to fetch ${page}: ${response.status} ${response.statusText}`,
@@ -62,9 +61,7 @@ self.addEventListener("install", (event) => {
 
       try {
         console.log("Caching conductor data...");
-        const response = await fetch(CONDUCTOR_URL, {
-          cache: "no-cache",
-        });
+        const response = await fetch(CONDUCTOR_URL);
         console.log("Conductor reponse",
           response.status,
           response.statusText
@@ -86,9 +83,7 @@ self.addEventListener("install", (event) => {
 
       try {
         console.log("Caching neutral concentric wire data...");
-        const response = await fetch(NEUTRAL_CONCENTRIC_WIRE, {
-          cache: "no-cache",
-        });
+        const response = await fetch(NEUTRAL_CONCENTRIC_WIRE);
         console.log("Neutral concentric wire reponse",
           response.status,
           response.statusText
@@ -122,14 +117,14 @@ self.addEventListener("install", (event) => {
 
 
 
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((name) => name !== "pages-cache")
-          .map((name) => caches.delete(name)),
-      );
-    }),
-  );
-});
+// self.addEventListener("activate", (event) => {
+//   event.waitUntil(
+//     caches.keys().then((cacheNames) => {
+//       return Promise.all(
+//         cacheNames
+//           .filter((name) => name !== "pages-cache")
+//           .map((name) => caches.delete(name)),
+//       );
+//     }),
+//   );
+// });

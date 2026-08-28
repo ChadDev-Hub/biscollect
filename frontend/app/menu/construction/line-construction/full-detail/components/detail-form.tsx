@@ -66,6 +66,7 @@ const DetailForm = () => {
     getConductorData();
     getNeutralData();
   }, []);
+  
   //   WATCH INPUTS
   const lineType = useWatch({
     control: control,
@@ -85,6 +86,7 @@ const DetailForm = () => {
         ...data,
         is_synced: false,
       });
+      console.log(data);
       await transaction.done;
 
       setEditMode(false);
@@ -97,7 +99,7 @@ const DetailForm = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full flex flex-col gap-4 relative bg-base-200 p-4 max-w-md rounded-box"
+      className="w-full flex flex-col gap-4 relative bg-base-100 p-4 max-w-md rounded-box"
     >
       <EditButton is_editing={editMode} setIsEditing={setEditMode} />
       <input type="hidden" {...register("activity")} />
@@ -124,7 +126,6 @@ const DetailForm = () => {
         name="description"
         register={register}
         label="Information"
-        required={true}
         isDisabled={!editMode}
       />
 
@@ -161,6 +162,7 @@ const DetailForm = () => {
           name="pole_assembly"
           label="Pole Assembly"
           register={register}
+          isDisabled={!editMode}
         />
       )}
 
@@ -170,7 +172,7 @@ const DetailForm = () => {
         register={register}
         label="Conductor"
         required={true}
-        options={conductors.map((conductor) => conductor.name)}
+        options={conductors}
         error={errors.conductor?.message}
         disabled={!editMode}
       />
@@ -181,7 +183,7 @@ const DetailForm = () => {
         name="neutral"
         required={false}
         label="Neutral-Concentric Wire"
-        options={neutral.map((neutral) => neutral.name)}
+        options={neutral}
         disabled={!editMode}
       />
 
@@ -196,7 +198,7 @@ const DetailForm = () => {
       />
 
       {/* IMAGE FIELD */}
-      <ImageField control={control} error={errors.image?.message} />
+      <ImageField control={control} error={errors.image?.message} is_disabled={!editMode} />
 
       {/* SUBMIT BUTTON */}
       <button
