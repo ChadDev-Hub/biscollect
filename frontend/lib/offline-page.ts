@@ -13,6 +13,6 @@ export const OfflinePages = [
   "/menu/construction",
   "/menu/construction/line-construction",
   "/menu/construction/line-construction/new-entry",
-  "/menu/construction/line-construction/full-detail"
-
+  "/menu/construction/line-construction/full-detail",
+  "/menu/distribution-map",
 ];

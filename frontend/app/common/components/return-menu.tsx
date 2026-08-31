@@ -9,7 +9,9 @@ const ReturnMenu = () => {
     const currentPath = usePathname();
     const pathReturnsToMenu = [
         "/menu/new-connection",
-        "/menu/change-meter"
+        "/menu/change-meter",
+        "/menu/construction",
+        "/menu/distribution-map",
     ]
     const handleReturn = () => {
         if (pathReturnsToMenu.includes(currentPath)) {
@@ -19,7 +21,7 @@ const ReturnMenu = () => {
         }
     }
   return (
-    <button type="button" className="btn flex items-center gap-2 btn-primary" onClick={handleReturn}>
+    <button type="button" className="btn btn-sm flex items-center gap-2 btn-primary" onClick={handleReturn}>
         <CornerDownLeft className="size-6" />
         <label className="text-xs font-bold text-neutral-content">Return</label>
     </button>

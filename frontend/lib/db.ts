@@ -8,7 +8,8 @@ export function getDB() {
   }
 
   if (!dbPromise) {
-    dbPromise = openDB("biscollect", 2, {
+    dbPromise = openDB("biscollect", 3, {
+      
       upgrade(db, oldVersion) {
         if (oldVersion < 1) {
           if (!db.objectStoreNames.contains("new_connections")) {
@@ -36,7 +37,7 @@ export function getDB() {
             store.createIndex("uuid", "uuid", { unique: true });
           }
 
-          if (!db.objectStoreNames.contains("transformer_constructions")){
+          if (!db.objectStoreNames.contains("transformer_constructions")) {
             const store = db.createObjectStore("transformer_constructions", {
               keyPath: "id",
               autoIncrement: true,
@@ -49,6 +50,14 @@ export function getDB() {
               autoIncrement: true,
             });
             store.createIndex("uuid", "uuid", { unique: true });
+          }
+        }
+        if (oldVersion < 3) {
+          if (!db.objectStoreNames.contains("consumer_meters")) {
+            const store = db.createObjectStore("consumer_meters", {
+              keyPath: "properties.id",
+            });
+            store.createIndex("hash", "properties.hash", { unique: true });
           }
         }
       },

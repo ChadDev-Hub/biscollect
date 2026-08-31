@@ -1,5 +1,6 @@
 import { clientsClaim } from "workbox-core";
 import { OfflinePages } from "../lib/offline-page";
+import {MapTileProvider} from "../lib/map-assets"
 
 const BaseUrl = process.env.NEXT_PUBLIC_BASESERVERURL
 
@@ -15,6 +16,22 @@ self.addEventListener("fetch", (event) => {
       return cached || fetch(event.request);
     }),
   );
+});
+
+self.addEventListener("fetch", (event) => {
+    const url = new URL(event.request.url);
+
+    if (url.pathname === "/maps/style.json") {
+        event.respondWith(
+            caches.open("maptile-provider").then(async (cache) => {
+                const cached = await cache.match(event.request);
+
+                return cached || fetch(event.request);
+            })
+        );
+
+        return;
+    }
 });
 
 const CONDUCTOR_URL = `${BaseUrl}/v1/wire/conductor`;
@@ -101,6 +118,17 @@ self.addEventListener("install", (event) => {
       }
 
 
+
+      // CACHE MAPTILE PROVIDER
+      try{
+        console.log("Caching maptile provider");
+        const cache = await caches.open("maptile-provider");
+        cache.addAll(MapTileProvider);
+      }catch(err){
+        console.error("Failed:", MapTileProvider, err);
+      }
+      
+
       const clients = await self.clients.matchAll({
         type: "window",
         includeUncontrolled: true,
@@ -117,14 +145,3 @@ self.addEventListener("install", (event) => {
 
 
 
-// self.addEventListener("activate", (event) => {
-//   event.waitUntil(
-//     caches.keys().then((cacheNames) => {
-//       return Promise.all(
-//         cacheNames
-//           .filter((name) => name !== "pages-cache")
-//           .map((name) => caches.delete(name)),
-//       );
-//     }),
-//   );
-// });

@@ -31,6 +31,12 @@ const Tools = () => {
         icon={<Cable className="text-neutral-content size-6" />}
         isCommingSoon
       />
+
+      <Tool
+        route="/menu/distribution-map"
+        label="Distribution Map"
+        icon={<UtilityPole className="text-neutral-content size-6" />}
+      />
     </div>
   );
 };

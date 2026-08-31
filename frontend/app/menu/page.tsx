@@ -1,7 +1,7 @@
 "use client"
 import Tools from "./components/tools"
 import Header from "../common/components/header"
-import BiselcoMap from '../common/map/map';
+
 
 const Menu = () => {
   return (
@@ -9,7 +9,7 @@ const Menu = () => {
       <Header title="DATA COLLECTION TOOLS" />
       <main className="flex flex-1 w-full max-w-2xl flex-col items-center justify-between py-15 px-4">
         <Tools />
-        <BiselcoMap/>
+       
       </main>
     </div>
   )
