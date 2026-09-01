@@ -1,5 +1,5 @@
 
-
+import {ConsumerMeter} from "@/types/consumer-meter";
 export type FeatureCollection = {
     type: string;
     features: Feature[];
@@ -11,7 +11,5 @@ export type Feature = {
         type: string;
         coordinates: number[];
     };
-    properties: {
-        [key: string]: unknown;
-    };
+    properties: ConsumerMeter;
 }

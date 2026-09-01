@@ -1,7 +1,7 @@
 "use client";
 
 
-import { CircleGauge, Gauge, UtilityPole, Cable } from "lucide-react";
+import { CircleGauge, Gauge, UtilityPole, Cable, MapPinnedIcon} from "lucide-react";
 import Tool from "@/app/common/components/tool";
 
 
@@ -35,7 +35,7 @@ const Tools = () => {
       <Tool
         route="/menu/distribution-map"
         label="Distribution Map"
-        icon={<UtilityPole className="text-neutral-content size-6" />}
+        icon={<MapPinnedIcon className="text-neutral-content size-6" />}
       />
     </div>
   );

@@ -1,28 +1,45 @@
 "use client";
 import { getDB } from "@/lib/db";
 import { useEffect, useState } from "react";
-import { FeatureCollection } from "@/types/geojson";
+import { FeatureCollection, Feature } from "@/types/geojson";
 import { useMap } from "./map";
-import { MapMouseEvent, Popup, MapGeoJSONFeature,PaddingOptions } from "maplibre-gl";
+import { renderToStaticMarkup } from "react-dom/server";
+import {
+  MapMouseEvent,
+  Popup,
+  MapGeoJSONFeature,
+  GeoJSONSource,
+} from "maplibre-gl";
 import { createRoot } from "react-dom/client";
-import MapPopupCard from './map-popupcard';
-
+import MapPopupCard from "./map-popupcard";
+import { useSearchParams } from "next/navigation";
+import { CircleGauge } from "lucide-react";
 
 const ConsumerMeterLayer = () => {
   const [consumer, setConsumer] = useState<FeatureCollection>();
   const { mapRef } = useMap();
+  const searchParams = useSearchParams();
+
   useEffect(() => {
     const fetchConsumer = async () => {
       const db = await getDB();
       const consumerdata = await db.getAll("consumer_meters");
+
+      if (!consumerdata) return;
+
+      const query = searchParams.get("q");
+      const consumerFiltered: Feature[] = query
+        ? consumerdata.filter((item: Feature) => item.properties.hash === query)
+        : consumerdata;
+
       const featureCollection = {
         type: "FeatureCollection",
-        features: consumerdata,
+        features: consumerFiltered,
       };
       setConsumer(featureCollection);
     };
     fetchConsumer();
-  }, []);
+  }, [searchParams]);
 
   useEffect(() => {
     if (!mapRef?.current) return;
@@ -33,6 +50,27 @@ const ConsumerMeterLayer = () => {
     const LayerId = "consumer-meter-layer";
     const unclusteredPointId = "consumer-unclustered-point";
     const clusterId = "consumer-cluster";
+
+    const ImageSetup = async () => {
+      if (!map) return;
+      if (map.hasImage("consumer-icon")) return;
+      const image = renderToStaticMarkup(
+        <CircleGauge
+          strokeWidth={2}
+          fill="blue"
+          color="orange"
+        />,
+      );
+      const imageData = `data:image/svg+xml;utf8,${encodeURIComponent(image)}`;
+      const ImageIcon = new Image();
+
+      ImageIcon.onload = () => {
+        if (!map.hasImage("consumer-icon")) {
+          map.addImage("consumer-icon", ImageIcon);
+        }
+      };
+      ImageIcon.src = imageData;
+    };
 
     const setup = async () => {
       if (!map) return;
@@ -93,57 +131,61 @@ const ConsumerMeterLayer = () => {
       if (!map.getLayer(unclusteredPointId)) {
         map.addLayer({
           id: unclusteredPointId,
-          type: "circle",
+          type: "symbol",
+
           source: sourceId,
           filter: ["!", ["has", "point_count"]],
-          paint: {
-            "circle-color": "#11b4da",
-            "circle-radius": 4,
-            "circle-stroke-width": 1,
-            "circle-stroke-color": "#fff",
+          layout: {
+            "icon-image": "consumer-icon",
+            "icon-allow-overlap": true,
+            "icon-size": 1,
           },
         });
       }
     };
 
+    // POPUP EVENT
     const addPopupEvent = async () => {
       if (!map.getLayer(LayerId)) return;
       const handleMouseClick = (
-        e: MapMouseEvent & { features?: MapGeoJSONFeature[]},
+        e: MapMouseEvent & { features?: MapGeoJSONFeature[] },
       ) => {
         if (!e.features) return;
         const properties = e.features[0].properties;
-        console.log(properties);
 
         const popupNode = document.createElement("div");
+
         const root = createRoot(popupNode);
-        root.render(<MapPopupCard  
-          account_no={properties.account_no} 
-          consumer_name={properties.consumer_name} 
-          meter_no={properties.meter_no} 
-          meter_brand={properties.meter_brand} hash={properties.hash} />);
+        root.render(
+          <MapPopupCard
+            account_no={properties.account_no}
+            account_name={properties.account_name}
+            meter_no={properties.meter_no}
+            meter_brand={properties.meter_brand}
+            hash={properties.hash}
+          />,
+        );
         new Popup({
           closeButton: false,
           closeOnClick: true,
-          className: "maplibregl-popup",
-          padding: { top: 0, bottom: 0, left: 0, right: 0 } as PaddingOptions,
+          className: "map-popup-custom",
+          closeOnMove: true,
           maxWidth: "none",
           anchor: "bottom",
-          offset: [0, -10],      
-      }).setLngLat(e.lngLat)
-    
-      .setDOMContent(popupNode)
-      .addTo(map)};
-      
+        })
+          .setLngLat(e.lngLat)
+
+          .setDOMContent(popupNode)
+          .addTo(map);
+      };
 
       map.on("click", unclusteredPointId, handleMouseClick);
       return () => {
-        map.off("click",unclusteredPointId, handleMouseClick);
+        map.off("click", unclusteredPointId, handleMouseClick);
       };
-    }; 
-    
-    
+    };
 
+    // MOUSE EVENT
     const addEvents = async () => {
       if (!map.getLayer(LayerId)) return;
 
@@ -152,19 +194,29 @@ const ConsumerMeterLayer = () => {
 
       map.on("mouseenter", unclusteredPointId, handleMouseEnter);
       map.on("mouseleave", unclusteredPointId, handleMouseLeave);
-    
 
       return () => {
         map.off("mouseenter", unclusteredPointId, handleMouseEnter);
         map.off("mouseleave", unclusteredPointId, handleMouseLeave);
-       
-      }
+      };
     };
 
+    const addLocateEvent = async () => {
+      if (consumer?.features.length > 1) return;
+      map.flyTo({
+        center: [
+          consumer?.features[0].geometry.coordinates[0] as number,
+          consumer?.features[0].geometry.coordinates[1] as number,
+        ],
+        zoom: 18,
+      });
+    };
     const run = async () => {
+      await ImageSetup();
       await setup();
       await addEvents();
       await addPopupEvent();
+      await addLocateEvent();
     };
     if (map.isStyleLoaded()) {
       run();
@@ -179,8 +231,23 @@ const ConsumerMeterLayer = () => {
         map.removeSource(sourceId);
       }
     };
+  }, [mapRef, consumer]);
+
+  useEffect(() => {
+    if (!mapRef?.current) return;
+
+    const map = mapRef.current;
+
+    if (!map.isStyleLoaded()) return;
+
+    const source = map.getSource("consumer-meter") as GeoJSONSource | undefined;
+
+    if (!source) return;
+
+    source.setData(consumer);
   }, [consumer, mapRef]);
-  return () => null;
+
+  return null;
 };
 
 export default ConsumerMeterLayer;

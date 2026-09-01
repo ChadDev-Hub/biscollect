@@ -14,7 +14,7 @@ const DownloadConsumerMeter = (
             const store = transaction.objectStore("consumer_meters");
             await store.clear();
             for (const feature of result){
-                await store.add(feature);
+                await store.put(feature);
             };
             await transaction.done;
         } catch (error) {

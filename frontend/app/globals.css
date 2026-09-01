@@ -82,3 +82,11 @@
 
 
 
+.map-popup-custom .maplibregl-popup-content {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  background: var(--b2);
+  border-radius: 10%;
+}
+

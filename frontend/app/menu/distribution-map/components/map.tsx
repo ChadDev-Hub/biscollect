@@ -3,7 +3,7 @@
 import { useRef, useEffect, createContext, useContext } from "react";
 import { PMTiles, Protocol, Source } from "pmtiles";
 import { Map, addProtocol, GeolocateControl } from "maplibre-gl";
-
+import ConsumerSearch from "./consumer-search";
 type MapContextType = {
   mapRef: React.RefObject<Map | null> | null;
 };
@@ -101,10 +101,12 @@ const BiselcoMap = ({ children }: Props) => {
 
   return (
     <MapContext.Provider value={{ mapRef }}>
-      <div className="flex flex-col gap-2">
+      
         {children}
-        <div className="w-full h-full min-h-screen" ref={mapRefContainer}></div>
-      </div>
+        <div className="w-full relative min-h-screen" ref={mapRefContainer}>
+          <ConsumerSearch />
+        </div>
+      
     </MapContext.Provider>
   );
 };
