@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, createContext, useContext, Suspense } from "react";
+import { useRef, useEffect, createContext, useContext, Suspense,useState} from "react";
 import { PMTiles, Protocol, Source } from "pmtiles";
 import { Map, addProtocol, GeolocateControl } from "maplibre-gl";
 import {Loader} from "lucide-react"
@@ -9,10 +9,12 @@ import ConsumerSearch from './consumer-search'
 
 type MapContextType = {
   mapRef: React.RefObject<Map | null> | null;
+  isMapReady: boolean;
 };
 
 const MapContext = createContext<MapContextType | null>({
   mapRef: null,
+  isMapReady: false,
 });
 
 type Props = {
@@ -68,6 +70,7 @@ class CachePMTilesSource implements Source {
 const BiselcoMap = ({ children }: Props) => {
   const mapRefContainer = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<Map | null>(null);
+  const [isMapReady, setIsMapReady] = useState(false);
 
   useEffect(() => {
     if (!mapRefContainer.current) return;
@@ -95,7 +98,12 @@ const BiselcoMap = ({ children }: Props) => {
       }),
     );
 
+    
     mapRef.current = map;
+    map.on("load", () => {
+      setIsMapReady(true);
+    });
+    
     return () => {
       map.remove();
       mapRef.current = null;
@@ -103,7 +111,7 @@ const BiselcoMap = ({ children }: Props) => {
   }, []);
 
   return (
-    <MapContext.Provider value={{ mapRef }}>
+    <MapContext.Provider value={{ mapRef, isMapReady }}>
       {children}
       <div className="w-full relative min-h-screen" ref={mapRefContainer}>
         <Suspense fallback={<Loader className="absolute top-1/2 left-1/2 text-primary" />}>

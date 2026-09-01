@@ -34,6 +34,39 @@ self.addEventListener("fetch", (event) => {
     }
 });
 
+
+self.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url);
+
+  if (
+    url.pathname.startsWith("/maps/fonts/") ||
+    url.pathname.startsWith("/maps/sprites/")
+  ) {
+    event.respondWith(
+      caches.open(MAP_CACHE).then(async (cache) => {
+        const cached = await cache.match(event.request);
+
+        if (cached) {
+          return cached;
+        }
+
+        try {
+          const response = await fetch(event.request);
+
+          if (response.ok) {
+            await cache.put(event.request, response.clone());
+          }
+
+          return response;
+        } catch (error) {
+          console.error("Offline map asset unavailable:", url.pathname);
+          throw error;
+        }
+      })
+    );
+  }
+});
+
 const CONDUCTOR_URL = `${BaseUrl}/v1/wire/conductor`;
 const CONDUCOT_CACHE_NAME = "gis-data-conductor";
 const NEUTRAL_CONCENTRIC_WIRE = `${BaseUrl}/v1/wire/neutral`
