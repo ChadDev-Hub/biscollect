@@ -1,14 +1,14 @@
 
 import {ConsumerMeter} from "@/types/consumer-meter";
 export type FeatureCollection = {
-    type: string;
+    type: "FeatureCollection";
     features: Feature[];
 }
 
 export type Feature = {
-    type: string;
+    type: "Feature";
     geometry: {
-        type: string;
+        type: "Point";
         coordinates: number[];
     };
     properties: ConsumerMeter;

@@ -1,11 +1,9 @@
 "use cient"
 import {SyncConsumerMeter }from "@/lib/actions/consumer-meter";
 import {getDB} from "@/lib/db";
-type Props = {
-    key: number
-}
+
 const DownloadConsumerMeter = (
-    {key}: Props
+    
 ) => {
     const handleSync = async () => {
         try {
@@ -22,7 +20,7 @@ const DownloadConsumerMeter = (
         }
     }
   return (
-    <button key={key} onClick={handleSync}>
+    <button  onClick={handleSync}>
         Sync Update
     </button>
       )

@@ -16,10 +16,13 @@ import { useSearchParams } from "next/navigation";
 import { CircleGauge } from "lucide-react";
 
 const ConsumerMeterLayer = () => {
-  const [consumer, setConsumer] = useState<FeatureCollection>();
+  const [consumer, setConsumer] = useState<FeatureCollection>({
+    type: "FeatureCollection",
+    features: [],
+  });
   const { mapRef } = useMap();
   const searchParams = useSearchParams();
-
+  const query = searchParams.get("q");
   useEffect(() => {
     const fetchConsumer = async () => {
       const db = await getDB();
@@ -27,19 +30,18 @@ const ConsumerMeterLayer = () => {
 
       if (!consumerdata) return;
 
-      const query = searchParams.get("q");
       const consumerFiltered: Feature[] = query
         ? consumerdata.filter((item: Feature) => item.properties.hash === query)
         : consumerdata;
 
-      const featureCollection = {
+      const featureCollection: FeatureCollection = {
         type: "FeatureCollection",
         features: consumerFiltered,
       };
       setConsumer(featureCollection);
     };
     fetchConsumer();
-  }, [searchParams]);
+  }, [query]);
 
   useEffect(() => {
     if (!mapRef?.current) return;
@@ -55,11 +57,7 @@ const ConsumerMeterLayer = () => {
       if (!map) return;
       if (map.hasImage("consumer-icon")) return;
       const image = renderToStaticMarkup(
-        <CircleGauge
-          strokeWidth={2}
-          fill="blue"
-          color="orange"
-        />,
+        <CircleGauge strokeWidth={2} fill="blue" color="orange" />,
       );
       const imageData = `data:image/svg+xml;utf8,${encodeURIComponent(image)}`;
       const ImageIcon = new Image();
@@ -76,14 +74,18 @@ const ConsumerMeterLayer = () => {
       if (!map) return;
       if (!consumer) return;
 
-      if (!map.getSource(sourceId)) {
+      const existingSource = map.getSource(sourceId) as GeoJSONSource;
+
+      if (!existingSource) {
         map.addSource(sourceId, {
           type: "geojson",
-          data: consumer,
+          data: consumer as FeatureCollection,
           cluster: true,
         });
+      } else {
+        existingSource.setData(consumer as FeatureCollection);
       }
-
+      // SOURCE LAYER
       if (!map.getLayer(LayerId)) {
         map.addLayer({
           id: LayerId,
@@ -112,6 +114,7 @@ const ConsumerMeterLayer = () => {
           },
         });
       }
+      // CLUSTER POINT LAYER
       if (!map.getLayer(clusterId)) {
         map.addLayer({
           id: clusterId,
@@ -127,7 +130,7 @@ const ConsumerMeterLayer = () => {
           },
         });
       }
-
+      // UNCLUSTER POINT LAYER
       if (!map.getLayer(unclusteredPointId)) {
         map.addLayer({
           id: unclusteredPointId,
@@ -201,37 +204,56 @@ const ConsumerMeterLayer = () => {
       };
     };
 
-    const addLocateEvent = async () => {
-      if (consumer?.features.length > 1) return;
-      map.flyTo({
-        center: [
-          consumer?.features[0].geometry.coordinates[0] as number,
-          consumer?.features[0].geometry.coordinates[1] as number,
-        ],
-        zoom: 18,
-      });
-    };
     const run = async () => {
       await ImageSetup();
       await setup();
       await addEvents();
       await addPopupEvent();
-      await addLocateEvent();
     };
+
     if (map.isStyleLoaded()) {
       run();
     } else {
       map.once("load", run);
     }
     return () => {
-      if (map && map.isStyleLoaded()) {
-        map.removeLayer(LayerId);
-        map.removeLayer(unclusteredPointId);
-        map.removeLayer(clusterId);
-        map.removeSource(sourceId);
+      if (addPopupEvent) {
+        map.off("click", unclusteredPointId, addPopupEvent);
+        map.off("mouseenter", unclusteredPointId, addPopupEvent);
+        map.off("mouseleave", unclusteredPointId, addPopupEvent);
       }
     };
   }, [mapRef, consumer]);
+
+  useEffect(() => {
+    const addLocateEvent = async () => {
+      if (!consumer) return;
+      if (!mapRef) return;
+      const map = mapRef.current;
+      if (!map) return;
+      if (consumer?.features.length !== 1) return;
+      const feature = consumer.features[0];
+
+      const [lng, lat] = feature.geometry.coordinates;
+
+      if (
+        typeof lng !== "number" ||
+        typeof lat !== "number" ||
+        !Number.isFinite(lng) ||
+        !Number.isFinite(lat)
+      ) {
+        return;
+      }
+      map.flyTo({
+        center: [
+          lng,
+          lat,
+        ],
+        zoom: 18,
+      });
+    };
+    addLocateEvent();
+  }, [consumer, mapRef]);
 
   useEffect(() => {
     if (!mapRef?.current) return;

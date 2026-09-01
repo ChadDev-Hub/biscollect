@@ -1,9 +1,12 @@
 "use client";
 
-import { useRef, useEffect, createContext, useContext } from "react";
+import { useRef, useEffect, createContext, useContext, Suspense } from "react";
 import { PMTiles, Protocol, Source } from "pmtiles";
 import { Map, addProtocol, GeolocateControl } from "maplibre-gl";
-import ConsumerSearch from "./consumer-search";
+import {Loader} from "lucide-react"
+import ConsumerSearch from './consumer-search'
+
+
 type MapContextType = {
   mapRef: React.RefObject<Map | null> | null;
 };
@@ -101,12 +104,13 @@ const BiselcoMap = ({ children }: Props) => {
 
   return (
     <MapContext.Provider value={{ mapRef }}>
-      
-        {children}
-        <div className="w-full relative min-h-screen" ref={mapRefContainer}>
+      {children}
+      <div className="w-full relative min-h-screen" ref={mapRefContainer}>
+        <Suspense fallback={<Loader className="absolute top-1/2 left-1/2 text-primary" />}>
           <ConsumerSearch />
-        </div>
-      
+        </Suspense>
+        
+      </div>
     </MapContext.Provider>
   );
 };
