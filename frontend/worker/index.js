@@ -68,17 +68,36 @@ self.addEventListener("fetch", (event) => {
 });
 
 const CONDUCTOR_URL = `${BaseUrl}/v1/wire/conductor`;
+const CONDUCTOR_CACHE_URL = "/v1/wire/conductor"
 const CONDUCOT_CACHE_NAME = "gis-data-conductor";
 const NEUTRAL_CONCENTRIC_WIRE = `${BaseUrl}/v1/wire/neutral`
+const NEUTRAL_CONCENTRIC_WIRE_CACHE_URL = "/v1/wire/neutral"
 const NEUTRAL_CONCENTRIC_WIRE_CACHE_NAME = "gis-data-neutral-concentric-wire"
 self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
+      const sendProgres = async(current, total, item)=>{
+        const clients = await self.clients.matchAll({
+          type: "window",
+          includeUncontrolled: true,
+        });
+        clients.forEach((client) => {
+          client.postMessage({
+            type: "PRECACHE_PROGRESS",
+            current,
+            total,
+            item,
+          });
+        });
+      }  
       console.log("Caching offline pages...");
-      const cache = await caches.open("pages-cache");
-      const total = OfflinePages.length;
-      for (let i = 0; i < total; i++) {
-        const page = OfflinePages[i];
+      
+      const total = OfflinePages.length + 2 + MapTileProvider.length;
+      let current = 0;
+
+      
+      const Pagecache = await caches.open("pages-cache");
+      for (const page of OfflinePages) {
         try {
           const response = await fetch(page);
           if (!response.ok) {
@@ -87,24 +106,14 @@ self.addEventListener("install", (event) => {
             );
             continue;
           }
-          await cache.put(page, response.clone());
-
-          const clients = await self.clients.matchAll({
-            type: "window",
-            includeUncontrolled: true,
-          });
-          clients.forEach((client) => {
-            client.postMessage({
-              type: "PRECACHE_PROGRESS",
-              current: i + 1,
-              total,
-              page,
-            });
-          });
+          await Pagecache.put(page, response.clone());
+          current ++;
+          await sendProgres(current, total, page);
           console.log("Cached:", page);
         } catch (err) {
           console.error("Failed:", page, err);
         }
+
       }
 
       // CACHE CONDUCTOR DATA
@@ -122,7 +131,9 @@ self.addEventListener("install", (event) => {
           );
         }
         const conductorCache = await caches.open(CONDUCOT_CACHE_NAME);
-        await conductorCache.put(CONDUCTOR_URL, response.clone());
+        await conductorCache.put(CONDUCTOR_CACHE_URL, response.clone());
+        current++;
+        sendProgres(current, total, CONDUCTOR_URL);
         console.log("Conductor data cached.");
       } catch (err) {
         console.error("Failed:", CONDUCTOR_URL, err);
@@ -144,7 +155,9 @@ self.addEventListener("install", (event) => {
           );
         }
         const neutralConcentricWireCache = await caches.open(NEUTRAL_CONCENTRIC_WIRE_CACHE_NAME);
-        await neutralConcentricWireCache.put(NEUTRAL_CONCENTRIC_WIRE, response.clone());
+        await neutralConcentricWireCache.put(NEUTRAL_CONCENTRIC_WIRE_CACHE_URL, response.clone());
+        current++;
+        sendProgres(current, total, NEUTRAL_CONCENTRIC_WIRE);
         console.log("Neutral concentric wire data cached.");
       } catch (err) {
         console.error("Failed:", NEUTRAL_CONCENTRIC_WIRE, err);
@@ -155,12 +168,32 @@ self.addEventListener("install", (event) => {
       // CACHE MAPTILE PROVIDER
       try{
         console.log("Caching maptile provider");
-        const cache = await caches.open("maptile-provider");
-        cache.addAll(MapTileProvider);
+        const Mapcache = await caches.open("maptile-provider");
+        
+
+        for (const provider of MapTileProvider){
+          try{
+            await Mapcache.add(provider);
+            current ++;
+            await sendProgres(current, total, provider);
+          }catch(err){
+            console.error("Failed to open the maptile provider:", provider, err);
+          }
+        }
       }catch(err){
         console.error("Failed:", MapTileProvider, err);
       }
+
+
+      try {
+        console.log("Cache Complete Status");
+        const CacheStatus = await caches.open("cache-status");
+        await CacheStatus.put("cache-complete", new Response(true));
+      } catch (err) {
+        console.error("Failed:", "cache-status", err);
+      }
       
+      await self.skipWaiting();
 
       const clients = await self.clients.matchAll({
         type: "window",

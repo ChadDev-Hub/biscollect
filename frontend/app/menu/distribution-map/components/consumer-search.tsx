@@ -1,26 +1,31 @@
 "use client";
 import { getDB } from "../../../../lib/db";
-import { useState,  useRef } from "react";
-import { Feature } from "../../../../types/geojson";
-import { useSearchParams, useRouter } from "next/navigation";
-const ConsumerSearch = () => {
+import { useState,  useRef, Dispatch, SetStateAction } from "react";
+import { Feature, FeatureCollection } from '../../../../types/geojson';
+
+
+
+type Props = {
+  setSelectedFeature: Dispatch<SetStateAction<FeatureCollection | null>>
+}
+
+
+const ConsumerSearch = ({ setSelectedFeature }: Props) => {
   const [searchConsumer, setSearchConsumer] = useState<Feature[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
+  
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
     const db = await getDB();
     const consumerdata = await db.getAll("consumer_meters");
     if (e.target.value === "") {
       setSearchConsumer([]);
-      router.replace(`/menu/distribution-map`);
+      setSelectedFeature(null);
       return;
     }
     if (!e.target.value) {
       setSearchConsumer([]);
-      router.replace(`/menu/distribution-map`);
+      setSelectedFeature(null);
       return;
     };
     const filtered = consumerdata.filter((item: Feature) => {
@@ -37,21 +42,22 @@ const ConsumerSearch = () => {
 
   const handleSelection = (item: Feature) => {
     if (!inputRef.current) return;
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("q", item.properties.hash);
-    router.push(`/menu/distribution-map?${params.toString()}`);
+    const selectedFeature:FeatureCollection = {
+      type: "FeatureCollection",
+      features: [item]
+    }
+    setSelectedFeature(selectedFeature);
     inputRef.current.value = item.properties.account_name;
     setSearchConsumer([]);
   };
   return (
-    <label className="absolute top-3 left-3 z-50 max-w-xs w-full">
+    <label className="absolute top-18 left-2 z-50 max-w-xs w-full">
       <input
-        
         ref={inputRef}
         type="text"
         onChange={handleSearch}
         placeholder="Search Consumer"
-        className="input   input-bordered w-full max-w-xs"
+        className="input  input-sm input-bordered w-full max-w-xs"
       />
       {searchConsumer.length > 0 && (
         <ul className="p-3 m-2 w-full menu-vertical bg-base-300 rounded-box max-h-96 overflow-y-scroll">

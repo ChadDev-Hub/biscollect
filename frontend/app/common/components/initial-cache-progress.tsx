@@ -12,6 +12,7 @@ const InitialCacheProgress = () => {
         }
       switch (e.data.type) {
         case "PRECACHE_PROGRESS":
+          console.log(e.data.item)
           setProgress(Math.round((e.data.current / e.data.total) * 100));
           break;
         case "PRECACHE_COMPLETE":

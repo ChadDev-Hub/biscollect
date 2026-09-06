@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import { useState } from "react";
 import { Settings, ChevronDown } from "lucide-react";
 type Props = {
   title: string;
@@ -8,8 +8,9 @@ type Props = {
 };
 
 const Header = ({ title, returnMenu, tools }: Props) => {
-  const [rotate, setRotate] = React.useState(false);
-  const handleRotate = () => setRotate(!rotate);
+  const [Open, setOpen] = useState(false);
+  const handleRotate = () => setOpen((prev) => !prev);
+  
   return (
     <header className="p-4 w-full flex items-center text-center bg-base-200 rounded-b-4xl">
       {returnMenu}
@@ -17,31 +18,33 @@ const Header = ({ title, returnMenu, tools }: Props) => {
         {title}
       </h1>
       {tools && tools.length > 0 && (
-        <>
+        <div className="relative">
           <button
             onClick={handleRotate}
             className="btn btn-circle btn-sm btn-secondary"
-            popoverTarget="popover-1"
-            style={{ anchorName: "--anchor-1" } as React.CSSProperties}
           >
-            <label className="swap swap-rotate w-full">
-              <input type="checkbox" />
-              <ChevronDown className="swap-on size-6" />
-              <Settings className="swap-off  size-6" />
-            </label>
+            {Open ? (
+              < label className="swap swap-rotate">
+              <ChevronDown className="size-6 swap-off" />
+              <Settings className="size-6 swap-on" />
+              </ label>
+              
+            ) : (
+              <label className="swap swap-rotate">
+              <ChevronDown className="size-6 swap-on" />
+              <Settings className="size-6 swap-off" />
+              </label>
+            )}
           </button>
 
-          <ul
-            className="dropdown menu w-52 rounded-box bg-base-100 shadow-sm"
-            popover="auto"
-            id="popover-1"
-            style={{ positionAnchor: "--anchor-1" } as React.CSSProperties}
-          >
-            {tools?.map((tool, index) => (
-              <li key={index}>{tool}</li>
-            ))}
-          </ul>
-        </>
+          {Open && (
+            <ul className=" absolute right-0 top-full mt-2 menu w-52 rounded-box bg-base-100 z-100 shadow-sm">
+              {tools?.map((tool, index) => (
+                <li key={index}>{tool}</li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
     </header>
   );

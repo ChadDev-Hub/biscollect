@@ -2,6 +2,7 @@
 
 import { UseFormRegister, FieldPath, FieldValues } from "react-hook-form";
 import { LucideIcon } from "lucide-react";
+import { Feature } from "@/types/geojson";
 type Props<T extends FieldValues> = {
   name: FieldPath<T>;
   register: UseFormRegister<T>;
@@ -17,12 +18,13 @@ type Props<T extends FieldValues> = {
   pattern?: RegExp;
   patternMessage?: string;
   isDisabled?: boolean;
-  listOptionId?:string;
+  listOptionId?: string;
   listOption?: string[];
-  hidden?: boolean
+  consumerLisOption?: Feature[];
+  hidden?: boolean;
 };
 
-const InputField =<T extends FieldValues> ({
+const InputField = <T extends FieldValues>({
   name,
   register,
   label,
@@ -37,28 +39,27 @@ const InputField =<T extends FieldValues> ({
   pattern,
   patternMessage,
   isDisabled,
-  listOption,
-  listOptionId,
-  hidden
+
+  hidden,
+  consumerLisOption,
 }: Props<T>) => {
   return (
     <section
-      className={`w-full flex flex-col gap-2 ${maxStep === step ? "block" : "hidden"}`}
+      className={`w-full  flex flex-col inset-1 gap-2 ${maxStep === step ? "block" : "hidden"}`}
     >
       <label className="label font-bold">
         <span className="">{label}</span>
         {required && <span className=" text-red-500">*</span>}
       </label>
 
-      <label className="input w-full px-1 ">
+      <label className="input w-full px-1 relative">
         <div className="py-2">
-            <div className="bg-base-200 p-2 rounded-full">
-              {Icon && <Icon className="text-primary size-4" />}
-            </div>
+          <div className="bg-base-200 p-2 rounded-full">
+            {Icon && <Icon className="text-primary size-4" />}
+          </div>
         </div>
-        
+
         <input
-          list={listOptionId}
           disabled={isDisabled}
           hidden={hidden}
           {...register(name, {
@@ -80,16 +81,19 @@ const InputField =<T extends FieldValues> ({
                 value: pattern,
                 message: `${patternMessage}`,
               },
-            })
+            }),
           })}
           type={inputType || "text"}
-          className="grow"
+          className="grow "
         />
-        <datalist id={listOptionId}>
-          {listOption?.map((option) => (
-            <option key={option} value={option} />
-          ))}
-        </datalist>
+        {
+          <ul className="absolute list list-sm top-full left-0 mt-1 max-h-32 z-50 w-full overflow-y-auto bg-base-300">
+            {consumerLisOption &&
+              consumerLisOption.map((item: Feature, index: number) => (
+                <li className="list-row list-xs z-100" key={index}>{item.properties.account_name}</li>
+              ))}
+          </ul>
+        }
       </label>
 
       {error && <span className="text-red-500 italic text-xs">{error}</span>}

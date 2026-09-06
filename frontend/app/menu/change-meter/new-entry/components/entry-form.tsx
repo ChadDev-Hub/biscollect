@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 import { ChangeMeterType } from "@/types/change-meter";
 import InputField from "../../../../common/components/form-field-components/input-field";
 import {
@@ -20,11 +20,14 @@ import SubmitCompletion from "../../../../common/components/submit-completion";
 import CoordinatesField from "../../../../common/components/form-field-components/coordinates-field";
 import ImageField from "../../../../common/components/form-field-components/image-field";
 import { getDB } from "../../../../../lib/db";
-
+import {Feature} from "@/types/geojson"
 const EntryForm = () => {
   const [uuid, setUuid] = useState("");
   const [step, setStep] = useState(0);
   const [success, setSuccess] = useState(false);
+  const [consumerOptions, setConsumerOption] = useState<Feature[] | []>(
+    [],
+  );
 
   // GENERATE UUID ON INTIAL LOAD
   useEffect(() => {
@@ -41,7 +44,7 @@ const EntryForm = () => {
     handleSubmit,
     setValue,
     control,
-    reset
+    reset,
   } = useForm<ChangeMeterType>({ mode: "all", shouldUnregister: false });
 
   const handleReturn = () => {
@@ -76,7 +79,35 @@ const EntryForm = () => {
     setStep(0);
     reset();
     setUuid(crypto.randomUUID());
-  }
+  };
+
+  const accountNumberWatch = useWatch({
+    control: control,
+    name: "account_no",
+  });
+
+  useEffect(() => {
+    const getConsumers = async () => {
+      const db = await getDB();
+      const data = await db.getAll("consumer_meters");
+    if(!accountNumberWatch || accountNumberWatch ===""){
+      setConsumerOption([]);
+      return;
+    }
+    const filtered = data.filter((item:Feature)=>{
+      return (
+        String(item.properties.account_name).toLowerCase().includes(accountNumberWatch) ||
+        String(item.properties.account_no).toLowerCase().includes(accountNumberWatch) ||
+        String(item.properties.meter_no).toLowerCase().includes(accountNumberWatch) ||
+        String(item.properties.meter_brand).toLowerCase().includes(accountNumberWatch)
+      );
+    })
+    setConsumerOption(filtered);
+    };
+    getConsumers();
+  }, [accountNumberWatch]);
+
+  
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -95,7 +126,10 @@ const EntryForm = () => {
         <h3 className="text-lg font-bold">Change Meter Entry</h3>
       </div>
       {success ? (
-        <SubmitCompletion onNewEntry={handleNewEntry} returnPath={`/menu/change-meter`} />
+        <SubmitCompletion
+          onNewEntry={handleNewEntry}
+          returnPath={`/menu/change-meter`}
+        />
       ) : (
         <>
           {step === 0 && (
@@ -122,6 +156,8 @@ const EntryForm = () => {
                 register={register}
                 label="Account Number"
                 error={errors.account_no?.message}
+                listOptionId="consumer"
+                consumerLisOption={consumerOptions}
               />
 
               {/* CONSUMERS NAME */}
@@ -254,16 +290,16 @@ const EntryForm = () => {
           }
 
           {step === 5 && (
-            <ImageField
-              control={control}
-              error={errors.image?.message}
-            />
+            <ImageField control={control} error={errors.image?.message} />
           )}
-          <FormButton maxStep={5} step={step} setStep={setStep} isValid={isValid} />
+          <FormButton
+            maxStep={5}
+            step={step}
+            setStep={setStep}
+            isValid={isValid}
+          />
         </>
       )}
-
-      
     </form>
   );
 };

@@ -1,6 +1,6 @@
 "use client";
 import { getDB } from "@/lib/db";
-import { useEffect, useState, } from "react";
+import { useEffect, useState } from "react";
 import { FeatureCollection, Feature } from "@/types/geojson";
 import { useMap } from "./map";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -12,7 +12,7 @@ import {
 } from "maplibre-gl";
 import { createRoot } from "react-dom/client";
 import MapPopupCard from "./map-popupcard";
-import { useSearchParams } from "next/navigation";
+
 import { CircleGauge } from "lucide-react";
 
 const ConsumerMeterLayer = () => {
@@ -20,30 +20,34 @@ const ConsumerMeterLayer = () => {
     type: "FeatureCollection",
     features: [],
   });
- 
-  const { mapRef, isMapReady } = useMap();
-  const searchParams = useSearchParams();
-  const query = searchParams.get("q");
-  
+
+  const { mapRef, isMapReady, selectedFeature } = useMap();
+
   const sourceId = "consumer-meter";
-    const layerId = "consumer-meter-layer";
-    const unclusteredPointId = "consumer-unclustered-point";
-    const clusterId = "consumer-cluster";
+  const layerId = "consumer-meter-layer";
+  const unclusteredPointId = "consumer-unclustered-point";
+  const clusterId = "consumer-cluster";
 
   useEffect(() => {
     if (!isMapReady) return;
     if (!mapRef?.current) return;
-
     const map = mapRef.current;
 
-    
     const setup = () => {
+      if (!isMapReady) {
+        console.log("Map is not ready");
+        return;
+      }
+      const map = mapRef.current;
+      if (!map) {
+        console.log("MapRef is not ready");
+        return;
+      }
       // --------------------------------
       // SOURCE
       // --------------------------------
-      
+
       if (!map.getSource(sourceId)) {
-        
         map.addSource(sourceId, {
           type: "geojson",
           data: {
@@ -53,7 +57,6 @@ const ConsumerMeterLayer = () => {
           cluster: true,
         });
       }
-      
 
       // --------------------------------
       // CLUSTER CIRCLE
@@ -160,6 +163,7 @@ const ConsumerMeterLayer = () => {
           closeOnMove: true,
           maxWidth: "none",
           anchor: "bottom",
+          offset: [0, -10],
         })
           .setLngLat(e.lngLat)
           .setDOMContent(popupNode)
@@ -186,7 +190,10 @@ const ConsumerMeterLayer = () => {
 
       if (!map.hasImage("consumer-icon")) {
         const image = renderToStaticMarkup(
-          <CircleGauge strokeWidth={2} fill="blue" color="orange" />,
+          
+            <CircleGauge strokeWidth={2} fill="green" color="orange" />
+          
+          ,
         );
 
         const imageData = `data:image/svg+xml;utf8,${encodeURIComponent(
@@ -206,7 +213,7 @@ const ConsumerMeterLayer = () => {
       // --------------------------------
       // CLEANUP
       // --------------------------------
-     
+
       return () => {
         map.off("click", unclusteredPointId, handleMouseClick);
 
@@ -216,6 +223,16 @@ const ConsumerMeterLayer = () => {
       };
     };
 
+    const handleConsumerMetersUpdated = () => {
+      setup();
+    };
+
+    window.addEventListener(
+      "consumer-meters-updated",
+      () => { 
+        console.log("consumer-meters-updated");
+        handleConsumerMetersUpdated() },
+    );
     if (map.isStyleLoaded()) {
       return setup();
     }
@@ -224,8 +241,12 @@ const ConsumerMeterLayer = () => {
 
     return () => {
       map.off("load", setup);
+      window.removeEventListener(
+        "consumer-meters-updated",
+        handleConsumerMetersUpdated,
+      );
     };
-  }, [mapRef,isMapReady]);
+  }, [mapRef, isMapReady]);
 
   useEffect(() => {
     const fetchConsumer = async () => {
@@ -234,8 +255,12 @@ const ConsumerMeterLayer = () => {
 
       if (!consumerdata) return;
 
-      const consumerFiltered: Feature[] = query
-        ? consumerdata.filter((item: Feature) => item.properties.hash === query)
+      const consumerFiltered: Feature[] = selectedFeature
+        ? consumerdata.filter(
+            (item: Feature) =>
+              item.properties.hash ===
+              selectedFeature?.features?.[0].properties.hash,
+          )
         : consumerdata;
 
       const featureCollection: FeatureCollection = {
@@ -245,15 +270,16 @@ const ConsumerMeterLayer = () => {
       setConsumer(featureCollection);
     };
     fetchConsumer();
-  }, [query]);
+  }, [selectedFeature]);
 
-  useEffect(()=>{
+  useEffect(() => {
     const assignConsumer = async () => {
       if (!isMapReady) return;
       if (!consumer) {
         console.log("consumer not found");
-        return};
-      if (!mapRef?.current){
+        return;
+      }
+      if (!mapRef?.current) {
         console.log("map not found");
         return;
       }
@@ -265,41 +291,19 @@ const ConsumerMeterLayer = () => {
       }
       const source = map.getSource(sourceId) as GeoJSONSource;
 
-      if (!source){
+      if (!source) {
         console.log("source not found");
         return;
       }
       source.setData(consumer);
-    }
-    assignConsumer();
-  },[consumer, mapRef, isMapReady])
-  
-  useEffect(() => {
-    const addLocateEvent = async () => {
-      if (!consumer) return;
-      if (!mapRef) return;
-      const map = mapRef.current;
-      if (!map) return;
-      if (consumer?.features.length !== 1) return;
-      const feature = consumer.features[0];
-
-      const [lng, lat] = feature.geometry.coordinates;
-
-      if (
-        typeof lng !== "number" ||
-        typeof lat !== "number" ||
-        !Number.isFinite(lng) ||
-        !Number.isFinite(lat)
-      ) {
-        return;
-      }
-      map.flyTo({
-        center: [lng, lat],
-        zoom: 18,
-      });
     };
-    addLocateEvent();
-  }, [consumer, mapRef]);
+
+    const run = async () => {
+      await assignConsumer();
+    };
+
+    run();
+  }, [consumer, mapRef, isMapReady]);
 
   return null;
 };

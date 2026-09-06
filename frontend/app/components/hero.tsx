@@ -7,11 +7,30 @@ import { useState, useEffect } from "react";
 const Hero = () => {
   const [serviceWorkerActive, setServiceWorkerActive] = useState(false);
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.ready.then(() => {
+    if (!("serviceWorker" in navigator)) return;
+    const handleMessage = (e: MessageEvent) => {
+      if (e.data.type === "PRECACHE_COMPLETE") {
         setServiceWorkerActive(true);
-      });
+      }
+    };
+
+    const checkPrecache = async () => {
+      try {
+        const cache = await caches.open("cache-status");
+        const response = await cache.match("cache-complete");
+        if (response) {
+          setServiceWorkerActive(true);
+        }
+      } catch (err) {
+        console.error("Failed:", "cache-status", err);
+      }
     }
+    checkPrecache();
+    navigator.serviceWorker.addEventListener("message", handleMessage);
+
+    return () => {
+      navigator.serviceWorker.removeEventListener("message", handleMessage);
+    };
   }, []);
   return (
     <div className="flex flex-col items-center justify-center gap-4 w-full">

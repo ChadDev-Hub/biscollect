@@ -1,20 +1,34 @@
 "use client";
 
-import { useRef, useEffect, createContext, useContext, Suspense,useState} from "react";
+import {
+  useRef,
+  useEffect,
+  createContext,
+  useContext,
+  Suspense,
+  useState,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { PMTiles, Protocol, Source } from "pmtiles";
 import { Map, addProtocol, GeolocateControl } from "maplibre-gl";
-import {Loader} from "lucide-react"
-import ConsumerSearch from './consumer-search'
-
+import { Loader } from "lucide-react";
+import ConsumerSearch from "./consumer-search";
+import { FeatureCollection} from "@/types/geojson";
 
 type MapContextType = {
   mapRef: React.RefObject<Map | null> | null;
   isMapReady: boolean;
+  selectedFeature: FeatureCollection | null;
+  setSelectedFeature: Dispatch<SetStateAction<FeatureCollection | null>>
 };
 
 const MapContext = createContext<MapContextType | null>({
   mapRef: null,
   isMapReady: false,
+  selectedFeature: null,
+  setSelectedFeature: () => {},
+  
 });
 
 type Props = {
@@ -68,6 +82,7 @@ class CachePMTilesSource implements Source {
 }
 
 const BiselcoMap = ({ children }: Props) => {
+  const [selectedFeature, setSelectedFeature] = useState<FeatureCollection | null>(null);
   const mapRefContainer = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<Map | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
@@ -98,26 +113,60 @@ const BiselcoMap = ({ children }: Props) => {
       }),
     );
 
-    
     mapRef.current = map;
     map.on("load", () => {
       setIsMapReady(true);
     });
-    
+
     return () => {
       map.remove();
       mapRef.current = null;
     };
   }, []);
 
+
+  useEffect(()=> {
+    const addLocateEvent = async () => {
+      if (!selectedFeature) return;
+      if (!mapRef) return;
+      const map = mapRef.current;
+      if (!map) return;
+      if (selectedFeature.features.length !== 1) return;
+      const feature = selectedFeature.features[0];
+
+      const [lng, lat] = feature.geometry.coordinates;
+
+      if (
+        typeof lng !== "number" ||
+        typeof lat !== "number" ||
+        !Number.isFinite(lng) ||
+        !Number.isFinite(lat)
+      ) {
+        return;
+      }
+      map.flyTo({
+        center: [lng, lat],
+        zoom: 18,
+      });
+    };
+    addLocateEvent();
+  },[selectedFeature]);
+
   return (
-    <MapContext.Provider value={{ mapRef, isMapReady }}>
-      {children}
-      <div className="w-full relative min-h-screen" ref={mapRefContainer}>
-        <Suspense fallback={<Loader className="absolute top-1/2 left-1/2 text-primary" />}>
-          <ConsumerSearch />
+    <MapContext.Provider value={{ mapRef, isMapReady,selectedFeature, setSelectedFeature}}>
+      <div className="w-full relative min-h-screen">
+        {children}
+        <div
+          className="w-full h-screen absolute inset-0"
+          ref={mapRefContainer}
+        ></div>
+        <Suspense
+          fallback={
+            <Loader className="absolute top-1/2 left-1/2 text-primary" />
+          }
+        >
+          <ConsumerSearch setSelectedFeature={setSelectedFeature} />
         </Suspense>
-        
       </div>
     </MapContext.Provider>
   );

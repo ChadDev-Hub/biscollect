@@ -3,9 +3,11 @@ import { Feature } from '../../types/geojson';
 
 
 
-export async function SyncConsumerMeter(){
+export async function SyncConsumerMeter(hash:string[] | [] = []){
     try {
-        const res = await api.get("/v1/consumers/all");
+        const res = await api.post("/v1/consumers/all",{
+            hashed: hash
+        });
         const result = res.data;
         return result as Feature[];
     } catch (error) {
