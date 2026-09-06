@@ -20,14 +20,12 @@ import SubmitCompletion from "../../../../common/components/submit-completion";
 import CoordinatesField from "../../../../common/components/form-field-components/coordinates-field";
 import ImageField from "../../../../common/components/form-field-components/image-field";
 import { getDB } from "../../../../../lib/db";
-import {Feature} from "@/types/geojson"
+import { Feature } from "@/types/geojson";
 const EntryForm = () => {
   const [uuid, setUuid] = useState("");
   const [step, setStep] = useState(0);
   const [success, setSuccess] = useState(false);
-  const [consumerOptions, setConsumerOption] = useState<Feature[] | []>(
-    [],
-  );
+  const [consumerOptions, setConsumerOption] = useState<Feature[] | []>([]);
 
   // GENERATE UUID ON INTIAL LOAD
   useEffect(() => {
@@ -88,26 +86,42 @@ const EntryForm = () => {
 
   useEffect(() => {
     const getConsumers = async () => {
+      if (!accountNumberWatch || accountNumberWatch === "") {
+        setConsumerOption([]);
+        return;
+      }
       const db = await getDB();
       const data = await db.getAll("consumer_meters");
-    if(!accountNumberWatch || accountNumberWatch ===""){
-      setConsumerOption([]);
-      return;
-    }
-    const filtered = data.filter((item:Feature)=>{
-      return (
-        String(item.properties.account_name).toLowerCase().includes(accountNumberWatch) ||
-        String(item.properties.account_no).toLowerCase().includes(accountNumberWatch) ||
-        String(item.properties.meter_no).toLowerCase().includes(accountNumberWatch) ||
-        String(item.properties.meter_brand).toLowerCase().includes(accountNumberWatch)
+      
+
+
+       const hasExactMatch = data.some(
+        (item: Feature) =>
+          String(item.properties.account_no ?? "").toLowerCase().trim() ===
+          String(accountNumberWatch).toLowerCase().trim(),
       );
-    })
-    setConsumerOption(filtered);
+
+      if (hasExactMatch) {
+        setConsumerOption([]);
+        return;
+      }
+      const filtered = data.filter((item: Feature) => {
+        const searchedItem =
+          String(item.properties.account_name).toLowerCase()
+            .includes(accountNumberWatch.toLowerCase()) ||
+          String(item.properties.account_no).toLowerCase()
+            .includes(accountNumberWatch.toLowerCase()) ||
+          String(item.properties.meter_no.toLowerCase())
+            .includes(accountNumberWatch.toLocaleLowerCase()) ||
+          String(item.properties.meter_brand.toLowerCase())
+            .includes(accountNumberWatch.toLowerCase());
+        return searchedItem;
+      });
+      setConsumerOption(filtered.splice(0, 60));
     };
     getConsumers();
   }, [accountNumberWatch]);
 
-  
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -158,6 +172,8 @@ const EntryForm = () => {
                 error={errors.account_no?.message}
                 listOptionId="consumer"
                 consumerLisOption={consumerOptions}
+                setValue={setValue}
+                setConsumerOption={setConsumerOption}
               />
 
               {/* CONSUMERS NAME */}

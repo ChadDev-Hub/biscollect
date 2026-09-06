@@ -8,7 +8,7 @@ export function getDB() {
   }
 
   if (!dbPromise) {
-    dbPromise = openDB("biscollect", 3, {
+    dbPromise = openDB("biscollect", 4, {
       
       upgrade(db, oldVersion) {
         if (oldVersion < 1) {
@@ -27,8 +27,16 @@ export function getDB() {
             store.createIndex("uuid", "uuid", { unique: true });
           }
         }
-
-        if (oldVersion < 2) {
+        if (oldVersion < 3) {
+          if (!db.objectStoreNames.contains("consumer_meters")) {
+            const store = db.createObjectStore("consumer_meters", {
+              keyPath: "properties.id",
+            });
+            store.createIndex("hash", "properties.hash", { unique: true });
+          }
+        }
+        // LINE CONSTRUCTION TABLE
+        if (oldVersion < 4) {
           if (!db.objectStoreNames.contains("line_constructions")) {
             const store = db.createObjectStore("line_constructions", {
               keyPath: "id",
@@ -44,20 +52,13 @@ export function getDB() {
             });
             store.createIndex("uuid", "uuid", { unique: true });
           }
+
           if (!db.objectStoreNames.contains("maintenance")) {
             const store = db.createObjectStore("maintenance", {
               keyPath: "id",
               autoIncrement: true,
             });
             store.createIndex("uuid", "uuid", { unique: true });
-          }
-        }
-        if (oldVersion < 3) {
-          if (!db.objectStoreNames.contains("consumer_meters")) {
-            const store = db.createObjectStore("consumer_meters", {
-              keyPath: "properties.id",
-            });
-            store.createIndex("hash", "properties.hash", { unique: true });
           }
         }
       },
