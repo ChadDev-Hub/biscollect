@@ -29,14 +29,15 @@ const ConsumerSearch = ({ setSelectedFeature }: Props) => {
       return;
     };
     const filtered = consumerdata.filter((item: Feature) => {
-      return (
+      const data = (
         String(item.properties.account_name).toLowerCase().includes(value) ||
         String(item.properties.account_no).toLowerCase().includes(value) ||
         String(item.properties.meter_no).toLowerCase().includes(value) ||
         String(item.properties.meter_brand).toLowerCase().includes(value)
       );
+      return data;
     });
-    setSearchConsumer(filtered);
+    setSearchConsumer(filtered.slice(0, 60));
   };
 
 
@@ -60,14 +61,17 @@ const ConsumerSearch = ({ setSelectedFeature }: Props) => {
         className="input  input-sm input-bordered w-full max-w-xs"
       />
       {searchConsumer.length > 0 && (
-        <ul className="p-3 m-2 w-full menu-vertical bg-base-300 rounded-box max-h-96 overflow-y-scroll">
+        <ul className="p-3 m-2 list w-full menu-vertical bg-base-300 rounded-box max-h-96 overflow-y-scroll">
           {searchConsumer.map((item: Feature) => (
             <li
               onClick={() => handleSelection(item)}
-              className="hover:bg-base-200"
+              className="hover:bg-base-200 list-row hover:text-primary hover:cursor-pointer"
               key={item.properties.hash}
             >
-              {item.properties.account_name}
+              <div>
+                <p className="text-xs">{item.properties.account_name}</p>
+              </div>
+              
             </li>
           ))}
         </ul>
