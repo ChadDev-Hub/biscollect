@@ -1,5 +1,5 @@
 "use client";
-import { getDB } from "../../../../lib/db";
+import { handleSearch } from "@/lib/actions/consumer-meter";
 import { useState,  useRef, Dispatch, SetStateAction } from "react";
 import { Feature, FeatureCollection } from '../../../../types/geojson';
 
@@ -14,31 +14,7 @@ const ConsumerSearch = ({ setSelectedFeature }: Props) => {
   const [searchConsumer, setSearchConsumer] = useState<Feature[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   
-  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.toLowerCase();
-    const db = await getDB();
-    const consumerdata = await db.getAll("consumer_meters");
-    if (e.target.value === "") {
-      setSearchConsumer([]);
-      setSelectedFeature(null);
-      return;
-    }
-    if (!e.target.value) {
-      setSearchConsumer([]);
-      setSelectedFeature(null);
-      return;
-    };
-    const filtered = consumerdata.filter((item: Feature) => {
-      const data = (
-        String(item.properties.account_name).toLowerCase().includes(value) ||
-        String(item.properties.account_no).toLowerCase().includes(value) ||
-        String(item.properties.meter_no).toLowerCase().includes(value) ||
-        String(item.properties.meter_brand).toLowerCase().includes(value)
-      );
-      return data;
-    });
-    setSearchConsumer(filtered.slice(0, 60));
-  };
+
 
 
   const handleSelection = (item: Feature) => {
@@ -56,7 +32,7 @@ const ConsumerSearch = ({ setSelectedFeature }: Props) => {
       <input
         ref={inputRef}
         type="text"
-        onChange={handleSearch}
+        onChange={(e) => handleSearch(e, setSearchConsumer, setSelectedFeature)}
         placeholder="Search Consumer"
         className="input  input-sm input-bordered w-full max-w-xs"
       />

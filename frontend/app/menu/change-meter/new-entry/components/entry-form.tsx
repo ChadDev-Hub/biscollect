@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useForm, SubmitHandler, useWatch } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { ChangeMeterType } from "@/types/change-meter";
 import InputField from "../../../../common/components/form-field-components/input-field";
 import {
@@ -21,6 +21,7 @@ import CoordinatesField from "../../../../common/components/form-field-component
 import ImageField from "../../../../common/components/form-field-components/image-field";
 import { getDB } from "../../../../../lib/db";
 import { Feature } from "@/types/geojson";
+import {handleSearch} from '@/lib/actions/consumer-meter';
 const EntryForm = () => {
   const [uuid, setUuid] = useState("");
   const [step, setStep] = useState(0);
@@ -79,48 +80,9 @@ const EntryForm = () => {
     setUuid(crypto.randomUUID());
   };
 
-  const accountNumberWatch = useWatch({
-    control: control,
-    name: "account_no",
-  });
+  
 
-  useEffect(() => {
-    const getConsumers = async () => {
-      if (!accountNumberWatch || accountNumberWatch === "") {
-        setConsumerOption([]);
-        return;
-      }
-      const db = await getDB();
-      const data = await db.getAll("consumer_meters");
-      
-
-
-       const hasExactMatch = data.some(
-        (item: Feature) =>
-          String(item.properties.account_no ?? "").toLowerCase().trim() ===
-          String(accountNumberWatch).toLowerCase().trim(),
-      );
-
-      if (hasExactMatch) {
-        setConsumerOption([]);
-        return;
-      }
-      const filtered = data.filter((item: Feature) => {
-        const searchedItem =
-          String(item.properties.account_name).toLowerCase()
-            .includes(accountNumberWatch.toLowerCase()) ||
-          String(item.properties.account_no).toLowerCase()
-            .includes(accountNumberWatch.toLowerCase()) ||
-          String(item.properties.meter_no.toLowerCase())
-            .includes(accountNumberWatch.toLocaleLowerCase()) ||
-          String(item.properties.meter_brand.toLowerCase())
-            .includes(accountNumberWatch.toLowerCase());
-        return searchedItem;
-      });
-      setConsumerOption(filtered.splice(0, 60));
-    };
-    getConsumers();
-  }, [accountNumberWatch]);
+  
 
   return (
     <form
@@ -174,6 +136,7 @@ const EntryForm = () => {
                 consumerLisOption={consumerOptions}
                 setValue={setValue}
                 setConsumerOption={setConsumerOption}
+                onChange={(e)=>handleSearch(e, setConsumerOption)}
               />
 
               {/* CONSUMERS NAME */}

@@ -1,9 +1,16 @@
 "use client";
 
-import { UseFormRegister, FieldPath, FieldValues, SetFieldValue, Path, PathValue } from "react-hook-form";
+import {
+  UseFormRegister,
+  FieldPath,
+  FieldValues,
+  SetFieldValue,
+  Path,
+  PathValue,
+} from "react-hook-form";
 import { LucideIcon } from "lucide-react";
 import { Feature } from "@/types/geojson";
-import {Dispatch, SetStateAction} from "react";
+import { Dispatch, SetStateAction } from "react";
 type Props<T extends FieldValues> = {
   name: FieldPath<T>;
   register: UseFormRegister<T>;
@@ -22,9 +29,10 @@ type Props<T extends FieldValues> = {
   listOptionId?: string;
   listOption?: string[];
   consumerLisOption?: Feature[];
-  setConsumerOption?: Dispatch<SetStateAction<Feature[] | []>>
+  setConsumerOption?: Dispatch<SetStateAction<Feature[] | []>>;
   hidden?: boolean;
   setValue?: SetFieldValue<T>;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 const InputField = <T extends FieldValues>({
@@ -45,38 +53,53 @@ const InputField = <T extends FieldValues>({
   setValue,
   hidden,
   consumerLisOption,
-  setConsumerOption
+  setConsumerOption,
+  onChange,
 }: Props<T>) => {
   const handleSelectedConsumter = (feature: Feature) => {
     if (!setValue) return;
-    
-    setValue("consumer_name" as Path<T> , feature.properties.account_name as PathValue<T,Path<T>> , {
-      shouldValidate: true,
-      shouldDirty: true,
-      shouldTouch: true,
-    });
-     
 
-    setValue("account_no" as Path<T> , feature.properties.account_no as PathValue<T,Path<T>> , {
-      shouldValidate: true,
-      shouldDirty: true,
-      shouldTouch: true,
-    });
+    setValue(
+      "consumer_name" as Path<T>,
+      feature.properties.account_name as PathValue<T, Path<T>>,
+      {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      },
+    );
 
+    setValue(
+      "account_no" as Path<T>,
+      feature.properties.account_no as PathValue<T, Path<T>>,
+      {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      },
+    );
 
-    setValue("pull_out_meter" as Path<T> , feature.properties.meter_brand as PathValue<T,Path<T>> , {
-      shouldValidate: true,
-      shouldDirty: true,
-      shouldTouch: true,
-    })
+    setValue(
+      "pull_out_meter" as Path<T>,
+      feature.properties.meter_brand as PathValue<T, Path<T>>,
+      {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      },
+    );
 
-    setValue("pull_out_meter_serial_no" as Path<T> , feature.properties.meter_no as PathValue<T,Path<T>> , {
-      shouldValidate: true,
-      shouldDirty: true,
-      shouldTouch: true,
-    })
+    setValue(
+      "pull_out_meter_serial_no" as Path<T>,
+      feature.properties.meter_no as PathValue<T, Path<T>>,
+      {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      },
+    );
     setConsumerOption?.([]);
-  }
+  };
   return (
     <section
       className={`w-full  flex flex-col  gap-2 ${maxStep === step ? "block" : "hidden"}`}
@@ -98,6 +121,7 @@ const InputField = <T extends FieldValues>({
             hidden={hidden}
             {...register(name, {
               required: { value: required, message: `${label} is Required` },
+              onChange: onChange,
               ...(minLength && {
                 minLength: {
                   value: minLength,
@@ -121,16 +145,20 @@ const InputField = <T extends FieldValues>({
             className="grow "
           />
         </label>
-        {
-          <ul className="absolute rounded list list-sm top-full mt-3 left-0 max-h-32 z-99999 w-full overflow-y-auto bg-base-300 ">
-            {consumerLisOption &&
-              consumerLisOption.map((item: Feature, index: number) => (
-                <li onClick={() => handleSelectedConsumter(item)} className="list-row hover:bg-base-200 text-[10px]  hover:cursor-pointer list-xs z-100" key={index}>
-                  {item.properties.account_no} | {item.properties.account_name} 
-                </li>
-              ))}
+
+        {consumerLisOption && consumerLisOption.length > 0 && (
+          <ul className="absolute rounded list list-sm top-full mt-3 left-0 border border-slate-400/55  shadow-2xl max-h-64 z-99999 w-full overflow-y-auto bg-base-300 ">
+            {consumerLisOption.map((item: Feature, index: number) => (
+              <li
+                onClick={() => handleSelectedConsumter(item)}
+                className="list-row hover:bg-base-200 text-[10px]  hover:cursor-pointer list-xs z-100"
+                key={index}
+              >
+                {item.properties.account_no} | {item.properties.account_name}
+              </li>
+            ))}
           </ul>
-        }
+        )}
       </div>
 
       {error && <span className="text-red-500 italic text-xs">{error}</span>}
