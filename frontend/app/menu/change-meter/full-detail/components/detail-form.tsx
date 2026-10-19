@@ -3,14 +3,22 @@ import { useEffect, useState } from "react";
 import { getDB } from "@/lib/db";
 import { ChangeMeterType } from "@/types/change-meter";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { User, Zap, Calendar, Hash, Cpu, Binary, NotebookPen, MapPinned } from "lucide-react";
+import {
+  User,
+  Zap,
+  Calendar,
+  Hash,
+  Cpu,
+  Binary,
+  NotebookPen,
+  MapPinned,
+  Tag
+} from "lucide-react";
 import InputField from "../../../../common/components/form-field-components/input-field";
 import EditButton from "../../../../common/components/edit-button";
-import CoordinatesField from '../../../../common/components/form-field-components/coordinates-field';
+import CoordinatesField from "../../../../common/components/form-field-components/coordinates-field";
 import ImageField from "@/app/common/components/form-field-components/image-field";
-import { useSearchParams } from 'next/navigation';
-
-
+import { useSearchParams } from "next/navigation";
 
 const DetailForm = () => {
   const [editMode, setEditMode] = useState(false);
@@ -18,7 +26,7 @@ const DetailForm = () => {
   const uuid = searchParams.get("uuid");
   const {
     register,
-    formState: { errors},
+    formState: { errors },
     handleSubmit,
     setValue,
     control,
@@ -35,16 +43,15 @@ const DetailForm = () => {
     };
     getEntry();
   }, [uuid, reset]);
-  const onSubmit:SubmitHandler<ChangeMeterType> = async (data) => {
+  const onSubmit: SubmitHandler<ChangeMeterType> = async (data) => {
     try {
       const db = await getDB();
       const transaction = db.transaction("change_meters", "readwrite");
       const store = transaction.objectStore("change_meters");
       await store.put({
         ...data,
-        is_synced: false},
-
-      );
+        is_synced: false,
+      });
       await transaction.done;
       setEditMode(false);
       window.dispatchEvent(new Event("change_meters-updated"));
@@ -53,7 +60,10 @@ const DetailForm = () => {
     }
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="relative flex w-full flex-col gap-2 bg-base-100 rounded-box p-4">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="relative flex w-full flex-col gap-2 bg-base-100 rounded-box p-4"
+    >
       <EditButton is_editing={editMode} setIsEditing={setEditMode} />
 
       {/* DATE ACCOMPLISHED */}
@@ -125,14 +135,13 @@ const DetailForm = () => {
         register={register}
         required={true}
         name="pull_out_reading"
-        label ="Pullout Reading"
+        label="Pullout Reading"
         error={errors.pull_out_reading?.message}
         inputType="number"
         Icon={Binary}
         isDisabled={!editMode}
-        />
+      />
 
-      
       <div className="grid grid-cols-2 gap-2">
         {/* NEW METER  */}
 
@@ -145,7 +154,7 @@ const DetailForm = () => {
           inputType="text"
           Icon={Cpu}
           isDisabled={!editMode}
-          />
+        />
 
         {/* NEW METER NUMBER  */}
         <InputField
@@ -157,20 +166,34 @@ const DetailForm = () => {
           inputType="text"
           Icon={Hash}
           isDisabled={!editMode}
-          />
+        />
       </div>
 
-      {/* INITIAL READING */}
-      <InputField
-        register={register}
-        required={true}
-        name="initial_reading"
-        label="Initial Reading"
-        error={errors.initial_reading?.message}
-        inputType="number"
-        Icon={Binary}
-        isDisabled={!editMode}
-      />
+      <div className="grid grid-cols-2 gap-2">
+        {/* INITIAL READING */}
+        <InputField
+          register={register}
+          required={true}
+          name="initial_reading"
+          label="Initial Reading"
+          error={errors.initial_reading?.message}
+          inputType="number"
+          Icon={Binary}
+          isDisabled={!editMode}
+        />
+
+        {/* METER SEALED */}
+        <InputField
+          register={register}
+          required={false}
+          name="meter_sealed"
+          label="Meter Sealed"
+          error={errors.meter_sealed?.message}
+          inputType="text"
+          Icon={Tag}
+          isDisabled={!editMode}
+        />
+      </div>
 
       {/* ACCOMPLISHED BY */}
       <InputField
@@ -196,7 +219,6 @@ const DetailForm = () => {
         isDisabled={!editMode}
       />
 
-
       {/* COORDINATES */}
       <CoordinatesField
         register={register}
@@ -206,7 +228,7 @@ const DetailForm = () => {
         Icon={MapPinned}
         is_disabled={!editMode}
       />
-      
+
       {/* IMAGE */}
       <ImageField
         control={control}
