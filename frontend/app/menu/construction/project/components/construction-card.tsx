@@ -37,7 +37,7 @@ type Icon = {
   className: string;
 };
 
-const ConstructionCard = ({
+const ConstructionCardTask = ({
   uuid,
   title,
   is_synced,
@@ -137,4 +137,4 @@ const ConstructionCard = ({
   );
 };
 
-export default ConstructionCard;
+export default ConstructionCardTask;

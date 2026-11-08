@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3003 --webpack",
@@ -10,6 +10,7 @@
     "lint:fix": "eslint --fix"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.14.0",
     "@serwist/next": "^9.5.11",
     "axios": "^1.18.1",
     "daisyui": "^5.7.4",
@@ -22,6 +23,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.80.0",
+    "react-redux": "^9.3.1",
     "tailwind": "^4.0.0",
     "theme-change": "^3.0.4"
   },

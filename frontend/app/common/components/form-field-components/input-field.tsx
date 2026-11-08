@@ -101,10 +101,10 @@ const InputField = <T extends FieldValues>({
     setConsumerOption?.([]);
   };
   return (
-    <section
-      className={`w-full  flex flex-col  gap-2 ${maxStep === step ? "block" : "hidden"}`}
+    <fieldset
+      className={`w-full fieldset  flex flex-col  gap-2 ${maxStep === step ? "block" : "hidden"}`}
     >
-      <label className="label font-bold">
+      <label className="fieldset-label font-bold">
         <span className="">{label}</span>
         {required && <span className=" text-red-500">*</span>}
       </label>
@@ -162,7 +162,7 @@ const InputField = <T extends FieldValues>({
       </div>
 
       {error && <span className="text-red-500 italic text-xs">{error}</span>}
-    </section>
+    </fieldset>
   );
 };
 

@@ -8,9 +8,9 @@ export function getDB() {
   }
 
   if (!dbPromise) {
-    dbPromise = openDB("biscollect", 4, {
+    dbPromise = openDB("biscollect", 6, {
       
-      upgrade(db, oldVersion) {
+      upgrade(db, oldVersion, newVersion, tx) {
         if (oldVersion < 1) {
           if (!db.objectStoreNames.contains("new_connections")) {
             const store = db.createObjectStore("new_connections", {
@@ -61,7 +61,35 @@ export function getDB() {
             store.createIndex("uuid", "uuid", { unique: true });
           }
         }
+        if (oldVersion < 5){ 
+          if (!db.objectStoreNames.contains("constructions")){
+            const store = db.createObjectStore("constructions",{
+              keyPath: "id",
+              autoIncrement: true
+            });
+            store.createIndex("uuid", "uuid", { unique: true });
+          }
+        }
+        // CREATE INDEX WHEN VERSION CHANGES
+        if (oldVersion < 6){
+          // CREATE INDEX FOR LINE CONSTRUCTION
+          if(db.objectStoreNames.contains("line_constructions")){
+            
+            const store = tx.objectStore("line_constructions")
+            if (!store.indexNames.contains("cuuid")){
+              store.createIndex("cuuid", "cuuid", { unique: false });
+            }
+          }
+          // TRANSFORMER CONSTRUCTION
+          if(db.objectStoreNames.contains("transformer_constructions")){
+            const store = tx.objectStore("transformer_constructions")
+            if (!store.indexNames.contains("cuuid")){
+              store.createIndex("cuuid", "cuuid", { unique: false });
+            }
+          }
+        }
       },
+      
     });
   }
 

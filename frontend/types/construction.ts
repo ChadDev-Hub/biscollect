@@ -1,8 +1,21 @@
 
 
+
+export type ConstructionType = {
+    id?: number;
+    uuid?: string;
+    activity: 'Line Construction' | 'Transformer Installation'
+    description: string;
+    date: string;
+    is_synced?: boolean;
+    is_deleted?: boolean;
+}
+
+
 export type LineConstructionType = {
+ id?: number;
  uuid: string;
- const_uuid: string;
+ cuuid: string;
  date_accomplished: string;   
  activity: "Line Construction";
  type: "Line Extension" | "New Line";

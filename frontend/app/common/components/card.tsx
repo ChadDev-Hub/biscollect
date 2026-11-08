@@ -52,7 +52,7 @@ export default function MeterAccomplishedCard({
   return (
     <div
       key={uuid}
-      className="card w-full max-w-md p-4 bg-base-100 shadow-md border border-base-200 hover:border-primary/20 transition-all duration-300 group"
+      className="card w-full relative max-w-md p-4 bg-base-100 shadow-md border border-base-200 hover:border-primary/20 transition-all duration-300 group"
     >
       {/* Top Accent Bar */}
       <div className="h-1.5 w-full bg-linear-to-r from-primary mb-3 to-secondary rounded-t-2xl" />
@@ -71,9 +71,9 @@ export default function MeterAccomplishedCard({
         <div className="badge badge-xs justify-self-end badge-info">{type}</div>
 
         {/* SYNC INDICATOR */}
-        <div className="flex-1 flex justify-end items-center">
+        <div className="absolute top-6 right-4">
           <div
-            className="btn btn-ghost btn-circle tooltip tooltip-left tooltip-info"
+            className="btn btn-ghost w-full btn-circle tooltip tooltip-left tooltip-info"
             title={is_synced ? "Synced" : "Not Synced"}
           >
             <div className="tooltip-content">
@@ -83,9 +83,17 @@ export default function MeterAccomplishedCard({
               </div>
             </div>
             {is_synced ? (
-              <CloudCheck className="w-5 h-5 text-success" />
+              <span className="badge badge-success badge-outline">
+                  <CloudCheck size={15} />
+                  Synced
+              </span>
+              
             ) : (
-              <CloudAlert className="w-5 h-5 text-warning" />
+              <span className="badge badge-error badge-outline">
+                  <CloudAlert size={15} />
+                  Pending
+              </span>
+              
             )}
           </div>
         </div>
