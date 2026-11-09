@@ -1,6 +1,5 @@
 "use client";
 import ToolsNavar from '../../../common/components/tools-navbar';
-import ConductorData from '../project/components/constructionTaskContainer';
 import ReturnMenu from '../../../common/components/return-menu';
 import AddEntries from '../../../common/components/add-entry';
 import ClaudeSyncButton from '../../../common/components/claude-sync-button';
@@ -16,7 +15,6 @@ const LineConstruction = () => {
         <AddEntries />
       </ToolsNavar>
       <main className="flex flex-col gap-2  w-full items-center justify-center py-15 px-4">
-          <ConductorData/>
       </main>
     </div>
   )

@@ -2,9 +2,9 @@
 
 import ReturnMenu from '@/app/common/components/return-menu';
 import ToolsNavar from '../../../common/components/tools-navbar';
-
 import AddTask from './components/addTask';
 import ConstructionTaskContainer from './components/constructionTaskContainer';
+import { Suspense } from 'react';
 
 const ProjectPage = () => {
   return (
@@ -13,12 +13,15 @@ const ProjectPage = () => {
             <div className="flex-1">
                 <ReturnMenu />
             </div>
-            <AddTask />
+            <Suspense fallback={<div>Loading...</div>}>
+                 <AddTask />
+            </Suspense>
+            
         </ToolsNavar>
 
-        <div>
+        <Suspense fallback={<div>Loading...</div>}>
             <ConstructionTaskContainer />
-        </div>
+        </Suspense>
     </div>
   );
 };

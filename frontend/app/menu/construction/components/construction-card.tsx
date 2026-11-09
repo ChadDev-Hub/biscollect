@@ -1,8 +1,7 @@
 "use client";
 import {
   CalendarDays,
-  UtilityPole,
-  Zap,
+  HardHat,
   CloudCheck,
   CloudAlert,
 } from "lucide-react";
@@ -14,7 +13,7 @@ type Props = {
 };
 
 const ConstructionCard = ({ data}: Props) => {
-  const isLineConstruction = data.activity === "Line Construction";
+
 
   return (
       <div className="card w-full hover:shadow-2xl 
@@ -24,24 +23,16 @@ const ConstructionCard = ({ data}: Props) => {
           <div className="card-body rounded-box p-5 gap-4">
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-start gap-3 min-w-0">
             <div
               className={`size-11 rounded-xl flex items-center
-              justify-center shrink-0
-              ${
-                isLineConstruction
-                  ? "bg-primary/10 text-primary"
-                  : "bg-warning/10 text-warning"
-              }`}
+              justify-center shrink-0 bg-primary/10 text-primary
+             `}
             >
-              {isLineConstruction ? (
-                <UtilityPole size={22} />
-              ) : (
-                <Zap size={22} />
-              )}
+              <HardHat className="size-6" />
             </div>
             <div className="min-w-0">
-              <h3 className="font-bold text-base leading-tight truncate">
+              <h3 className="font-bold text-xs  leading-tight ">
                 {data.activity}
               </h3>
               <p className="text-xs text-base-content/50 mt-1">

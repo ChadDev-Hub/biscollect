@@ -4,7 +4,6 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import type { ConstructionType } from "@/types/construction";
 import InputField from "@/app/common/components/form-field-components/input-field";
 import { Calendar, NotepadText, Workflow } from "lucide-react";
-import SelectInputField from "@/app/common/components/form-field-components/select-input-field";
 import {addConstruction, addConstructionActivity} from "./construction-slice";
 import { useAppDispatch } from '../../../hooks';
 import { useAddProjectModal } from '../../../common/components/buttons/add-project';
@@ -12,7 +11,7 @@ import { useAddProjectModal } from '../../../common/components/buttons/add-proje
 type FormType = ConstructionType;
 
 const ProjectForm = () => {
-  const activities = ["Line Construction", "Transformer Installation"];
+  
   const {handleClose} = useAddProjectModal();
   const {
     reset,
@@ -50,14 +49,13 @@ const ProjectForm = () => {
         error={errors.date?.message}
       />
 
-      <SelectInputField
+      <InputField
         Icon={Workflow}
-        register={register}
         name="activity"
+        register={register}
         label="Activity"
         required={true}
         error={errors.activity?.message}
-        options={activities}
       />
 
       <InputField

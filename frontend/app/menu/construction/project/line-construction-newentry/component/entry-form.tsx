@@ -5,8 +5,6 @@ import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 import InputField from "../../../../../common/components/form-field-components/input-field";
 import { UtilityPole, Calendar, MapPin, Undo2 } from "lucide-react";
 import { LineConstructionType } from "@/types/construction";
-import { GetConductorName, GetNeutralName } from "@/lib/actions/conductor";
-import { ConductorName } from "@/types/conductor-wire";
 import CheckBoxFieldOption from "../../../../../common/components/form-field-components/radio-input-field";
 import SelectInputField from "../../../../../common/components/form-field-components/select-input-field";
 import CoordinatesField from "@/app/common/components/form-field-components/coordinates-field";
@@ -19,6 +17,11 @@ import SubmitCompletion from "../../../../../common/components/submit-completion
 import { DataCleaner } from "@/lib/data-cleaner";
 import { getDB } from "../../../../../../lib/db";
 import TextAreaField from "../../../../../common/components/form-field-components/text-area-field";
+import { useAppDispatch, useAppSelector } from "../../../../../hooks";
+
+import { useSearchParams } from 'next/navigation';
+import { fetchConductorData, fetchNeutralData } from '../../components/constructionTaskSlice';
+
 const LineConstrucitonEntryForm = () => {
   const {
     reset,
@@ -36,11 +39,12 @@ const LineConstrucitonEntryForm = () => {
   });
 
   const [step, setStep] = useState(0);
-
-  const [conductors, setConductors] = useState<ConductorName[] | []>([]);
-  const [neutral, setNeutral] = useState<ConductorName[] | []>([]);
+  const params = useSearchParams();
+  const cuuid = params.get("cuuid");
+  const conductors = useAppSelector((state) => state.constructionTask.conductor);
+  const neutral = useAppSelector((state) => state.constructionTask.neutral);
   const [success, setSuccess] = useState(false);
-
+  const dispatch = useAppDispatch();
   const handleReturn = () => {
     if (step > 0) {
       setStep(step - 1);
@@ -49,21 +53,12 @@ const LineConstrucitonEntryForm = () => {
 
   // EFFECT THAT GET THE CONDUCTOR DATA
   useEffect(() => {
-    const getConductorData = async () => {
-      const data = await GetConductorName();
-      if (data) {
-        setConductors(data);
-      }
+    const fetchData = async () => {
+      dispatch(fetchConductorData());
+      dispatch(fetchNeutralData());
     };
-    const getNeutralData = async () => {
-      const data = await GetNeutralName();
-      if (data) {
-        setNeutral(data);
-      }
-    };
-    getConductorData();
-    getNeutralData();
-  }, []);
+    fetchData();
+  }, [dispatch]);
 
   //   WATCH INPUTS
   const lineType = useWatch({
@@ -78,12 +73,13 @@ const LineConstrucitonEntryForm = () => {
   const onSubmit: SubmitHandler<LineConstructionType> = async (data) => {
     const cleanedData = DataCleaner({
       ...data,
-      const_uuid: crypto.randomUUID(),
+      cuuid: cuuid || "",
       uuid: crypto.randomUUID(),
       is_synced: false,
       is_deleted: false,
       datetime_synced: null,
       datetime_deleted: null,
+      pct_acc: 0,
     });
     const db = await getDB();
     const transaction = db.transaction("line_constructions", "readwrite");

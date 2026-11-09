@@ -20,8 +20,9 @@ const ConstructionTaskContainer = () => {
   const searchParams = useSearchParams();
 
   const cuuid = searchParams.get("cuuid");
-  console.log("widow", window.location.href);
+  
   useEffect(()=>{
+    
     const fetchData = async () => {
       dispatch(fetchLineConstructions(cuuid || ''));
     }

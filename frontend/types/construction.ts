@@ -4,7 +4,7 @@
 export type ConstructionType = {
     id?: number;
     uuid?: string;
-    activity: 'Line Construction' | 'Transformer Installation'
+    activity: string;
     description: string;
     date: string;
     is_synced?: boolean;
@@ -32,5 +32,6 @@ export type LineConstructionType = {
  datetime_synced?: string;
  is_deleted?: boolean;
  datetime_deleted?: string;
+ pct_acc: number;
 }
 

@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import Link from "next/link";
-import { X, Construction, ArrowUpRight, Zap } from "lucide-react";
+import { X, UtilityPole, ArrowUpRight, Zap } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 const AddTask = () => {
   const modalRef = useRef<HTMLDialogElement>(null);
@@ -30,7 +30,7 @@ const AddTask = () => {
         <button
           className="btn btn-sm btn-circle btn-ghost absolute right-3 top-3"
           onClick={handleCloseModal}
-          aria-label="Close modal"
+         
         >
           <X size={18} />
         </button>
@@ -48,7 +48,7 @@ const AddTask = () => {
             className="group flex items-center gap-4 rounded-xl border border-base-300 p-4 transition-all hover:border-primary hover:bg-primary/5 active:border-primary active:bg-primary/5"
           >
             <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Construction size={22} />
+              <UtilityPole size={22} />
             </div>
 
             <div className="flex-1">
@@ -60,7 +60,7 @@ const AddTask = () => {
 
             <ArrowUpRight
               size={18}
-              className="text-base-content/40 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
+              className="text-base-content/40 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary group-active:-translate-y-0.5 group-active:translate-x-0.5 group-active:text-primary"
             />
           </Link>
 
@@ -81,15 +81,13 @@ const AddTask = () => {
 
             <ArrowUpRight
               size={18}
-              className="text-base-content/40 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
+              className="text-base-content/40 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary group-active:-translate-y-0.5 group-active:translate-x-0.5 group-active:text-primary"
             />
           </Link>
         </div>
       </div>
 
-      <form method="dialog" className="modal-backdrop">
-        <button>close</button>
-      </form>
+      
     </dialog>
     </>
   );
