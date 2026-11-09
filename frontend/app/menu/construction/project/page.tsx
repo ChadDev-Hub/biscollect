@@ -11,17 +11,19 @@ const ProjectPage = () => {
     <div className="bg-base-300 min-h-screen  flex flex-col items-center">
         <ToolsNavar>
             <div className="flex-1">
-                <ReturnMenu />
+                <ReturnMenu  />
             </div>
             <Suspense fallback={<div>Loading...</div>}>
                  <AddTask />
             </Suspense>
             
         </ToolsNavar>
-
-        <Suspense fallback={<div>Loading...</div>}>
+        <div className="flex flex-col gap-4 w-full place-items-center p-4">
+             <Suspense fallback={<div>Loading...</div>}>
             <ConstructionTaskContainer />
         </Suspense>
+        </div>
+       
     </div>
   );
 };

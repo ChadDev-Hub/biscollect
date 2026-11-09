@@ -9,7 +9,7 @@ const ChageMeters = () => {
     <div className="bg-base-300 min-h-screen  flex flex-col items-center">
       <ToolsNavar>
         <div className="flex-1">
-          <ReturnMenu />
+          <ReturnMenu/>
         </div>
         <ClaudeSyncButton />
         <AddEntries />

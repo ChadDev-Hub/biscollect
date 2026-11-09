@@ -1,24 +1,21 @@
 "use client";
 
-import {useRouter, usePathname} from "next/navigation";
+import { useRouter} from 'next/navigation';
 import {CornerDownLeft} from "lucide-react"
+import {useSearchParams} from "next/navigation";
 
 
 const ReturnMenu = () => {
     const router = useRouter();
-    const currentPath = usePathname();
-    const pathReturnsToMenu = [
-        "/menu/new-connection",
-        "/menu/change-meter",
-        "/menu/construction",
-        "/menu/distribution-map",
-    ]
+    const params = useSearchParams();
+    const returnTo = params.get("returnTo");
+ 
     const handleReturn = () => {
-        if (pathReturnsToMenu.includes(currentPath)) {
-            router.push("/menu");
-        }else{
+        if (!returnTo) {
             router.back();
+            return;
         }
+        router.replace(returnTo);
     }
   return (
     <button type="button" className="btn btn-sm flex items-center gap-2 btn-primary" onClick={handleReturn}>

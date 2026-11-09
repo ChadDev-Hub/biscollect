@@ -6,9 +6,13 @@ import Link from "next/link";
 
 const AddEntries = () => {
     const currentPath = usePathname();
+    const params = new URLSearchParams({
+        returnTo: currentPath
+    })
+    
   return (
     <Link
-      href={`${currentPath}/new-entry`}
+      href={`${currentPath}/new-entry?${params.toString()}`}
       data-tip="Add Entry"
       className="btn btn-circle btn-outline btn-primary tooltip tooltip-left tooltip-info"
       type="button"

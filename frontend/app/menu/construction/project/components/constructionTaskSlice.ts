@@ -3,14 +3,12 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import type { LineConstructionType } from "@/types/construction";
 import type { ConductorName } from "@/types/conductor-wire";
 import { GetConductorName, GetNeutralName } from "@/lib/actions/conductor";
-
 import { getDB } from "@/lib/db";
 
 export const fetchLineConstructions = createAsyncThunk<
   LineConstructionType[],
   string
 >("constructionTask/fetchLineConstructions", async (cuuid: string) => {
-  console.log("fetchLineConstructions", cuuid);
   const db = getDB();
   const transaction = (await db).transaction("line_constructions", "readonly");
   const store = transaction.objectStore("line_constructions");
@@ -25,14 +23,12 @@ export const fetchConductorData = createAsyncThunk<ConductorName[], void>(
   async () => {
     try {
       const conductorData = await GetConductorName();
-      console.log(conductorData);
       return conductorData ?? [];
     } catch (error) {
       throw error;
     }
   },
 );
-
 
 export const fetchNeutralData = createAsyncThunk<ConductorName[], void>(
   "constructionTask/fetchNeutralData",
@@ -44,8 +40,25 @@ export const fetchNeutralData = createAsyncThunk<ConductorName[], void>(
       throw error;
     }
   },
-)
+);
 
+export const AddContructionLinetoDb = createAsyncThunk<
+  void,
+  LineConstructionType
+>(
+  "constructionTask/AddContructionLintoDb",
+  async (data: LineConstructionType, { rejectWithValue }) => {
+    try {
+      const db = await getDB();
+      const transaction = db.transaction("line_constructions", "readwrite");
+      const store = transaction.objectStore("line_constructions");
+      await store.add(data);
+      await transaction.done;
+    } catch (error) {
+      if (error) return rejectWithValue("Error adding construction activity");
+    }
+  },
+);
 
 type ConstructionTaskState = {
   line_constructions: LineConstructionType[] | [];
@@ -76,12 +89,21 @@ export const constructionTaskSlice = createSlice({
         0,
       );
       action.payload.id = maxId + 1;
-      state.line_constructions = [action.payload, ...state.line_constructions];
+      const newData = {
+        ...action.payload,
+        conductor: state.conductor.find(
+          (item) => item.id === action.payload.conductor,
+        )?.name as string,
+        neutral: state.neutral.find(
+          (item) => item.id === action.payload.neutral,
+        )?.name as string,
+      };
+      state.line_constructions = [newData, ...state.line_constructions];
     },
   },
   extraReducers: (builder) => {
     builder
-    // LINE CONSTRUCTION DATA
+      // LINE CONSTRUCTION DATA
       .addCase(
         fetchLineConstructions.fulfilled,
         (state, action: PayloadAction<LineConstructionType[]>) => {
@@ -99,41 +121,41 @@ export const constructionTaskSlice = createSlice({
         state.error = "Error fetching line constructions";
       })
 
-    // CONDUCTOR DATA
-    .addCase(
-      fetchConductorData.fulfilled,
-      (state, action: PayloadAction<ConductorName[]>) => {
-        state.conductor = action.payload;
+      // CONDUCTOR DATA
+      .addCase(
+        fetchConductorData.fulfilled,
+        (state, action: PayloadAction<ConductorName[]>) => {
+          state.conductor = action.payload;
+          state.error = "";
+          state.loading = false;
+        },
+      )
+      .addCase(fetchConductorData.pending, (state) => {
+        state.loading = true;
         state.error = "";
+      })
+      .addCase(fetchConductorData.rejected, (state) => {
         state.loading = false;
-      },
-    )
-    .addCase(fetchConductorData.pending, (state) => {
-      state.loading = true;
-      state.error = "";
-    })
-    .addCase(fetchConductorData.rejected, (state) => {
-      state.loading = false;
-      state.error = "Error fetching conductor data";
-    })
+        state.error = "Error fetching conductor data";
+      })
 
-    // NEUTRAL DATA
-    .addCase(
-      fetchNeutralData.fulfilled,
-      (state, action: PayloadAction<ConductorName[]>) => {
-        state.neutral = action.payload;
+      // NEUTRAL DATA
+      .addCase(
+        fetchNeutralData.fulfilled,
+        (state, action: PayloadAction<ConductorName[]>) => {
+          state.neutral = action.payload;
+          state.error = "";
+          state.loading = false;
+        },
+      )
+      .addCase(fetchNeutralData.pending, (state) => {
+        state.loading = true;
         state.error = "";
+      })
+      .addCase(fetchNeutralData.rejected, (state) => {
         state.loading = false;
-      },
-    )
-    .addCase(fetchNeutralData.pending, (state) => {
-      state.loading = true;
-      state.error = "";
-    })
-    .addCase(fetchNeutralData.rejected, (state) => {
-      state.loading = false;
-      state.error = "Error fetching neutral data";
-    })
+        state.error = "Error fetching neutral data";
+      });
   },
 });
 

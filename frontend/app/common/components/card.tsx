@@ -34,15 +34,19 @@ export default function MeterAccomplishedCard({
   datetime_synced
 }: Props) {
   const currentPath = usePathname();
+  const params = new URLSearchParams({
+    uuid: uuid,
+    returnTo: currentPath
+  })
   let store = "";
   let detailLink = "";
   switch (currentPath) {
     case "/menu/change-meter":
-      detailLink = `/menu/change-meter/full-detail?uuid=${uuid}`;
+      detailLink = `/menu/change-meter/full-detail?${params.toString()}`;
       store = "change_meters";
       break;
     case "/menu/new-connection":
-      detailLink = `/menu/new-connection/full-detail?uuid=${uuid}`;
+      detailLink = `/menu/new-connection/full-detail?${params.toString()}`;
       store = "new_connections";
       break;
     default:

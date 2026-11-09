@@ -1,12 +1,36 @@
+
 import {configureStore} from '@reduxjs/toolkit';
 import constructionSlice from '@/app/menu/construction/components/construction-slice';
 import constructionTaskSlice from '@/app/menu/construction/project/components/constructionTaskSlice';
+import LineConstructionDetailSlice from '@/app/menu/construction/project/line-construction/full-detail/components/lineConstructionDetailSlice';
+
 
 export const store  = configureStore({
     reducer: {
         construction: constructionSlice,
-        constructionTask: constructionTaskSlice
+        constructionTask: constructionTaskSlice,
+        lineconstructionDetail: LineConstructionDetailSlice
     },
+    middleware: (getDefaultMiddleware) => 
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: [
+                    'constructionTask/AddContructionLintoDb',
+                    'constructionTask/fetchLineConstructions',
+                    'constructionTask/addLineConstruction',
+                    'lineConstructionDetail/fetchDetail',
+                ],
+                ignoredPaths: [
+                    'constructionTask.line_constructions',
+                    'lineconstructionDetail.data',
+                ],
+                ignoredActionPaths: [
+                    /meta.arg/,
+                    'meta.arg.file',
+                    /^payload\.(?:\d+\.)?image$/
+                ]
+            }
+        })
 });
 
 

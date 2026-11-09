@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 import InputField from "../../../../../common/components/form-field-components/input-field";
-import { UtilityPole, Calendar, MapPin, Undo2 } from "lucide-react";
+import { UtilityPole, Calendar, MapPin, Undo2, Workflow, LineSquiggle} from "lucide-react";
 import { LineConstructionType } from "@/types/construction";
 import CheckBoxFieldOption from "../../../../../common/components/form-field-components/radio-input-field";
 import SelectInputField from "../../../../../common/components/form-field-components/select-input-field";
@@ -12,16 +12,13 @@ import ImageField from "@/app/common/components/form-field-components/image-fiel
 const constuctionType = ["Line Extension", "New Line"];
 const LineType = ["Primary", "Secondary", "Underbuilt"];
 const Phasing = ["AN", "BN", "CN", "ABCN", "BCN", "ACN", "ABN", "BAN", "CAN"];
-import FormButton from "../../../../../common/components/form-button";
+import FormButton from "../../../../../common/components/buttons/form-button";
 import SubmitCompletion from "../../../../../common/components/submit-completion";
-import { DataCleaner } from "@/lib/data-cleaner";
-import { getDB } from "../../../../../../lib/db";
 import TextAreaField from "../../../../../common/components/form-field-components/text-area-field";
 import { useAppDispatch, useAppSelector } from "../../../../../hooks";
 
 import { useSearchParams } from 'next/navigation';
-import { fetchConductorData, fetchNeutralData } from '../../components/constructionTaskSlice';
-
+import { fetchConductorData, fetchNeutralData, AddContructionLinetoDb,  addLineConstruction} from '../../components/constructionTaskSlice';
 const LineConstrucitonEntryForm = () => {
   const {
     reset,
@@ -71,21 +68,18 @@ const LineConstrucitonEntryForm = () => {
   });
 
   const onSubmit: SubmitHandler<LineConstructionType> = async (data) => {
-    const cleanedData = DataCleaner({
+    const cleanedData: LineConstructionType ={
       ...data,
       cuuid: cuuid || "",
       uuid: crypto.randomUUID(),
       is_synced: false,
       is_deleted: false,
-      datetime_synced: null,
-      datetime_deleted: null,
+      datetime_synced: undefined,
+      datetime_deleted: undefined,
       pct_acc: 0,
-    });
-    const db = await getDB();
-    const transaction = db.transaction("line_constructions", "readwrite");
-    const store = transaction.objectStore("line_constructions");
-    await store.put(cleanedData);
-    await transaction.done;
+    }
+    dispatch(addLineConstruction(cleanedData));
+    dispatch(AddContructionLinetoDb(cleanedData));
     setSuccess(true);
     reset();
   };
@@ -115,7 +109,7 @@ const LineConstrucitonEntryForm = () => {
       </div>
       {success ? (
         <SubmitCompletion
-          returnPath="/menu/construction/line-construction"
+          returnPath={`/menu/construction/project?cuuid=${cuuid}`}
           onNewEntry={handleNewEntry}
         />
       ) : (
@@ -139,6 +133,7 @@ const LineConstrucitonEntryForm = () => {
 
               {/* CONSTRUCTION TYPE */}
               <SelectInputField
+                Icon={Workflow}
                 name="type"
                 register={register}
                 label="Construction Type"
@@ -199,6 +194,7 @@ const LineConstrucitonEntryForm = () => {
             <>
               {/* CONDUCTOR */}
               <SelectInputField
+                Icon={LineSquiggle}
                 name="conductor"
                 register={register}
                 label="Conductor"
@@ -210,6 +206,7 @@ const LineConstrucitonEntryForm = () => {
 
               {/* NEUTRAL WIRE TYPE */}
               <SelectInputField
+                Icon={LineSquiggle}
                 register={register}
                 name="neutral"
                 required={false}

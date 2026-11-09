@@ -15,19 +15,22 @@ import {
   NotebookPen,
   MapPinned,
 } from "lucide-react";
-import FormButton from "../../../../common/components/form-button";
+import FormButton from "../../../../common/components/buttons/form-button";
 import SubmitCompletion from "../../../../common/components/submit-completion";
 import CoordinatesField from "../../../../common/components/form-field-components/coordinates-field";
 import ImageField from "../../../../common/components/form-field-components/image-field";
 import { getDB } from "../../../../../lib/db";
 import { Feature } from "@/types/geojson";
 import {handleSearch} from '@/lib/actions/consumer-meter';
+import {useSearchParams} from 'next/navigation';
+
 const EntryForm = () => {
   const [uuid, setUuid] = useState("");
   const [step, setStep] = useState(0);
   const [success, setSuccess] = useState(false);
   const [consumerOptions, setConsumerOption] = useState<Feature[] | []>([]);
-
+  const [accountOptions, setAccountOption] = useState<Feature[] | []>([]);
+  const params = useSearchParams();
   // GENERATE UUID ON INTIAL LOAD
   useEffect(() => {
     const SetUUID = async () => {
@@ -104,7 +107,7 @@ const EntryForm = () => {
       {success ? (
         <SubmitCompletion
           onNewEntry={handleNewEntry}
-          returnPath={`/menu/change-meter`}
+          returnPath={`/menu/change-meter?returnTo=${params.get('returnTo')}`}
         />
       ) : (
         <>
@@ -132,11 +135,11 @@ const EntryForm = () => {
                 register={register}
                 label="Account Number"
                 error={errors.account_no?.message}
-                listOptionId="consumer"
-                consumerLisOption={consumerOptions}
+               
+                consumerLisOption={accountOptions}
                 setValue={setValue}
-                setConsumerOption={setConsumerOption}
-                onChange={(e)=>handleSearch(e, setConsumerOption)}
+                setConsumerOption={setAccountOption}
+                onChange={(e)=>handleSearch(e, setAccountOption)}
               />
 
               {/* CONSUMERS NAME */}
@@ -147,6 +150,11 @@ const EntryForm = () => {
                 register={register}
                 label="Consumer Name"
                 error={errors.consumer_name?.message}
+                
+                consumerLisOption={consumerOptions}
+                setValue={setValue}
+                setConsumerOption={setConsumerOption}
+                onChange={(e)=>handleSearch(e, setConsumerOption)}
               />
             </>
           )}

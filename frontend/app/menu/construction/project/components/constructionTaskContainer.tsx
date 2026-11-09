@@ -2,7 +2,7 @@
 
 import { LineConstructionType } from "@/types/construction";
 import { useEffect} from 'react'
-import ConstructionCardTask from "./construction-card";
+import ConstructionCardTask from "../line-construction/component/construction-card";
 import { useAppDispatch, useAppSelector } from '../../../../hooks';
 import {fetchLineConstructions} from "./constructionTaskSlice";
 import {useSearchParams} from 'next/navigation';

@@ -44,7 +44,7 @@ const AddTask = () => {
 
         <div className="flex flex-col gap-3">
           <Link
-            href={`/menu/construction/project/line-construction-newentry?cuuid=${project_id}`}
+            href={`/menu/construction/project/line-construction?cuuid=${project_id}`}
             className="group flex items-center gap-4 rounded-xl border border-base-300 p-4 transition-all hover:border-primary hover:bg-primary/5 active:border-primary active:bg-primary/5"
           >
             <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -65,7 +65,7 @@ const AddTask = () => {
           </Link>
 
           <Link
-            href={`/menu/construction/project/transformer-installation-newentry?cuuid=${project_id}`}
+            href={`/menu/construction/project/transformer-installation?cuuid=${project_id}`}
             className="group flex items-center gap-4 rounded-xl border border-base-300 p-4 transition-all hover:border-primary hover:bg-primary/5 active:border-primary active:bg-primary/5"
           >
             <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">

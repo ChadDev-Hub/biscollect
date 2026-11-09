@@ -11,7 +11,7 @@ const Construction = () => {
     <div className="bg-base-300 flex flex-col items-center min-h-screen justify-center">
       <ToolsNavar>
         <div className="flex-1">
-          <ReturnMenu />
+          <ReturnMenu/>
         </div>
         <ClaudeSyncButton />
         <AddProject>

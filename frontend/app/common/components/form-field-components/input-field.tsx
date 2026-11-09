@@ -10,7 +10,7 @@ import {
 } from "react-hook-form";
 import { LucideIcon } from "lucide-react";
 import { Feature } from "@/types/geojson";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 type Props<T extends FieldValues> = {
   name: FieldPath<T>;
   register: UseFormRegister<T>;
@@ -56,7 +56,12 @@ const InputField = <T extends FieldValues>({
   setConsumerOption,
   onChange,
 }: Props<T>) => {
+  const [focus, setFocus] = useState(true);
+
+  const handleFocus = () => setFocus(true);
+  const handleBlur = () => setFocus(false);
   const handleSelectedConsumter = (feature: Feature) => {
+    
     if (!setValue) return;
 
     setValue(
@@ -117,10 +122,12 @@ const InputField = <T extends FieldValues>({
           </div>
 
           <input
+            onFocus={handleFocus}
             disabled={isDisabled}
             hidden={hidden}
             {...register(name, {
               required: { value: required, message: `${label} is Required` },
+              onBlur: handleBlur,
               onChange: onChange,
               ...(minLength && {
                 minLength: {
@@ -146,8 +153,8 @@ const InputField = <T extends FieldValues>({
           />
         </label>
 
-        {consumerLisOption && consumerLisOption.length > 0 && (
-          <ul className="absolute rounded list list-sm top-full mt-3 left-0 border border-slate-400/55  shadow-2xl max-h-64 z-99999 w-full overflow-y-auto bg-base-300 ">
+        {consumerLisOption && consumerLisOption.length > 0  && (
+          <ul id={`${name}-options`} className="absolute rounded list list-sm top-full mt-3 left-0 border border-slate-400/55  shadow-2xl max-h-64 z-99999 w-full overflow-y-auto bg-base-300 ">
             {consumerLisOption.map((item: Feature, index: number) => (
               <li
                 onClick={() => handleSelectedConsumter(item)}

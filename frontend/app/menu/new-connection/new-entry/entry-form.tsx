@@ -7,8 +7,8 @@ import ImageField from "@/app/common/components/form-field-components/image-fiel
 import { useState, useEffect } from "react";
 import { Undo2 } from "lucide-react";
 import { getDB } from "@/lib/db";
-import FormButton from "../../../common/components/form-button";
-
+import FormButton from "../../../common/components/buttons/form-button";
+import { useSearchParams } from "next/navigation";
 import {
   Calendar,
   User,
@@ -19,6 +19,7 @@ import {
   Asterisk,
   NotebookPen,
   MapPinned,
+
 } from "lucide-react";
 import SubmitCompletion from "../../../common/components/submit-completion";
 
@@ -26,6 +27,7 @@ const EntryForm = () => {
   const [step, setStep] = useState(0);
   const [uniqueid, setUniqueid] = useState("");
   const [success, setSuccess] = useState(false);
+  const params = useSearchParams();
   useEffect(() => {
     queueMicrotask(() => setUniqueid(crypto.randomUUID()));
   }, []);
@@ -96,7 +98,7 @@ const EntryForm = () => {
       {success ? (
         <SubmitCompletion
           onNewEntry={handleNewEntry}
-          returnPath={`/menu/new-connection`}
+          returnPath={`/menu/new-connection?returnTo=${params.get("returnTo")}`}
         />
       ) : (
         <>

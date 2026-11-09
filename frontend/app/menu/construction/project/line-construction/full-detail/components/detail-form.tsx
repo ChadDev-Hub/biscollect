@@ -5,23 +5,24 @@ import { useSearchParams } from "next/navigation";
 import { LineConstructionType } from "@/types/construction";
 import { getDB } from "@/lib/db";
 import { useEffect, useState } from "react";
-import SelectInputField from "../../../../../common/components/form-field-components/select-input-field";
-import EditButton from "../../../../../common/components/edit-button";
+import SelectInputField from "@/app/common/components/form-field-components/select-input-field";
+import EditButton from "@/app/common/components/edit-button";
 import InputField from "@/app/common/components/form-field-components/input-field";
 import TextAreaField from "@/app/common/components/form-field-components/text-area-field";
-import CheckBoxFieldOption from "../../../../../common/components/form-field-components/radio-input-field";
-import { ConductorName } from "../../../../../../types/conductor-wire";
-import { GetConductorName, GetNeutralName } from "@/lib/actions/conductor";
+import CheckBoxFieldOption from "@/app/common/components/form-field-components/radio-input-field";
 import CoordinatesField from "@/app/common/components/form-field-components/coordinates-field";
 import ImageField from "@/app/common/components/form-field-components/image-field";
 import { useAlert } from '@/app/common/components/alert';
-
+import { useAppDispatch, useAppSelector } from '../../../../../../hooks';
+import { fetchDetail } from "./lineConstructionDetailSlice";
 const DetailForm = () => {
   const searchParams = useSearchParams();
   const uuid = searchParams.get("uuid");
+  const dispatch = useAppDispatch();
   const [editMode, setEditMode] = useState(false);
-  const [conductors, setConductors] = useState<ConductorName[] | []>([]);
-  const [neutral, setNeutral] = useState<ConductorName[] | []>([]);
+  const conductors = useAppSelector((state) => state.constructionTask.conductor);
+  const neutral = useAppSelector((state) => state.constructionTask.neutral);
+  const detail = useAppSelector((state) => state.lineconstructionDetail.data);
   const {showAlert} =  useAlert();
   const {
     register,
@@ -34,38 +35,22 @@ const DetailForm = () => {
     mode: "all",
     shouldUnregister: false,
   });
+
+  // RESET THE DETAIL IF NEW DATA ARRIVES
+  useEffect(() => {
+    if (!detail) return;
+    reset(detail);
+  }, [detail, reset]);
+
   //   EFFECT THAN GET LINE CONSTRUCTION DATA
   useEffect(() => {
-    const getEntry = async () => {
-      const idb = await getDB();
-      const transaction = idb.transaction("line_constructions", "readwrite");
-      const store = transaction.objectStore("line_constructions");
-      const index = store.index("uuid");
-      const result = await index.get(uuid ?? "");
-      reset(result);
-    };
-    getEntry();
-  }, [uuid, reset]);
+     if (!uuid) return;
+      const fetchData = async () => {
+        dispatch(fetchDetail(uuid));
+      };
+      fetchData();
+  }, [uuid, dispatch]);
 
-  //   EFFECT THAT GET THE CONDUCTOR DATA
-
-  useEffect(() => {
-    const getConductorData = async () => {
-      const data = await GetConductorName();
-      if (data) {
-        setConductors(data);
-      }
-    };
-    const getNeutralData = async () => {
-      const data = await GetNeutralName();
-      if (data) {
-        setNeutral(data);
-      }
-    };
-
-    getConductorData();
-    getNeutralData();
-  }, []);
   
   //   WATCH INPUTS
   const lineType = useWatch({
@@ -86,7 +71,7 @@ const DetailForm = () => {
         ...data,
         is_synced: false,
       });
-      console.log(data);
+   
       await transaction.done;
 
       setEditMode(false);

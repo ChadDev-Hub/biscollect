@@ -7,7 +7,7 @@ import {
   LucideIcon,
   CalendarDays,
 } from "lucide-react";
-import DeleteRecord from "../../../../common/components/delete";
+import DeleteRecord from "../../../../../common/components/delete";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
   date_accomplished: string;
   description?: string;
   datetime_synced?: string;
-  information: Information[];
+  information?: Information[];
 };
 
 type Title = {
@@ -49,7 +49,19 @@ const ConstructionCardTask = ({
   const currentPath = usePathname();
   
   return (
-    <div className="card w-full max-w-md  p-4 bg-base-100 shadow-md border border-base-200 hover:border-primary/20 transition-all duration-300 group">
+    <div className="
+    card 
+    w-full max-w-md 
+     p-4 bg-base-100 
+     shadow-md border
+      border-base-200 
+      transition-all 
+      duration-300 
+      group 
+      hover:shadow-2xl
+      hover:border-primary
+      active:shadow-2xl 
+      active:border-primary">
       <div className="h-1.5 w-full bg-linear-to-r from-primary mb-3 to-secondary rounded-t-2xl" />
 
       <div className="card-body p-0">
@@ -103,7 +115,7 @@ const ConstructionCardTask = ({
         <div className="divider my-1 opacity-60"></div>
         {/* INFORMATIONS */}
         <div className="grid grid-cols-2 gap-2">
-          {information.map((info, index) => (
+          {information?.map((info, index) => (
             <div
               key={index}
               className="flex items-center gap-2.5 p-2 rounded-xl bg-base-200/40 border border-base-200"
@@ -115,7 +127,7 @@ const ConstructionCardTask = ({
                 <label className="text-[10px] label font-bold">
                   {info.label}
                 </label>
-                <p className="text-xs italic">{info.value}</p>
+                <p className="text-xs italic">{String(info.value)}</p>
               </div>
             </div>
           ))}
@@ -126,7 +138,7 @@ const ConstructionCardTask = ({
         <div className="card-actions justify-end">
           <DeleteRecord store="line_constructions" uuid={uuid} />
           <Link
-            href={`${currentPath}/full-detail?uuid=${uuid}`}
+            href={`${currentPath}/line-construction/full-detail?uuid=${uuid}`}
             className="btn btn-primary btn-sm"
           >
             Full Detail
