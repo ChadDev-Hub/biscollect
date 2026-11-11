@@ -2,14 +2,14 @@
 import {configureStore} from '@reduxjs/toolkit';
 import constructionSlice from '@/app/menu/construction/components/construction-slice';
 import constructionTaskSlice from '@/app/menu/construction/project/components/constructionTaskSlice';
-import LineConstructionDetailSlice from '@/app/menu/construction/project/line-construction/full-detail/components/lineConstructionDetailSlice';
-
-
+import navigationSlice from './common/slice/navigationSlice';
+import LineConstructionSlice from '@/app/menu/construction/project/line-construction/full-detail/components/lineConstructionDetailSlice';
 export const store  = configureStore({
     reducer: {
         construction: constructionSlice,
         constructionTask: constructionTaskSlice,
-        lineconstructionDetail: LineConstructionDetailSlice
+        navigation: navigationSlice,
+        lineconstructionDetail: LineConstructionSlice
     },
     middleware: (getDefaultMiddleware) => 
         getDefaultMiddleware({

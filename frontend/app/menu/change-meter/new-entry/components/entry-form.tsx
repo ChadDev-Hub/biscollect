@@ -22,7 +22,8 @@ import ImageField from "../../../../common/components/form-field-components/imag
 import { getDB } from "../../../../../lib/db";
 import { Feature } from "@/types/geojson";
 import {handleSearch} from '@/lib/actions/consumer-meter';
-import {useSearchParams} from 'next/navigation';
+import {popUrl} from '@/app/common/slice/navigationSlice';
+import {  useAppSelector, useAppDispatch } from '@/app/hooks';
 
 const EntryForm = () => {
   const [uuid, setUuid] = useState("");
@@ -30,7 +31,8 @@ const EntryForm = () => {
   const [success, setSuccess] = useState(false);
   const [consumerOptions, setConsumerOption] = useState<Feature[] | []>([]);
   const [accountOptions, setAccountOption] = useState<Feature[] | []>([]);
-  const params = useSearchParams();
+  const previousPath = useAppSelector((state) => state.navigation.history.at(-1));
+  console.log(previousPath);
   // GENERATE UUID ON INTIAL LOAD
   useEffect(() => {
     const SetUUID = async () => {
@@ -82,11 +84,11 @@ const EntryForm = () => {
     reset();
     setUuid(crypto.randomUUID());
   };
-
-  
-
-  
-
+  const dispatch = useAppDispatch();
+ 
+  const handleCompletionClick = () => {
+    dispatch(popUrl());
+  }
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -106,8 +108,9 @@ const EntryForm = () => {
       </div>
       {success ? (
         <SubmitCompletion
+          onClick={handleCompletionClick}
           onNewEntry={handleNewEntry}
-          returnPath={`/menu/change-meter?returnTo=${params.get('returnTo')}`}
+          returnPath={previousPath ? previousPath : "/"}
         />
       ) : (
         <>

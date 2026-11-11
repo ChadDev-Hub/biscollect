@@ -8,7 +8,6 @@ import { useState, useEffect } from "react";
 import { Undo2 } from "lucide-react";
 import { getDB } from "@/lib/db";
 import FormButton from "../../../common/components/buttons/form-button";
-import { useSearchParams } from "next/navigation";
 import {
   Calendar,
   User,
@@ -22,12 +21,13 @@ import {
 
 } from "lucide-react";
 import SubmitCompletion from "../../../common/components/submit-completion";
+import {useAppSelector, useAppDispatch } from '@/app/hooks';
+import { popUrl } from '@/app/common/slice/navigationSlice';
 
 const EntryForm = () => {
   const [step, setStep] = useState(0);
   const [uniqueid, setUniqueid] = useState("");
   const [success, setSuccess] = useState(false);
-  const params = useSearchParams();
   useEffect(() => {
     queueMicrotask(() => setUniqueid(crypto.randomUUID()));
   }, []);
@@ -74,7 +74,11 @@ const EntryForm = () => {
     reset();
     setUniqueid(crypto.randomUUID());
   };
-
+  const dispatch = useAppDispatch();
+  const previousPath = useAppSelector((state) => state.navigation.history.at(-1));
+  const handleSubmitCompletionReturnPath = () => {
+    dispatch(popUrl());
+  }
   return (
     <form
       onKeyDown={(e) => {
@@ -98,7 +102,8 @@ const EntryForm = () => {
       {success ? (
         <SubmitCompletion
           onNewEntry={handleNewEntry}
-          returnPath={`/menu/new-connection?returnTo=${params.get("returnTo")}`}
+          returnPath={previousPath ?? "/"}
+          onClick={handleSubmitCompletionReturnPath}
         />
       ) : (
         <>

@@ -1,6 +1,6 @@
 "use client";
 import LoginForm from "./components/loginform";
-import ReturnMenu from "@/app/common/components/return-menu";
+import ReturnMenu from "@/app/common/components/buttons/return-menu";
 import Header from "./components/header";
 import { Suspense } from "react";
 const GooleLoginPage = () => {

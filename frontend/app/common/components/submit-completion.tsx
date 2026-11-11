@@ -3,11 +3,12 @@
 import { CircleCheck } from "lucide-react";
 import Link from "next/link";
 type Props = {
+  onClick: () => void;
   returnPath: string;
   onNewEntry: () => void
 };
 const SubmitCompletion = (
-  {returnPath, onNewEntry}: Props
+  {returnPath, onNewEntry, onClick}: Props
 ) => {
 
   
@@ -20,6 +21,7 @@ const SubmitCompletion = (
 
       <div className="flex gap-4 justify-space-between">
         <Link
+          onClick={onClick}
           href={returnPath}
           type="button"
           className="btn btn-secondary"

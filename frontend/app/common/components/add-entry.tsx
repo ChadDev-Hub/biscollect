@@ -2,17 +2,22 @@
 import { CirclePlus } from "lucide-react";
 import {usePathname} from "next/navigation";
 import Link from "next/link";
-
+import { useAppDispatch } from '@/app/hooks';
+import {pushUrl} from '@/app/common/slice/navigationSlice';
 
 const AddEntries = () => {
     const currentPath = usePathname();
-    const params = new URLSearchParams({
-        returnTo: currentPath
-    })
+    const dispatch = useAppDispatch();
+  
+    const handleClick = () => {
+        dispatch(pushUrl(currentPath));
+        
+    }
     
   return (
     <Link
-      href={`${currentPath}/new-entry?${params.toString()}`}
+      onClick={handleClick}
+      href={`${currentPath}/new-entry`}
       data-tip="Add Entry"
       className="btn btn-circle btn-outline btn-primary tooltip tooltip-left tooltip-info"
       type="button"

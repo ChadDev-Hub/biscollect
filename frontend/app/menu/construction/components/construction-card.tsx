@@ -7,13 +7,21 @@ import {
 } from "lucide-react";
 import type { ConstructionType } from "@/types/construction";
 import Link from "next/link";
+import { useAppDispatch } from '@/app/hooks';
+import {pushUrl} from '@/app/common/slice/navigationSlice'
+import { usePathname } from 'next/navigation';
+
 type Props = {
   data: ConstructionType;
   onClick?: (data: ConstructionType) => void;
 };
 
 const ConstructionCard = ({ data}: Props) => {
-
+  const dispatch = useAppDispatch();
+  const currentPath = usePathname();
+  const handleClick = () => {
+    dispatch(pushUrl(currentPath));
+  }
 
   return (
       <div className="card w-full hover:shadow-2xl 
@@ -75,7 +83,7 @@ const ConstructionCard = ({ data}: Props) => {
             </time>
           </div>
 
-          <Link href={`/menu/construction/project?cuuid=${data.uuid}`}
+          <Link onClick={handleClick} href={`/menu/construction/project?cuuid=${data.uuid}`}
             className="text-xs font-semibold text-primary
               opacity-70 group-hover:opacity-100 transition-opacity group-active:opacity-100 group-focus-within:opacity-100"
           >

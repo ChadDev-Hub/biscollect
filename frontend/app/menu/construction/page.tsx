@@ -1,6 +1,6 @@
 "use client";
 
-import ReturnMenu from "@/app/common/components/return-menu";
+import ReturnMenu from "@/app/common/components/buttons/return-menu";
 import ToolsNavar from "@/app/common/components/tools-navbar";
 import ProjectForm from "@/app/menu/construction/components/project-form";
 import ClaudeSyncButton from "@/app/common/components/claude-sync-button";

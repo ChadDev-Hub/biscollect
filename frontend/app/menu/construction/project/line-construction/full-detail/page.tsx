@@ -1,13 +1,10 @@
 "use client";
 
-import ReturnMenu from "@/app/common/components/return-menu";
+import ReturnMenu from "@/app/common/components/buttons/return-menu";
 import DetailForm from "./components/detail-form";
 import { Suspense } from "react";
-import { useSearchParams } from "next/navigation";
 
 const FullDetail = () => {
-  const searchParams = useSearchParams();
-const cuuid = searchParams.get("cuuid");
   return (
     <div className="bg-base-300 min-h-screen  flex flex-col items-center">
       <header className="w-full p-4">

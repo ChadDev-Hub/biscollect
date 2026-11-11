@@ -9,7 +9,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {useAppDispatch} from '@/app/hooks';
+import {pushUrl} from '@/app/common/slice/navigationSlice';
 import Delete from "./delete";
+
 type Props = {
   uuid: string;
   date: string;
@@ -35,8 +38,7 @@ export default function MeterAccomplishedCard({
 }: Props) {
   const currentPath = usePathname();
   const params = new URLSearchParams({
-    uuid: uuid,
-    returnTo: currentPath
+    uuid: uuid
   })
   let store = "";
   let detailLink = "";
@@ -52,7 +54,10 @@ export default function MeterAccomplishedCard({
     default:
       break;
   }
-  
+  const dispatch = useAppDispatch();
+  const handleClick = () => {
+    dispatch(pushUrl(currentPath));
+  }
   return (
     <div
       key={uuid}
@@ -162,6 +167,7 @@ export default function MeterAccomplishedCard({
           <Delete store={store} uuid={uuid} />
           {/* FULL DETAIL BUTTON */}
           <Link
+            onClick={handleClick}
             href={detailLink}
             type="button"
             className="btn btn-primary btn-sm  normal-case font-medium gap-2 shadow-md shadow-primary/10"

@@ -1,5 +1,5 @@
 import EntryForm from "./entry-form";
-import ReturnButton from "../../../common/components/return-menu";
+import ReturnButton from "../../../common/components/buttons/return-menu";
 import { Suspense } from "react";
 const NewEntry = () => {
   return (

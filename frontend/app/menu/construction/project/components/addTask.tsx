@@ -3,9 +3,12 @@
 import React, { useRef } from "react";
 import Link from "next/link";
 import { X, UtilityPole, ArrowUpRight, Zap } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
+import {useAppDispatch} from '@/app/hooks';
+import {pushUrl} from '@/app/common/slice/navigationSlice';
 const AddTask = () => {
   const modalRef = useRef<HTMLDialogElement>(null);
+  const currentPath = usePathname();
   const searchParams = useSearchParams();
   const project_id = searchParams.get("cuuid");
   const handleOpenModal = () => {
@@ -19,6 +22,11 @@ const AddTask = () => {
     }
   }
 
+  const dispatch = useAppDispatch();
+  const handleClick = ()=> {
+    dispatch(pushUrl(currentPath));
+    handleCloseModal();
+  }
   return (
     <>
       <button className="btn btn-primary" onClick={handleOpenModal}>
@@ -44,6 +52,8 @@ const AddTask = () => {
 
         <div className="flex flex-col gap-3">
           <Link
+            id="line-construction"
+            onClick={handleClick}
             href={`/menu/construction/project/line-construction?cuuid=${project_id}`}
             className="group flex items-center gap-4 rounded-xl border border-base-300 p-4 transition-all hover:border-primary hover:bg-primary/5 active:border-primary active:bg-primary/5"
           >
@@ -65,6 +75,8 @@ const AddTask = () => {
           </Link>
 
           <Link
+            id="transformer-installation"
+            onClick={ handleClick}
             href={`/menu/construction/project/transformer-installation?cuuid=${project_id}`}
             className="group flex items-center gap-4 rounded-xl border border-base-300 p-4 transition-all hover:border-primary hover:bg-primary/5 active:border-primary active:bg-primary/5"
           >

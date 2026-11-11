@@ -2,6 +2,10 @@
 
 import { ReactNode } from 'react'
 import Link from 'next/link'
+import { useAppDispatch } from '@/app/hooks';
+import {pushUrl} from '@/app/common/slice/navigationSlice';
+import { usePathname } from 'next/navigation';
+
 type Props = {
   label: string;
   icon: ReactNode;
@@ -15,8 +19,15 @@ const Tool = ({
   route,
   isCommingSoon
 }: Props) => {
+  const currentPath = usePathname();
+  const dispatch = useAppDispatch();
+  const handleClick = () => {
+    dispatch(pushUrl(currentPath));
+  }
   return (
+    
     <Link
+      onClick={handleClick}
       prefetch
       href={isCommingSoon ? "#" : route}
       type="button"

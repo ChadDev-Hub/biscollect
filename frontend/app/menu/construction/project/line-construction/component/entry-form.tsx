@@ -15,10 +15,11 @@ const Phasing = ["AN", "BN", "CN", "ABCN", "BCN", "ACN", "ABN", "BAN", "CAN"];
 import FormButton from "../../../../../common/components/buttons/form-button";
 import SubmitCompletion from "../../../../../common/components/submit-completion";
 import TextAreaField from "../../../../../common/components/form-field-components/text-area-field";
-import { useAppDispatch, useAppSelector } from "../../../../../hooks";
-
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { popUrl } from "@/app/common/slice/navigationSlice";
 import { useSearchParams } from 'next/navigation';
 import { fetchConductorData, fetchNeutralData, AddContructionLinetoDb,  addLineConstruction} from '../../components/constructionTaskSlice';
+
 const LineConstrucitonEntryForm = () => {
   const {
     reset,
@@ -40,6 +41,7 @@ const LineConstrucitonEntryForm = () => {
   const cuuid = params.get("cuuid");
   const conductors = useAppSelector((state) => state.constructionTask.conductor);
   const neutral = useAppSelector((state) => state.constructionTask.neutral);
+  
   const [success, setSuccess] = useState(false);
   const dispatch = useAppDispatch();
   const handleReturn = () => {
@@ -90,6 +92,14 @@ const LineConstrucitonEntryForm = () => {
     setStep(0);
     reset();
   };
+
+
+
+  // RETURN PATH
+  const returnPath = useAppSelector((state) => state.navigation.history.at(-1));
+  const handleCompletionReturn = () => {
+    dispatch(popUrl());
+  }
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -109,8 +119,9 @@ const LineConstrucitonEntryForm = () => {
       </div>
       {success ? (
         <SubmitCompletion
-          returnPath={`/menu/construction/project?cuuid=${cuuid}`}
+          returnPath={returnPath ?? "/"}
           onNewEntry={handleNewEntry}
+          onClick={handleCompletionReturn}
         />
       ) : (
         <>

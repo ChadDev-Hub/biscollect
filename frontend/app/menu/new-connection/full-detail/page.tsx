@@ -1,5 +1,5 @@
 "use client";
-import ReturnMenu from "@/app/common/components/return-menu";
+import ReturnMenu from "@/app/common/components/buttons/return-menu";
 import DetailForm from "./components/detail-form";
 import { Suspense } from "react";
 

@@ -1,5 +1,5 @@
 "use client"
-import ReturnButton from "../../../common/components/return-menu";
+import ReturnButton from "../../../common/components/buttons/return-menu";
 import EntryForm from "./components/entry-form";
 const NewEntry = () => {
   return (
