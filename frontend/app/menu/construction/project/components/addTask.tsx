@@ -24,7 +24,7 @@ const AddTask = () => {
 
   const dispatch = useAppDispatch();
   const handleClick = ()=> {
-    dispatch(pushUrl(currentPath));
+    dispatch(pushUrl(`${currentPath}?${searchParams.toString()}`));
     handleCloseModal();
   }
   return (

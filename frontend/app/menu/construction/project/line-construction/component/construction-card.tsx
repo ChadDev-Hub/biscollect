@@ -1,15 +1,13 @@
 // frontend/components/LineConstruction.tsx
 "use client";
 
-import {
-  CloudCheck,
-  CloudAlert,
-  LucideIcon,
-  CalendarDays,
-} from "lucide-react";
+import { CloudCheck, CloudAlert, LucideIcon, CalendarDays } from "lucide-react";
 import DeleteRecord from "../../../../../common/components/delete";
 import Link from "next/link";
-import {usePathname} from "next/navigation";
+import { usePathname, useSearchParams} from "next/navigation";
+import { useAppDispatch } from "@/app/hooks";
+import { pushUrl } from "@/app/common/slice/navigationSlice";
+
 type Props = {
   uuid: string;
   is_synced: boolean;
@@ -24,7 +22,7 @@ type Title = {
   title: string;
   icon: LucideIcon;
   className: string;
-}
+};
 
 type Information = {
   label: string;
@@ -47,9 +45,15 @@ const ConstructionCardTask = ({
   information,
 }: Props) => {
   const currentPath = usePathname();
+  const dispatch = useAppDispatch();
+  const params = useSearchParams();
   
+  const handleNavigate = () => {
+    dispatch(pushUrl(`${currentPath}?${params.toString()}`));
+  };
   return (
-    <div className="
+    <div
+      className="
     card 
     w-full max-w-md 
      p-4 bg-base-100 
@@ -61,7 +65,8 @@ const ConstructionCardTask = ({
       hover:shadow-2xl
       hover:border-primary
       active:shadow-2xl 
-      active:border-primary">
+      active:border-primary"
+    >
       <div className="h-1.5 w-full bg-linear-to-r from-primary mb-3 to-secondary rounded-t-2xl" />
 
       <div className="card-body p-0">
@@ -138,6 +143,7 @@ const ConstructionCardTask = ({
         <div className="card-actions justify-end">
           <DeleteRecord store="line_constructions" uuid={uuid} />
           <Link
+            onClick={handleNavigate}
             href={`${currentPath}/line-construction/full-detail?uuid=${uuid}`}
             className="btn btn-primary btn-sm"
           >

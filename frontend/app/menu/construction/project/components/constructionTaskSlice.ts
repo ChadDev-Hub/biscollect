@@ -15,6 +15,14 @@ export const fetchLineConstructions = createAsyncThunk<
   const index = store.index("cuuid");
   const result = await index.getAll(cuuid);
   const reverse = result.reverse();
+
+  const conductorData =  await GetConductorName();
+  const neutralData = await GetNeutralName();
+
+  reverse.forEach((line) => {
+    line.conductor = conductorData?.find((item) => item.id === line.conductor)?.name ;
+    line.neutral = neutralData?.find((item) => item.id === line.neutral)?.name ;
+  });
   return reverse;
 });
 
