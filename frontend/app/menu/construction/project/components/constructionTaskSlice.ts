@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
+import type { PayloadAction} from "@reduxjs/toolkit";
 import type { LineConstructionType } from "@/types/construction";
 import type { ConductorName } from "@/types/conductor-wire";
 import { GetConductorName, GetNeutralName } from "@/lib/actions/conductor";
 import { getDB } from "@/lib/db";
+
 
 export const fetchLineConstructions = createAsyncThunk<
   LineConstructionType[],
@@ -88,26 +89,11 @@ export const constructionTaskSlice = createSlice({
   name: "constructionTask",
   initialState,
   reducers: {
-    addLineConstruction: (
-      state,
-      action: PayloadAction<LineConstructionType>,
-    ) => {
-      const maxId = Math.max(
-        ...state.line_constructions.map((item) => item.id || 0),
-        0,
-      );
-      action.payload.id = maxId + 1;
-      const newData = {
-        ...action.payload,
-        conductor: state.conductor.find(
-          (item) => item.id === action.payload.conductor,
-        )?.name as string,
-        neutral: state.neutral.find(
-          (item) => item.id === action.payload.neutral,
-        )?.name as string,
-      };
-      state.line_constructions = [newData, ...state.line_constructions];
-    },
+    filterData: (state, action) => {
+      state.loading = true;
+      state.line_constructions = action.payload;
+      state.loading = false;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -163,9 +149,34 @@ export const constructionTaskSlice = createSlice({
       .addCase(fetchNeutralData.rejected, (state) => {
         state.loading = false;
         state.error = "Error fetching neutral data";
-      });
+      })
+
+      // ADD CONSTRUCTION LINE DATA
+      .addCase(
+        AddContructionLinetoDb.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          state.error = "";
+          
+          const maxId = Math.max(
+            ...state.line_constructions.map((item) => item.id || 0),
+            0,
+          );
+          action.meta.arg.id= maxId + 1;
+          const newData = {
+            ...action.meta.arg,
+            conductor: state.conductor.find(
+              (item) => item.id === action.meta.arg.conductor,
+            )?.name as string,
+            neutral: state.neutral.find(
+              (item) => item.id === action.meta.arg.neutral,
+            )?.name as string,
+          };
+          state.line_constructions = [newData, ...state.line_constructions];
+        },
+      );
   },
 });
 
-export const { addLineConstruction } = constructionTaskSlice.actions;
+export const { filterData } = constructionTaskSlice.actions;
 export default constructionTaskSlice.reducer;

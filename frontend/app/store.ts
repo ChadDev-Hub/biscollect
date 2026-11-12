@@ -27,7 +27,7 @@ export const store  = configureStore({
                 ignoredActionPaths: [
                     /meta.arg/,
                     'meta.arg.file',
-                    /^payload\.(?:\d+\.)?image$/
+                    /^payload(?:\.\d+)?(?:\.item)?\.image$/,
                 ]
             }
         })

@@ -18,7 +18,7 @@ import TextAreaField from "../../../../../common/components/form-field-component
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { popUrl } from "@/app/common/slice/navigationSlice";
 import { useSearchParams } from 'next/navigation';
-import { fetchConductorData, fetchNeutralData, AddContructionLinetoDb,  addLineConstruction} from '../../components/constructionTaskSlice';
+import { fetchConductorData, fetchNeutralData, AddContructionLinetoDb} from '../../components/constructionTaskSlice';
 
 const LineConstrucitonEntryForm = () => {
   const {
@@ -80,7 +80,6 @@ const LineConstrucitonEntryForm = () => {
       datetime_deleted: undefined,
       pct_acc: 0,
     }
-    dispatch(addLineConstruction(cleanedData));
     dispatch(AddContructionLinetoDb(cleanedData));
     setSuccess(true);
     reset();
