@@ -53,12 +53,12 @@ const ConstructionCard = ({ data}: Props) => {
           {data.is_synced ? (
             <span className="badge badge-success badge-outline gap-1">
               <CloudCheck size={15} />
-              Synced
+            
             </span>
           ) : (
             <span className="badge badge-warning badge-outline gap-1">
               <CloudAlert size={15} />
-              Pending
+        
             </span>
           )}
         </div>

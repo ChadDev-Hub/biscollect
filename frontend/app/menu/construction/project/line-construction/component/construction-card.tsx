@@ -9,7 +9,9 @@ import {
 } from "lucide-react";
 import DeleteRecord from "../../../../../common/components/delete";
 import Link from "next/link";
-import {usePathname} from "next/navigation";
+import {usePathname, useSearchParams} from "next/navigation";
+import {useAppDispatch} from '@/app/hooks';
+import {pushUrl} from '@/app/common/slice/navigationSlice';
 type Props = {
   uuid: string;
   is_synced: boolean;
@@ -46,8 +48,13 @@ const ConstructionCardTask = ({
   date_accomplished,
   information,
 }: Props) => {
+  const searchParams = useSearchParams();
+  const dispatch = useAppDispatch();
   const currentPath = usePathname();
-  
+
+  const handleNavigation = () => {
+    dispatch(pushUrl(`${currentPath}?${searchParams.toString()}`));
+  }
   return (
     <div className="
     card 
@@ -138,6 +145,7 @@ const ConstructionCardTask = ({
         <div className="card-actions justify-end">
           <DeleteRecord store="line_constructions" uuid={uuid} />
           <Link
+            onClick={handleNavigation}
             href={`${currentPath}/line-construction/full-detail?uuid=${uuid}`}
             className="btn btn-primary btn-sm"
           >
