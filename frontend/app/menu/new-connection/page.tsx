@@ -15,10 +15,8 @@ const NewConnection = () => {
         <ClaudeSyncButton />
         <AddEntries />
       </ToolsNavar>
-      <main className="grid grid-cols-1  w-full max-w-2xl place-content-center place-items-center justify-between py-15 px-4">
-       
+      <main className="flex w-full max-w-6xl flex-col justify-center py-15 px-4">
           <NewConnectionContainer  />
-        
       </main>
     </div>
   );

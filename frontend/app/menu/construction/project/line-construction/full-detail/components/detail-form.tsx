@@ -6,7 +6,7 @@ import { LineConstructionType } from "@/types/construction";
 import { getDB } from "@/lib/db";
 import { useEffect, useState } from "react";
 import SelectInputField from "@/app/common/components/form-field-components/select-input-field";
-import EditButton from "@/app/common/components/edit-button";
+import EditButton from "@/app/common/components/buttons/edit-button";
 import InputField from "@/app/common/components/form-field-components/input-field";
 import TextAreaField from "@/app/common/components/form-field-components/text-area-field";
 import CheckBoxFieldOption from "@/app/common/components/form-field-components/radio-input-field";
@@ -14,7 +14,8 @@ import CoordinatesField from "@/app/common/components/form-field-components/coor
 import ImageField from "@/app/common/components/form-field-components/image-field";
 import { useAlert } from '@/app/common/components/alert';
 import { useAppDispatch, useAppSelector } from '../../../../../../hooks';
-import { fetchDetail } from "./lineConstructionDetailSlice";
+import { fetchConstructionLineDetail, fetchNeutralData, fetchConductorData } from '@/app/menu/construction/project/components/constructionTaskSlice';
+
 const DetailForm = () => {
   const searchParams = useSearchParams();
   const uuid = searchParams.get("uuid");
@@ -22,7 +23,6 @@ const DetailForm = () => {
   const [editMode, setEditMode] = useState(false);
   const conductors = useAppSelector((state) => state.constructionTask.conductor);
   const neutral = useAppSelector((state) => state.constructionTask.neutral);
-  const detail = useAppSelector((state) => state.lineconstructionDetail.data);
   const {showAlert} =  useAlert();
   const {
     register,
@@ -36,20 +36,19 @@ const DetailForm = () => {
     shouldUnregister: false,
   });
 
-  // RESET THE DETAIL IF NEW DATA ARRIVES
-  useEffect(() => {
-    if (!detail) return;
-    reset(detail);
-  }, [detail, reset]);
+
 
   //   EFFECT THAN GET LINE CONSTRUCTION DATA
   useEffect(() => {
      if (!uuid) return;
       const fetchData = async () => {
-        dispatch(fetchDetail(uuid));
+        dispatch(fetchConductorData());
+        dispatch(fetchNeutralData());
+        const result = await dispatch(fetchConstructionLineDetail(uuid)).unwrap();
+        reset(result);
       };
       fetchData();
-  }, [uuid, dispatch]);
+  }, [uuid, dispatch, reset]);
 
   
   //   WATCH INPUTS

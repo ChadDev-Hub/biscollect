@@ -2,7 +2,7 @@ import api from './interceptor';
 import { Feature, FeatureCollection } from '../../types/geojson';
 import { Dispatch, SetStateAction } from 'react';
 import { getDB } from '../db';
-
+import Fuse from 'fuse.js';
 
 export async function SyncConsumerMeter(hash:string[] | [] = []){
     try {
@@ -27,14 +27,11 @@ export async function SyncConsumerMeter(hash:string[] | [] = []){
       setSelectedFeature?.(null);
       return;
     }
-    const filtered = consumerdata.filter((item: Feature) => {
-      const data = (
-        String(item.properties.account_name).toLowerCase().includes(value) ||
-        String(item.properties.account_no).toLowerCase().includes(value) ||
-        String(item.properties.meter_no).toLowerCase().includes(value) ||
-        String(item.properties.meter_brand).toLowerCase().includes(value)
-      );
-      return data;
+    const fuse = new Fuse(consumerdata, {
+      keys: ["properties.account_name", "properties.account_no", "properties.meter_no", "properties.meter_brand"],
+    })
+    const result = fuse.search(value, {
+      limit: 30
     });
-    setSearched(filtered.slice(0, 30));
+    setSearched(result.map((result) => result.item));
   };

@@ -3,13 +3,13 @@ import {configureStore} from '@reduxjs/toolkit';
 import constructionSlice from '@/app/menu/construction/components/construction-slice';
 import constructionTaskSlice from '@/app/menu/construction/project/components/constructionTaskSlice';
 import navigationSlice from './common/slice/navigationSlice';
-import LineConstructionSlice from '@/app/menu/construction/project/line-construction/full-detail/components/lineConstructionDetailSlice';
+import ChangeMeterSlice from '@/app/menu/change-meter/components/changeMeterSlice';
 export const store  = configureStore({
     reducer: {
         construction: constructionSlice,
         constructionTask: constructionTaskSlice,
         navigation: navigationSlice,
-        lineconstructionDetail: LineConstructionSlice
+        changeMeter: ChangeMeterSlice
     },
     middleware: (getDefaultMiddleware) => 
         getDefaultMiddleware({
@@ -23,6 +23,7 @@ export const store  = configureStore({
                 ignoredPaths: [
                     'constructionTask.line_constructions',
                     'lineconstructionDetail.data',
+                    'changeMeter.data',
                 ],
                 ignoredActionPaths: [
                     /meta.arg/,

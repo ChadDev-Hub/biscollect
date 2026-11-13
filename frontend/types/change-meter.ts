@@ -1,6 +1,7 @@
 
 
 export type ChangeMeterType = {
+    id?: number;
     uuid: string;
     date_accomplished: string;
     account_no: string;
@@ -17,8 +18,8 @@ export type ChangeMeterType = {
     lat: number;
     lon: number;
     image: File;
-    is_synced: boolean;
-    datetime_synced: string;
-    is_deleted: boolean;
-    datetime_deleted: string;
+    is_synced?: boolean;
+    datetime_synced?: string;
+    is_deleted?: boolean;
+    datetime_deleted?: string;
 }

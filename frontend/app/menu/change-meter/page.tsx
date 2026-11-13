@@ -14,9 +14,9 @@ const ChageMeters = () => {
         <ClaudeSyncButton />
         <AddEntries />
       </ToolsNavar>
-      <main className="grid grid-cols-1  w-full max-w-2xl place-content-center place-items-center justify-between py-15 px-4">
+      
         <ChangeMeterContainer />
-      </main>
+      
     </div>
   );
 };

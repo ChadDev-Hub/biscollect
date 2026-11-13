@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState} from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { ChangeMeterType } from "@/types/change-meter";
 import InputField from "../../../../common/components/form-field-components/input-field";
@@ -19,28 +19,26 @@ import FormButton from "../../../../common/components/buttons/form-button";
 import SubmitCompletion from "../../../../common/components/submit-completion";
 import CoordinatesField from "../../../../common/components/form-field-components/coordinates-field";
 import ImageField from "../../../../common/components/form-field-components/image-field";
-import { getDB } from "../../../../../lib/db";
+
 import { Feature } from "@/types/geojson";
 import {handleSearch} from '@/lib/actions/consumer-meter';
 import {popUrl} from '@/app/common/slice/navigationSlice';
 import {  useAppSelector, useAppDispatch } from '@/app/hooks';
+import { addChangeMeter } from '../../components/changeMeterSlice';
 
 const EntryForm = () => {
-  const [uuid, setUuid] = useState("");
+  
   const [step, setStep] = useState(0);
   const [success, setSuccess] = useState(false);
   const [consumerOptions, setConsumerOption] = useState<Feature[] | []>([]);
   const [accountOptions, setAccountOption] = useState<Feature[] | []>([]);
   const previousPath = useAppSelector((state) => state.navigation.history.at(-1));
-  console.log(previousPath);
-  // GENERATE UUID ON INTIAL LOAD
-  useEffect(() => {
-    const SetUUID = async () => {
-      const uuid = crypto.randomUUID();
-      setUuid(uuid);
-    };
-    SetUUID();
-  }, []);
+  
+  const dispatch = useAppDispatch();
+ 
+  const handleCompletionClick = () => {
+    dispatch(popUrl());
+  }
 
   const {
     register,
@@ -59,18 +57,14 @@ const EntryForm = () => {
 
   const onSubmit: SubmitHandler<ChangeMeterType> = async (data) => {
     try {
-      const db = await getDB();
-      const transaction = db.transaction("change_meters", "readwrite");
-      const store = transaction.objectStore("change_meters");
-      await store.put({
+      const uuid = crypto.randomUUID();
+      const changeMeterData = {
         ...data,
         uuid: uuid,
         is_synced: false,
         is_deleted: false,
-        datetime_synced: null,
-        datetime_deleted: null,
-      });
-      await transaction.done;
+      }
+      dispatch(addChangeMeter(changeMeterData));
       setSuccess(true);
     } catch (error) {
       console.error(error);
@@ -82,13 +76,8 @@ const EntryForm = () => {
     setSuccess(false);
     setStep(0);
     reset();
-    setUuid(crypto.randomUUID());
   };
-  const dispatch = useAppDispatch();
- 
-  const handleCompletionClick = () => {
-    dispatch(popUrl());
-  }
+  
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}

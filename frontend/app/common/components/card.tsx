@@ -9,8 +9,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {useAppDispatch} from '@/app/hooks';
-import {pushUrl} from '@/app/common/slice/navigationSlice';
+import { useAppDispatch } from "@/app/hooks";
+import { pushUrl } from "@/app/common/slice/navigationSlice";
 import Delete from "./delete";
 
 type Props = {
@@ -20,8 +20,8 @@ type Props = {
   meter_serial_no: string;
   meter_brand: string;
   type: Type;
-  is_synced: boolean;
-  datetime_synced: string | null;
+  is_synced?: boolean;
+  datetime_synced?: string;
 };
 
 type Type = "CM" | "NC";
@@ -34,12 +34,12 @@ export default function MeterAccomplishedCard({
   meter_brand,
   type,
   is_synced,
-  datetime_synced
+  datetime_synced,
 }: Props) {
   const currentPath = usePathname();
   const params = new URLSearchParams({
-    uuid: uuid
-  })
+    uuid: uuid,
+  });
   let store = "";
   let detailLink = "";
   switch (currentPath) {
@@ -57,7 +57,7 @@ export default function MeterAccomplishedCard({
   const dispatch = useAppDispatch();
   const handleClick = () => {
     dispatch(pushUrl(currentPath));
-  }
+  };
   return (
     <div
       key={uuid}
@@ -87,22 +87,22 @@ export default function MeterAccomplishedCard({
           >
             <div className="tooltip-content">
               <div className="p-2 text-center">
-                <h1 className="text-sm font-bold">{is_synced ? "Synced" : "Not Synced"}</h1>
-                <p className="text-xs italic">{is_synced ? `${datetime_synced}` : ""}</p>
+                <h1 className="text-sm font-bold">
+                  {is_synced ? "Synced" : "Not Synced"}
+                </h1>
+                <p className="text-xs italic">
+                  {is_synced ? `${datetime_synced}` : ""}
+                </p>
               </div>
             </div>
             {is_synced ? (
               <span className="badge badge-success badge-outline">
-                  <CloudCheck size={15} />
-                  Synced
+                <CloudCheck size={15} />
               </span>
-              
             ) : (
               <span className="badge badge-error badge-outline">
-                  <CloudAlert size={15} />
-                  Pending
+                <CloudAlert size={15} />
               </span>
-              
             )}
           </div>
         </div>
@@ -162,18 +162,17 @@ export default function MeterAccomplishedCard({
 
       {/* Action Button Option */}
       <div className="card-actions justify-end items-center mt-5">
-        
-          {/* DELETE BUTTON */}
-          <Delete store={store} uuid={uuid} />
-          {/* FULL DETAIL BUTTON */}
-          <Link
-            onClick={handleClick}
-            href={detailLink}
-            type="button"
-            className="btn btn-primary btn-sm  normal-case font-medium gap-2 shadow-md shadow-primary/10"
-          >
-            View Full Details
-          </Link>
+        {/* DELETE BUTTON */}
+        <Delete store={store} uuid={uuid} />
+        {/* FULL DETAIL BUTTON */}
+        <Link
+          onClick={handleClick}
+          href={detailLink}
+          type="button"
+          className="btn btn-primary btn-sm  normal-case font-medium gap-2 shadow-md shadow-primary/10"
+        >
+          View Full Details
+        </Link>
       </div>
     </div>
   );

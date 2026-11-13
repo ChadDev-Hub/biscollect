@@ -12,7 +12,9 @@ const ReturnMenu = () => {
 
   const handleReturn = () => {
     const previousPage = pageHistory.at(-1);
-    if (!previousPage) return;
+    if (!previousPage){
+      router.push("/menu")
+      return};
     router.push(previousPage);
     dispatch(popUrl());
   };

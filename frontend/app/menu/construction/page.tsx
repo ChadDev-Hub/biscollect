@@ -18,7 +18,7 @@ const Construction = () => {
           <ProjectForm />
         </AddProject>
       </ToolsNavar>
-      <main className="flex flex-1 w-full max-w-2xl flex-col items-center justify-between py-15 px-4">
+      <main className="flex flex-1 w-full max-w-7xl flex-col items-center justify-between py-15 px-4">
         <ConstructionContainer />
       </main>
     </div>

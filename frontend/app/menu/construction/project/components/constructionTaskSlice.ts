@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction} from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 import type { LineConstructionType } from "@/types/construction";
 import type { ConductorName } from "@/types/conductor-wire";
 import { GetConductorName, GetNeutralName } from "@/lib/actions/conductor";
 import { getDB } from "@/lib/db";
 
-
+//  LINE CONSTRUCTION ----------------------------------------------------------
 export const fetchLineConstructions = createAsyncThunk<
   LineConstructionType[],
   string
@@ -17,12 +17,14 @@ export const fetchLineConstructions = createAsyncThunk<
   const result = await index.getAll(cuuid);
   const reverse = result.reverse();
 
-  const conductorData =  await GetConductorName();
+  const conductorData = await GetConductorName();
   const neutralData = await GetNeutralName();
 
   reverse.forEach((line) => {
-    line.conductor = conductorData?.find((item) => item.id === line.conductor)?.name ;
-    line.neutral = neutralData?.find((item) => item.id === line.neutral)?.name ;
+    line.conductor = conductorData?.find(
+      (item) => item.id === line.conductor,
+    )?.name;
+    line.neutral = neutralData?.find((item) => item.id === line.neutral)?.name;
   });
   return reverse;
 });
@@ -69,6 +71,56 @@ export const AddContructionLinetoDb = createAsyncThunk<
   },
 );
 
+export const fetchConstructionLineDetail = createAsyncThunk<
+  LineConstructionType,
+  string,
+  { rejectValue: string }
+>("constructionTask/fetchConstructionLineDetail", async (uuid: string) => {
+  try {
+    const db = await getDB();
+    const transaction = db.transaction("line_constructions", "readonly");
+    const store = transaction.objectStore("line_constructions");
+    const index = store.index("uuid");
+    const result = await index.get(uuid);
+  
+    const conductorData = await GetConductorName();
+    const neutralData = await GetNeutralName();
+    result.conductor = conductorData?.find(
+      (item) => item.id === result.conductor,
+    )?.name;
+    result.neutral = neutralData?.find(
+      (item) => item.id === result.neutral,
+    )?.name;
+    console.log(result)
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error fetching construction line detail");
+  }
+});
+
+export const updateConstructionLineDetail = createAsyncThunk<
+  LineConstructionType,
+  LineConstructionType,
+  { rejectValue: string }
+>(
+  "constructionTask/updateConstructionLineDetail",
+  async (data) => {
+    try {
+      const db = await getDB();
+      const transaction = db.transaction("line_constructions", "readwrite");
+      const store = transaction.objectStore("line_constructions");
+      await store.put(data);
+      await transaction.done;
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error updating construction line detail");
+    }
+  },
+)
+//  LINE CONSTRUCTION ----------------------------------------------------------
+
 type ConstructionTaskState = {
   line_constructions: LineConstructionType[] | [];
   conductor: ConductorName[] | [];
@@ -93,7 +145,7 @@ export const constructionTaskSlice = createSlice({
       state.loading = true;
       state.line_constructions = action.payload;
       state.loading = false;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -152,29 +204,66 @@ export const constructionTaskSlice = createSlice({
       })
 
       // ADD CONSTRUCTION LINE DATA
-      .addCase(
-        AddContructionLinetoDb.fulfilled,
-        (state, action) => {
-          state.loading = false;
-          state.error = "";
-          
-          const maxId = Math.max(
-            ...state.line_constructions.map((item) => item.id || 0),
-            0,
-          );
-          action.meta.arg.id= maxId + 1;
-          const newData = {
-            ...action.meta.arg,
-            conductor: state.conductor.find(
-              (item) => item.id === action.meta.arg.conductor,
-            )?.name as string,
-            neutral: state.neutral.find(
-              (item) => item.id === action.meta.arg.neutral,
-            )?.name as string,
-          };
-          state.line_constructions = [newData, ...state.line_constructions];
-        },
-      );
+      .addCase(AddContructionLinetoDb.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = "";
+
+        const maxId = Math.max(
+          ...state.line_constructions.map((item) => item.id || 0),
+          0,
+        );
+        action.meta.arg.id = maxId + 1;
+        const newData = {
+          ...action.meta.arg,
+          conductor: state.conductor.find(
+            (item) => item.id === action.meta.arg.conductor,
+          )?.name as string,
+          neutral: state.neutral.find(
+            (item) => item.id === action.meta.arg.neutral,
+          )?.name as string,
+        };
+        state.line_constructions = [newData, ...state.line_constructions];
+      })
+      .addCase(AddContructionLinetoDb.pending, (state) => {
+        state.loading = true;
+        state.error = "";
+      })
+      .addCase(AddContructionLinetoDb.rejected, (state) => {
+        state.loading = false;
+        state.error = "Error adding construction line";
+      })
+      // FETCH CONSTRUCTION LINE DETAIL
+      .addCase(fetchConstructionLineDetail.fulfilled, (state) => {
+        state.loading = false;
+        state.error = "";
+      })
+      .addCase(fetchConstructionLineDetail.pending, (state) => {
+        state.loading = true;
+        state.error = "";
+      })
+      .addCase(fetchConstructionLineDetail.rejected, (state) => {
+        state.loading = false;
+        state.error = "Error fetching construction line detail";
+      })
+      // UPDATE CONSTRUCTION LINE DETAIL
+      .addCase(updateConstructionLineDetail.fulfilled, (state, action: PayloadAction<LineConstructionType>) => {
+        state.line_constructions = state.line_constructions.map((item) => {
+          if (item.id === action.payload.id) {
+            return action.payload;
+          }
+          return item;
+        })
+        state.loading = false;
+        state.error = ''
+      })
+      .addCase(updateConstructionLineDetail.pending, (state) => {
+        state.loading = true;
+        state.error = "";
+      })
+      .addCase(updateConstructionLineDetail.rejected, (state) => {
+        state.loading = false;
+        state.error = "Error updating construction line detail";
+      })
   },
 });
 

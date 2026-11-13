@@ -55,7 +55,7 @@ const ConstructionCardTask = ({
     <div
       className="
     card 
-    w-full max-w-md 
+    w-full max-w-md
      p-4 bg-base-100 
      shadow-md border
       border-base-200 

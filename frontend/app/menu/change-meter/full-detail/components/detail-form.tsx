@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getDB } from "@/lib/db";
 import { ChangeMeterType } from "@/types/change-meter";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
@@ -15,15 +14,18 @@ import {
   Tag
 } from "lucide-react";
 import InputField from "../../../../common/components/form-field-components/input-field";
-import EditButton from "../../../../common/components/edit-button";
+import EditButton from "../../../../common/components/buttons/edit-button";
 import CoordinatesField from "../../../../common/components/form-field-components/coordinates-field";
 import ImageField from "@/app/common/components/form-field-components/image-field";
+import {fetchChangeMeterDetail, updateChangeMeterDetail} from '@/app/menu/change-meter/components/changeMeterSlice';
 import { useSearchParams } from "next/navigation";
+import { useAppDispatch } from '@/app/hooks';
 
 const DetailForm = () => {
   const [editMode, setEditMode] = useState(false);
   const searchParams = useSearchParams();
   const uuid = searchParams.get("uuid");
+  const dispatch = useAppDispatch();
   const {
     register,
     formState: { errors },
@@ -34,27 +36,17 @@ const DetailForm = () => {
   } = useForm<ChangeMeterType>({ mode: "all", shouldUnregister: false });
   useEffect(() => {
     const getEntry = async () => {
-      const idb = await getDB();
-      const transaction = idb.transaction("change_meters", "readwrite");
-      const store = transaction.objectStore("change_meters");
-      const index = store.index("uuid");
-      const result = await index.get(uuid ?? "");
+      const result = await dispatch(fetchChangeMeterDetail(uuid!)).unwrap();
       reset(result);
     };
     getEntry();
-  }, [uuid, reset]);
+  }, [uuid, reset, dispatch]);
+
   const onSubmit: SubmitHandler<ChangeMeterType> = async (data) => {
     try {
-      const db = await getDB();
-      const transaction = db.transaction("change_meters", "readwrite");
-      const store = transaction.objectStore("change_meters");
-      await store.put({
-        ...data,
-        is_synced: false,
-      });
-      await transaction.done;
+      const editedData = { ...data, is_synced: false, is_deleted: false };
+      await dispatch(updateChangeMeterDetail(editedData)).unwrap();
       setEditMode(false);
-      window.dispatchEvent(new Event("change_meters-updated"));
     } catch (error) {
       console.error(error);
     }

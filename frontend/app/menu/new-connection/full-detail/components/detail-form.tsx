@@ -16,7 +16,7 @@ import {
   NotebookPen,
   MapPinned,
 } from "lucide-react";
-import EditButton from "../../../../common/components/edit-button";
+import EditButton from "../../../../common/components/buttons/edit-button";
 import CoordinatesField from '../../../../common/components/form-field-components/coordinates-field';
 import ImageField from "@/app/common/components/form-field-components/image-field";
 import { useSearchParams } from 'next/navigation';

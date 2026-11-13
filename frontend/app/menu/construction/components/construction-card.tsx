@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useAppDispatch } from '@/app/hooks';
 import {pushUrl} from '@/app/common/slice/navigationSlice'
 import { usePathname } from 'next/navigation';
+import {ArrowRightIcon} from 'lucide-react';
 
 type Props = {
   data: ConstructionType;
@@ -24,7 +25,7 @@ const ConstructionCard = ({ data}: Props) => {
   }
 
   return (
-      <div className="card w-full hover:shadow-2xl 
+      <div className="card w-full min-w-sm hover:shadow-2xl 
       active:shadow-2xl active:border-primary 
       focus-within:shadow-2xl focus-within:border-primary
       max-w-md  p-4 bg-base-100 shadow-md border border-base-200 hover:border-primary transition-all duration-300 group">
@@ -51,12 +52,11 @@ const ConstructionCard = ({ data}: Props) => {
 
           {/* Sync status */}
           {data.is_synced ? (
-            <span className="badge badge-success badge-outline gap-1">
+            <span data-tip="Synced" className="badge hover:cursor-pointer badge-success tooltip tooltip-info tooltip-left badge-outline gap-1">
               <CloudCheck size={15} />
-            
             </span>
           ) : (
-            <span className="badge badge-warning badge-outline gap-1">
+            <span data-tip="Not Synced" className="badge hover:cursor-pointer tooltip tooltip-info tooltip-left badge-warning badge-outline gap-1">
               <CloudAlert size={15} />
         
             </span>
@@ -84,10 +84,10 @@ const ConstructionCard = ({ data}: Props) => {
           </div>
 
           <Link onClick={handleClick} href={`/menu/construction/project?cuuid=${data.uuid}`}
-            className="text-xs font-semibold text-primary
+            className="text-xs flex font-semibold text-primary
               opacity-70 group-hover:opacity-100 transition-opacity group-active:opacity-100 group-focus-within:opacity-100"
           >
-            View details →
+            View Task <span className="group-hover:translate-x-2 group-active:translate-x-2 transition-transform duration-500"><ArrowRightIcon size={15} /></span>
           </Link>
         </div>
       </div>
