@@ -66,8 +66,8 @@ const CoordinatesField =<T extends FieldValues> ({
     }
   }, [latWatch, lonWatch]);
   return (
-    <section className={`flex flex-col gap-2 `}>
-      <label htmlFor="" className="label font-bold">
+    <fieldset className={`flex flex-col gap-2 `}>
+      <label htmlFor="" className="fieldset-label font-bold">
         <span className="">Geolocation</span>
         <span className=" text-red-500">*</span>
       </label>
@@ -117,7 +117,7 @@ const CoordinatesField =<T extends FieldValues> ({
           />
         </button>
       </div>
-    </section>
+    </fieldset>
   );
 };
 

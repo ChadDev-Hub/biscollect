@@ -26,17 +26,17 @@ const CheckBoxFieldOption = <T extends FieldValues>({
 }: Props<T>) => {
   
   return (
-    <section className="w-full space-y-2">
-      <label className="label font-bold">
-        <span className="">{label}</span>
+    <fieldset className="w-full space-y-2">
+      <label className="fieldset-label font-bold text-xs">
+        <span className="">{label}</span> 
         {required && <span className=" text-red-500">*</span>}
       </label>
       <div className={className}>
         {options.map((option, index) => (
-          <div key={index} className="flex gap-4">
-            <label key={option} className={`flex ${ selected === option ?  ` ${isDisabled ? 
+          <div key={index} className="flex gap-4 w-full">
+            <label key={option} className={`flex  ${ selected === option ?  ` ${isDisabled ? 
               "ring-neutral-600 bg-neutral-400 cursor-not-allowed" : "ring-secondary bg-secondary cursor-pointer"
-            }`  : "ring-neutral-600"}     items-center gap-2 p-2 shadow  ring-1 rounded-xs text-center place-content-center text-xs min-w-25`}>
+            }`  : "ring-neutral-600"}  w-full    items-center gap-2 p-2 shadow  ring-1 rounded-xs text-center place-content-center text-xs min-w-25`}>
               <input
                 disabled ={isDisabled}
                 hidden
@@ -60,7 +60,7 @@ const CheckBoxFieldOption = <T extends FieldValues>({
       </div>
 
       {error && <span className="text-red-500 text-xs italic">{error}</span>}
-    </section>
+    </fieldset>
   );
 };
 

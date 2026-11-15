@@ -37,7 +37,7 @@ const NewConnectionContainer = () => {
           meter_brand={entry.meter_brand}
           type="NC"
           is_synced={entry.is_synced}
-          datetime_synced={entry.datetime_synced}
+          datetime_synced={entry.datetime_synced ?? "____"}
         />
       ))}
     </div>

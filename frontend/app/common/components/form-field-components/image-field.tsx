@@ -24,10 +24,10 @@ const ImageField = <T extends FieldValues>({
   const image = useWatch({ name: "image" as Path<T>, control: control });
 
   return (
-    <section
+    <fieldset
       className={`flex flex-col w-full gap-2 items-center justify-center `}
     >
-      <label className="label self-start font-bold">
+      <label className="fieldset-label self-start font-bold">
         Image <span className="text-red-500">*</span>
       </label>
       <label className="cursor-pointer   text-slate-300/45">
@@ -62,7 +62,7 @@ const ImageField = <T extends FieldValues>({
       <p>
         {error && <span className="text-red-500 italic text-xs">{error}</span>}
       </p>
-    </section>
+    </fieldset>
   );
 };
 

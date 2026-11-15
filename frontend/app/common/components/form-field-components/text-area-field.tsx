@@ -19,8 +19,8 @@ const TextAreaField = <T extends FieldValues>({
   isDisabled
 }: Props<T>) => {
   return (
-    <section className="w-full space-y-2 flex flex-col">
-      <label className="label font-bold text-xs">
+    <fieldset className="w-full space-y-2 flex flex-col">
+      <label className="fieldset-label font-bold text-md">
         <span className="">{label}</span>
         {required && <span className=" text-red-500">*</span>}
       </label>
@@ -36,7 +36,7 @@ const TextAreaField = <T extends FieldValues>({
         })}
       ></textarea>
       {error && <span className="text-red-500 text-xs italic">{error}</span>}
-    </section>
+    </fieldset>
   );
 };
 

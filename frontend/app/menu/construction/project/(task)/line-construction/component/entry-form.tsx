@@ -2,23 +2,23 @@
 
 import { useState, useEffect } from "react";
 import { useForm, SubmitHandler, useWatch } from "react-hook-form";
-import InputField from "../../../../../common/components/form-field-components/input-field";
+import InputField from "@/app/common/components/form-field-components/input-field";
 import { UtilityPole, Calendar, MapPin, Undo2, Workflow, LineSquiggle} from "lucide-react";
 import { LineConstructionType } from "@/types/construction";
-import CheckBoxFieldOption from "../../../../../common/components/form-field-components/radio-input-field";
-import SelectInputField from "../../../../../common/components/form-field-components/select-input-field";
+import CheckBoxFieldOption from "@/app/common/components/form-field-components/radio-input-field";
+import SelectInputField from "@/app/common/components/form-field-components/select-input-field";
 import CoordinatesField from "@/app/common/components/form-field-components/coordinates-field";
 import ImageField from "@/app/common/components/form-field-components/image-field";
 const constuctionType = ["Line Extension", "New Line"];
 const LineType = ["Primary", "Secondary", "Underbuilt"];
 const Phasing = ["AN", "BN", "CN", "ABCN", "BCN", "ACN", "ABN", "BAN", "CAN"];
-import FormButton from "../../../../../common/components/buttons/form-button";
-import SubmitCompletion from "../../../../../common/components/submit-completion";
-import TextAreaField from "../../../../../common/components/form-field-components/text-area-field";
+import FormButton from "@/app/common/components/buttons/form-button";
+import SubmitCompletion from "@/app/common/components/submit-completion";
+import TextAreaField from "@/app/common/components/form-field-components/text-area-field";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { popUrl } from "@/app/common/slice/navigationSlice";
 import { useSearchParams } from 'next/navigation';
-import { fetchConductorData, fetchNeutralData, AddContructionLinetoDb} from '../../components/constructionTaskSlice';
+import { fetchConductorData, fetchNeutralData, AddContructionLinetoDb} from '@/app/menu/construction/project/components/constructionTaskSlice';
 
 const LineConstrucitonEntryForm = () => {
   const {
@@ -102,7 +102,7 @@ const LineConstrucitonEntryForm = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col p-4 gap-4 bg-base-200 card w-full max-w-lg shadow-md"
+      className="flex   flex-col p-4 gap-4 bg-base-200 card w-full max-w-lg shadow-md"
     >
       <div className="flex items-center justify-between gap-2">
         <button

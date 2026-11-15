@@ -10,7 +10,7 @@ import {
 } from "react-hook-form";
 import { LucideIcon } from "lucide-react";
 import { Feature } from "@/types/geojson";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction} from "react";
 type Props<T extends FieldValues> = {
   name: FieldPath<T>;
   register: UseFormRegister<T>;
@@ -56,10 +56,9 @@ const InputField = <T extends FieldValues>({
   setConsumerOption,
   onChange,
 }: Props<T>) => {
-  const [focus, setFocus] = useState(true);
+ 
 
-  const handleFocus = () => setFocus(true);
-  const handleBlur = () => setFocus(false);
+
   const handleSelectedConsumter = (feature: Feature) => {
     
     if (!setValue) return;
@@ -109,7 +108,7 @@ const InputField = <T extends FieldValues>({
     <fieldset
       className={`w-full fieldset  flex flex-col  gap-2 ${maxStep === step ? "block" : "hidden"}`}
     >
-      <label className="fieldset-label font-bold">
+      <label className="fieldset-label font-bold text-xs">
         <span className="">{label}</span>
         {required && <span className=" text-red-500">*</span>}
       </label>
@@ -122,12 +121,11 @@ const InputField = <T extends FieldValues>({
           </div>
 
           <input
-            onFocus={handleFocus}
+        
             disabled={isDisabled}
             hidden={hidden}
             {...register(name, {
               required: { value: required, message: `${label} is Required` },
-              onBlur: handleBlur,
               onChange: onChange,
               ...(minLength && {
                 minLength: {

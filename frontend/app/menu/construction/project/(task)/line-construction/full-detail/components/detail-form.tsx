@@ -1,9 +1,8 @@
 "use client";
 import { useForm, SubmitHandler, useWatch } from "react-hook-form";
-import { CalendarDays, UtilityPole, MapPin } from "lucide-react";
+import { CalendarDays, UtilityPole, MapPin,LineSquiggle, Workflow } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { LineConstructionType } from "@/types/construction";
-import { getDB } from "@/lib/db";
 import { useEffect, useState } from "react";
 import SelectInputField from "@/app/common/components/form-field-components/select-input-field";
 import EditButton from "@/app/common/components/buttons/edit-button";
@@ -13,8 +12,9 @@ import CheckBoxFieldOption from "@/app/common/components/form-field-components/r
 import CoordinatesField from "@/app/common/components/form-field-components/coordinates-field";
 import ImageField from "@/app/common/components/form-field-components/image-field";
 import { useAlert } from '@/app/common/components/alert';
-import { useAppDispatch, useAppSelector } from '../../../../../../hooks';
-import { fetchConstructionLineDetail, fetchNeutralData, fetchConductorData } from '@/app/menu/construction/project/components/constructionTaskSlice';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
+
+import { fetchConstructionLineDetail, fetchNeutralData, fetchConductorData, updateConstructionLineDetail } from '@/app/menu/construction/project/components/constructionTaskSlice';
 
 const DetailForm = () => {
   const searchParams = useSearchParams();
@@ -36,6 +36,7 @@ const DetailForm = () => {
     shouldUnregister: false,
   });
 
+  
 
 
   //   EFFECT THAN GET LINE CONSTRUCTION DATA
@@ -63,19 +64,13 @@ const DetailForm = () => {
 
   const onSubmit: SubmitHandler<LineConstructionType> = async (data) => {
     try {
-      const db = await getDB();
-      const transaction = db.transaction("line_constructions", "readwrite");
-      const store = transaction.objectStore("line_constructions");
-      await store.put({
+      const newData: LineConstructionType = {
         ...data,
         is_synced: false,
-      });
-   
-      await transaction.done;
-
+      }
+      dispatch(updateConstructionLineDetail(newData));
       setEditMode(false);
-      window.dispatchEvent(new Event("line_constructions-updated"));
-      showAlert("Line Construction Updated", "success");
+      showAlert("line construction updated successfully", "success");
     } catch (error) {
       console.error(error);
     }
@@ -84,7 +79,8 @@ const DetailForm = () => {
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="w-full flex flex-col gap-4 relative bg-base-100 p-4 max-w-md rounded-box"
-    >
+    > 
+    
       <EditButton is_editing={editMode} setIsEditing={setEditMode} />
       <input type="hidden" {...register("activity")} />
       <InputField
@@ -100,6 +96,7 @@ const DetailForm = () => {
       <SelectInputField
         name="type"
         register={register}
+        Icon={Workflow}
         label="Type"
         required={true}
         options={["Line Extension", "New Line"]}
@@ -152,6 +149,7 @@ const DetailForm = () => {
 
       {/* CONDUCTOR */}
       <SelectInputField
+        Icon={LineSquiggle}
         name="conductor"
         register={register}
         label="Conductor"
@@ -159,16 +157,19 @@ const DetailForm = () => {
         options={conductors}
         error={errors.conductor?.message}
         disabled={!editMode}
+        valueasNumber={true}
       />
 
       {/* NEUTRAL */}
       <SelectInputField
+        Icon={LineSquiggle}
         register={register}
         name="neutral"
         required={false}
         label="Neutral-Concentric Wire"
         options={neutral}
         disabled={!editMode}
+        valueasNumber={true}
       />
 
       {/* COORDINATES */}

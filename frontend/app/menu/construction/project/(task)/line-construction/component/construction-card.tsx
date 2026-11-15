@@ -2,7 +2,7 @@
 "use client";
 
 import { CloudCheck, CloudAlert, LucideIcon, CalendarDays } from "lucide-react";
-import DeleteRecord from "../../../../../common/components/delete";
+import DeleteRecord from "@/app/common/components/delete";
 import Link from "next/link";
 import { usePathname, useSearchParams} from "next/navigation";
 import { useAppDispatch } from "@/app/hooks";

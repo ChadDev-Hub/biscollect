@@ -4,6 +4,8 @@ import type { LineConstructionType } from "@/types/construction";
 import type { ConductorName } from "@/types/conductor-wire";
 import { GetConductorName, GetNeutralName } from "@/lib/actions/conductor";
 import { getDB } from "@/lib/db";
+import { GetTransformerType } from '@/lib/actions/transformer';
+import type {TransformerType, TransformerInstallation} from "@/types/transformer";
 
 //  LINE CONSTRUCTION ----------------------------------------------------------
 export const fetchLineConstructions = createAsyncThunk<
@@ -82,16 +84,14 @@ export const fetchConstructionLineDetail = createAsyncThunk<
     const store = transaction.objectStore("line_constructions");
     const index = store.index("uuid");
     const result = await index.get(uuid);
-  
     const conductorData = await GetConductorName();
     const neutralData = await GetNeutralName();
     result.conductor = conductorData?.find(
       (item) => item.id === result.conductor,
-    )?.name;
+    )?.id;
     result.neutral = neutralData?.find(
       (item) => item.id === result.neutral,
-    )?.name;
-    console.log(result)
+    )?.id;
     return result;
   } catch (error) {
     console.error(error);
@@ -121,10 +121,29 @@ export const updateConstructionLineDetail = createAsyncThunk<
 )
 //  LINE CONSTRUCTION ----------------------------------------------------------
 
+
+
+// =================================== TRANSFORMER =====================================
+export const fetchTransformerType = createAsyncThunk<TransformerType[], void, { rejectValue: string }>(
+  "constructionTask/fetchTransformerType",
+  async () => {
+    try {
+      const transformerType = await GetTransformerType();
+      return transformerType ?? [];
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error fetching transformer type");
+    }
+  }
+)
+
+// =================================== TRANSFORMER =====================================
+
 type ConstructionTaskState = {
   line_constructions: LineConstructionType[] | [];
   conductor: ConductorName[] | [];
   neutral: ConductorName[] | [];
+  transformer_type: TransformerType[] | [];
   error: string;
   loading: boolean;
 };
@@ -132,6 +151,7 @@ type ConstructionTaskState = {
 const initialState: ConstructionTaskState = {
   line_constructions: [],
   conductor: [],
+  transformer_type: [],
   error: "",
   loading: false,
   neutral: [],
@@ -263,8 +283,26 @@ export const constructionTaskSlice = createSlice({
       .addCase(updateConstructionLineDetail.rejected, (state) => {
         state.loading = false;
         state.error = "Error updating construction line detail";
+      });
+
+      // TRANSFORMER DATA
+      builder
+      .addCase(fetchTransformerType.fulfilled, (state, action) => {
+        state.loading = true;
+        state.transformer_type = action.payload;
+        state.loading = false;
       })
+      .addCase(fetchTransformerType.pending, (state) => {
+        state.loading = true;
+        state.error = "";
+      })
+      .addCase(fetchTransformerType.rejected, (state) => {
+        state.loading = false;
+        state.error = "Error fetching transformer type";
+      })  
+      
   },
+  
 });
 
 export const { filterData } = constructionTaskSlice.actions;

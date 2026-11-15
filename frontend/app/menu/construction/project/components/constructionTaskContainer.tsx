@@ -2,7 +2,7 @@
 
 import { LineConstructionType } from "@/types/construction";
 import { useEffect } from "react";
-import ConstructionCardTask from "../line-construction/component/construction-card";
+import ConstructionCardTask from "@/app/menu/construction/project/(task)/line-construction/component/construction-card";
 import { useAppDispatch, useAppSelector } from "../../../../hooks";
 import { fetchLineConstructions } from "./constructionTaskSlice";
 import { useSearchParams } from "next/navigation";
@@ -46,7 +46,7 @@ const ConstructionTaskContainer = () => {
         />
       </div>
       {line_constructions.length === 0 ? <NoItemsFound title="Construction Task" description="There are currently no construction tasks to display." actionLabel="Search" /> : 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+      <div className="grid transition-all duration-500 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
         {line_constructions.map((entry: LineConstructionType) => (
           <ConstructionCardTask
             title={{

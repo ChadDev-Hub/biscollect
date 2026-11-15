@@ -67,12 +67,20 @@ self.addEventListener("fetch", (event) => {
   }
 });
 
+// CONDUCTOR
 const CONDUCTOR_URL = `${BaseUrl}/v1/wire/conductor`;
 const CONDUCTOR_CACHE_URL = "/v1/wire/conductor"
 const CONDUCOT_CACHE_NAME = "gis-data-conductor";
+// NEUTRAL
 const NEUTRAL_CONCENTRIC_WIRE = `${BaseUrl}/v1/wire/neutral`
 const NEUTRAL_CONCENTRIC_WIRE_CACHE_URL = "/v1/wire/neutral"
 const NEUTRAL_CONCENTRIC_WIRE_CACHE_NAME = "gis-data-neutral-concentric-wire"
+// TRANSFORMER
+const TRANSFORMER_URL = `${BaseUrl}/v1/dt/type`;
+const TRANSFORMER_CACHE_URL = "/v1/dt/type";
+const TRANSFORMER_CACHE_NAME = "gis-data-transformer";
+
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
@@ -184,6 +192,28 @@ self.addEventListener("install", (event) => {
         console.error("Failed:", MapTileProvider, err);
       }
 
+      // CACHE TRANSFORMER DATA
+
+      try {
+        console.log("Caching transformer data...");
+        const response = await fetch(TRANSFORMER_URL);
+        console.log("Transformer reponse",
+          response.status,
+          response.statusText
+        );
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch transformer data: ${response.status}`
+          );
+        }
+        const transformerCache = await caches.open(TRANSFORMER_CACHE_NAME);
+        await transformerCache.put(TRANSFORMER_CACHE_URL, response.clone());
+        current++;
+        sendProgres(current, total, TRANSFORMER_URL);
+        console.log("Transformer data cached.");
+      } catch (err) {
+        console.error("Failed:", TRANSFORMER_URL, err);
+      }
 
       try {
         console.log("Cache Complete Status");
