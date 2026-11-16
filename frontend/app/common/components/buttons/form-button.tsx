@@ -3,21 +3,26 @@
 import { Dispatch, SetStateAction } from "react";
 
 type Props = {
-  maxStep: number;
-  step: number;
-  setStep: Dispatch<SetStateAction<number>>;
+  maxStep?: number;
+  step?: number;
+  setStep?: Dispatch<SetStateAction<number>>;
   isValid: boolean;
 };
 
 const FormButton = ({ maxStep, step, setStep, isValid }: Props) => {
   const handleNextStep = () => {
+    if (setStep === undefined || step === undefined || maxStep === undefined) {
+      return;
+    }
     if (step < maxStep) {
       setStep(step + 1);
     }
   };
+
+  const isLastStep = step === undefined || maxStep === undefined || step >= maxStep;
   return (
     <>
-      {step < maxStep ? (
+      { !isLastStep ? (
         <button
           disabled={!isValid}
           type="button"

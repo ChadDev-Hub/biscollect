@@ -17,7 +17,7 @@ export type LineConstructionType = {
  uuid: string;
  cuuid: string;
  date_accomplished: string;   
- activity: "Line Construction";
+ task: "Line Construction";
  type: "Line Extension" | "New Line";
  line_type:"Primary" | "Secondary" | "Underbuilt";
  description: string;

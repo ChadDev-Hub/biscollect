@@ -11,7 +11,6 @@ import CoordinatesField from "@/app/common/components/form-field-components/coor
 import ImageField from "@/app/common/components/form-field-components/image-field";
 const constuctionType = ["Line Extension", "New Line"];
 const LineType = ["Primary", "Secondary", "Underbuilt"];
-const Phasing = ["AN", "BN", "CN", "ABCN", "BCN", "ACN", "ABN", "BAN", "CAN"];
 import FormButton from "@/app/common/components/buttons/form-button";
 import SubmitCompletion from "@/app/common/components/submit-completion";
 import TextAreaField from "@/app/common/components/form-field-components/text-area-field";
@@ -19,7 +18,7 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { popUrl } from "@/app/common/slice/navigationSlice";
 import { useSearchParams } from 'next/navigation';
 import { fetchConductorData, fetchNeutralData, AddContructionLinetoDb} from '@/app/menu/construction/project/components/constructionTaskSlice';
-
+import {PhasingOptions} from '@/lib/phasing';
 const LineConstrucitonEntryForm = () => {
   const {
     reset,
@@ -32,8 +31,8 @@ const LineConstrucitonEntryForm = () => {
     mode: "all",
     shouldUnregister: false,
     defaultValues: {
-      activity: "Line Construction",
-    },
+      task: "Line Construction",
+    }
   });
 
   const [step, setStep] = useState(0);
@@ -126,8 +125,7 @@ const LineConstrucitonEntryForm = () => {
         <>
           {step === 0 && (
             <>
-              {/* ACTIVITY */}
-              <input type="hidden" {...register("activity")} />
+             
 
               {/* DATE ACCOMPLISHED */}
 
@@ -182,7 +180,7 @@ const LineConstrucitonEntryForm = () => {
                 register={register}
                 label="Phasing"
                 required={true}
-                options={Phasing}
+                options={PhasingOptions}
                 selected={PhasingInput}
                 error={errors.phasing?.message}
               />

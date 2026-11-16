@@ -21,7 +21,7 @@ export const store  = configureStore({
                     'lineConstructionDetail/fetchDetail',
                 ],
                 ignoredPaths: [
-                    'constructionTask.line_constructions',
+                    'constructionTask.construction_task',
                     'lineconstructionDetail.data',
                     'changeMeter.data',
                 ],

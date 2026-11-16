@@ -33,10 +33,9 @@ const CheckBoxFieldOption = <T extends FieldValues>({
       </label>
       <div className={className}>
         {options.map((option, index) => (
-          <div key={index} className="flex gap-4 w-full">
-            <label key={option} className={`flex  ${ selected === option ?  ` ${isDisabled ? 
-              "ring-neutral-600 bg-neutral-400 cursor-not-allowed" : "ring-secondary bg-secondary cursor-pointer"
-            }`  : "ring-neutral-600"}  w-full    items-center gap-2 p-2 shadow  ring-1 rounded-xs text-center place-content-center text-xs min-w-25`}>
+          
+            <label key={index} className={`flex  ${ selected === option ?  ` ${isDisabled ? 
+            'bg-base-200' : 'bg-secondary'} text-white` : '' } hover:cursor-pointer active:border-primary  hover:border-primary border place-content-center rounded-box  w-full `}>
               <input
                 disabled ={isDisabled}
                 hidden
@@ -55,7 +54,7 @@ const CheckBoxFieldOption = <T extends FieldValues>({
               {option}
                 </span>
             </label>
-          </div>
+    
         ))}
       </div>
 

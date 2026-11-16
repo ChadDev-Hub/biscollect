@@ -1,26 +1,32 @@
 "use client";
 import { useState, useEffect} from "react";
-import { useForm, useWatch} from "react-hook-form";
-import { Calendar, Undo2, Zap } from "lucide-react";
+import { useForm, useWatch, SubmitHandler} from "react-hook-form";
+import { Calendar, MapPin, Zap } from "lucide-react";
+import ImageField from "@/app/common/components/form-field-components/image-field";
 import InputField from "@/app/common/components/form-field-components/input-field";
 import SelectInputField from "@/app/common/components/form-field-components/select-input-field";
 import CheckBoxFieldOption from "@/app/common/components/form-field-components/radio-input-field";
 import FormButton from "@/app/common/components/buttons/form-button";
-import SubmitCompletion from "@/app/common/components/submit-completion";
-import TextAreaField from "@/app/common/components/form-field-components/text-area-field";
-import type {TransformerInstallation, TransformerType} from "@/types/transformer";
-import {fetchTransformerType} from "@/app/menu/construction/project/components/constructionTaskSlice";
+import type {TransformerInstallation} from "@/types/transformer";
+import {fetchTransformerType, AddTransformertoDb} from "@/app/menu/construction/project/components/constructionTaskSlice";
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { PhasingOptions } from '@/lib/phasing';
 import CoordinatesField from "@/app/common/components/form-field-components/coordinates-field";
+import {useSearchParams} from 'next/navigation';
 
 
 const EntryForm = () => {
   const transformerType = useAppSelector((state) => state.constructionTask.transformer_type);
   const [step, setStep] = useState(0);
   const [success, setSuccess] = useState(false);
-  const  {register,formState:{isValid, errors},control, setValue} = useForm<TransformerInstallation>();
-  
+  const  {register,formState:{isValid, errors},control, setValue, handleSubmit, reset} = useForm<TransformerInstallation>(
+    {
+      defaultValues:{
+        task: "Transformer Installation",
+      }
+    }
+  );
+  const params = useSearchParams();
   const dispatch = useAppDispatch();
   
   useEffect(()=>{
@@ -39,8 +45,27 @@ const EntryForm = () => {
     control,
     name: "phasing",
   })
+
+
+  const onSubmit:SubmitHandler<TransformerInstallation> = async (data) => {
+    try {
+      const newData: TransformerInstallation = {
+        
+        ...data,
+        uuid: crypto.randomUUID(),
+        cuuid: params.get("cuuid") || "",
+        is_synced: false,
+      }
+      dispatch(AddTransformertoDb(newData));
+      setSuccess(true);
+      reset();
+    } catch (error) {
+      console.error(error);
+    }
+  }
   return (
     <form
+      onSubmit={handleSubmit(onSubmit)}
       className="flex   flex-col p-4 gap-4 bg-base-200 card w-full max-w-lg shadow-md"
     >
       <InputField
@@ -54,10 +79,11 @@ const EntryForm = () => {
 
       <SelectInputField
         register={register}
-        name="transformer_type_id"
+        name="transformer_type"
         label="Transformer Type"
         options={transformerType}
         required
+        valueasNumber
         Icon={Zap}
       />
       
@@ -86,10 +112,14 @@ const EntryForm = () => {
       <CoordinatesField 
       register={register}
       setValue={setValue}
-       control={control} Icon={Undo2} latitudeError={errors.lat?.message} />
+       control={control} Icon={MapPin} latitudeError={errors.lat?.message} />
        
-      
-      <FormButton step={step} setStep={setStep} maxStep={4} isValid={isValid} />
+
+       {/* IMAGE */}
+        <ImageField
+        control={control} error={errors.image?.message}
+        /> 
+      <FormButton isValid={isValid} />
     </form>
   );
 };

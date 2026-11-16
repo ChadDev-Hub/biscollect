@@ -1,53 +1,40 @@
 // frontend/components/LineConstruction.tsx
 "use client";
 
-import { CloudCheck, CloudAlert, LucideIcon, CalendarDays } from "lucide-react";
+import {
+  CloudCheck,
+  CloudAlert,
+  CalendarDays,
+  UtilityPole,
+  LineSquiggle,
+} from "lucide-react";
 import DeleteRecord from "@/app/common/components/delete";
 import Link from "next/link";
-import { usePathname, useSearchParams} from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useAppDispatch } from "@/app/hooks";
 import { pushUrl } from "@/app/common/slice/navigationSlice";
+import { LineConstructionType } from "@/types/construction";
 
 type Props = {
-  uuid: string;
-  is_synced: boolean;
-  title: Title;
-  date_accomplished: string;
-  description?: string;
-  datetime_synced?: string;
-  information?: Information[];
-};
-
-type Title = {
-  title: string;
-  icon: LucideIcon;
-  className: string;
-};
-
-type Information = {
-  label: string;
-  value: string | number;
-  icon: Icon;
-};
-
-type Icon = {
-  icon: LucideIcon;
-  className: string;
+  data: LineConstructionType;
 };
 
 const ConstructionCardTask = ({
-  uuid,
-  title,
-  is_synced,
-  datetime_synced,
-  description,
-  date_accomplished,
-  information,
+  data: {
+    uuid,
+    date_accomplished,
+    description,
+    task,
+    is_synced,
+    datetime_synced,
+    conductor,
+    neutral,
+  },
 }: Props) => {
   const currentPath = usePathname();
   const dispatch = useAppDispatch();
   const params = useSearchParams();
-  
+
   const handleNavigate = () => {
     dispatch(pushUrl(`${currentPath}?${params.toString()}`));
   };
@@ -72,12 +59,12 @@ const ConstructionCardTask = ({
       <div className="card-body p-0">
         <div className=" flex items-center  gap-3 mb-5">
           <div className="p-2.5 glass  text-primary rounded-xl mt-0.5">
-            <title.icon className={title.className} />
+            <UtilityPole className="w-5 h-5" />
           </div>
           {/* TITLE */}
           <div className="flex flex-col">
             <h1 className=" text-[12px] font-bold text-base-content tracking-wide mt-0.5 card-title">
-              {title.title}
+              {task}
             </h1>
 
             <label className="text-xs font-bold text-base-content label ">
@@ -113,30 +100,33 @@ const ConstructionCardTask = ({
 
         {/* DESCRIPTION */}
 
-        <p className="text-xs italic text-base-content">
-          {description && description}
-        </p>
+        <p className="text-xs italic text-base-content">{description}</p>
 
         <div className="divider my-1 opacity-60"></div>
-        {/* INFORMATIONS */}
+        {/* CONDUCTOR */}
         <div className="grid grid-cols-2 gap-2">
-          {information?.map((info, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-2.5 p-2 rounded-xl bg-base-200/40 border border-base-200"
-            >
-              <div className="p-2.5 glass text-primary rounded-xl mt-0.5">
-                <info.icon.icon className={info.icon.className} />
-              </div>
-              <div className="flex-1 flex flex-col">
-                <label className="text-[10px] label font-bold">
-                  {info.label}
-                </label>
-                <p className="text-xs italic">{String(info.value)}</p>
-              </div>
+          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-base-200/40 border border-base-200">
+            <div className="p-2.5 glass text-primary rounded-xl mt-0.5">
+              <LineSquiggle className="w-5 h-5" />
             </div>
-          ))}
+            <div className="flex-1 flex flex-col">
+              <label className="text-[10px] label font-bold">Conductor</label>
+              <p className="text-xs italic">{conductor}</p>
+            </div>
+          </div>
+          {/* NEUTRAL */}
+          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-base-200/40 border border-base-200">
+            <div className="p-2.5 glass text-primary rounded-xl mt-0.5">
+              <LineSquiggle className="w-5 h-5" />
+            </div>
+            <div className="flex-1 flex flex-col">
+              <label className="text-[10px] label font-bold">Conductor</label>
+              <p className="text-xs italic">{neutral}</p>
+            </div>
+          </div>
         </div>
+
+       
 
         <div className="divider my-1 opacity-60"></div>
         {/* CARD ACTIONS */}
