@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3003 --webpack",
     "build": "next build --webpack",
-    "start": "next start -p 3002",
+    "start": "next start -p 3003",
     "lint": "eslint",
     "lint:fix": "eslint --fix"
   },
@@ -17,15 +17,14 @@
     "fuse.js": "^7.5.0",
     "idb": "^8.0.3",
     "lucide-react": "^1.73.0",
-    "maplibre-gl": "^5.24.0",
+    "maplibre-gl": "^6.18.0",
     "next": "^16.2.9",
-    "next-pwa": "^5.6.0",
     "pmtiles": "^4.5.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.80.0",
     "react-redux": "^9.3.1",
-    "tailwind": "^4.0.0",
+    "tailwind": "^2.3.1",
     "theme-change": "^3.0.4"
   },
   "devDependencies": {

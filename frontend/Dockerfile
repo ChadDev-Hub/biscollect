@@ -14,6 +14,10 @@ COPY --from=dependencies /app/node_modules ./node_modules
 
 COPY . .
 
+ARG NEXT_PUBLIC_BASESERVERURL
+
+ENV NEXT_PUBLIC_BASESERVERURL=$NEXT_PUBLIC_BASESERVERURL
+
 RUN npm run build
 
 FROM node:trixie AS runner

@@ -82,7 +82,7 @@ const DetailForm = () => {
     > 
     
       <EditButton is_editing={editMode} setIsEditing={setEditMode} />
-      <input type="hidden" {...register("activity")} />
+      <input type="hidden" {...register("task")} />
       <InputField
         name="date_accomplished"
         register={register}

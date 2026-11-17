@@ -4,7 +4,7 @@
 
 import React from 'react'
 import type { TransformerInstallation } from '@/types/transformer';
-import {LucideCarBattery, CalendarDays} from 'lucide-react'
+import { CarBattery, CalendarDays}from 'lucide-react'
 type Props = {
     data: TransformerInstallation
 }
@@ -28,7 +28,7 @@ const TransformerInstallationCard = ({ data }: Props) => {
     >
       <div className="card-body">
         <div className="p-2.5 glass  text-primary rounded-xl mt-0.5">
-            <CalendarDays className="inline-block mr-1 size-3 " />
+            <CarBattery className="inline-block mr-1 size-3 " />
           </div>
           {/* TITLE */}
           <div className="flex flex-col">

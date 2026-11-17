@@ -3,12 +3,14 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_BASESERVERURL: ${NEXT_PUBLIC_BASESERVERURL}
     image: chaddevhub/biscollect:prod
     container_name: biscollect-prod
     env_file:
       - "frontend/.env"
     ports:
-      - "3002:3002"
+      - "3003:3003"
 
   biscollect-dev:
     build:

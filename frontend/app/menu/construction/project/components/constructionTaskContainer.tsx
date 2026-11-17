@@ -58,7 +58,7 @@ const ConstructionTaskContainer = () => {
               case "Transformer Installation":
                 return <TransformerInstallationCard key={index} data={entry} />;
               default:
-                return <></>;
+                return null;
             }
           })}
         </div>
