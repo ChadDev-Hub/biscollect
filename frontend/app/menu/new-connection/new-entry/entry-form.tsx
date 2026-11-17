@@ -4,9 +4,8 @@ import InputField from "../../../common/components/form-field-components/input-f
 import { NewConnectionType } from "@/types/new-connection";
 import CoordinatesField from "../../../common/components/form-field-components/coordinates-field";
 import ImageField from "@/app/common/components/form-field-components/image-field";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Undo2 } from "lucide-react";
-import { getDB } from "@/lib/db";
 import FormButton from "../../../common/components/buttons/form-button";
 import {
   Calendar,
@@ -23,15 +22,14 @@ import {
 import SubmitCompletion from "../../../common/components/submit-completion";
 import {useAppSelector, useAppDispatch } from '@/app/hooks';
 import { popUrl } from '@/app/common/slice/navigationSlice';
+import { addNewConnection } from '../components/newConnectionSlice';
+
 
 const EntryForm = () => {
   const [step, setStep] = useState(0);
-  const [uniqueid, setUniqueid] = useState("");
   const [success, setSuccess] = useState(false);
-  useEffect(() => {
-    queueMicrotask(() => setUniqueid(crypto.randomUUID()));
-  }, []);
-
+  const dispatch = useAppDispatch();
+  const previousPath = useAppSelector((state) => state.navigation.history.at(-1));
   const {
     register,
     formState: { errors, isValid },
@@ -43,19 +41,15 @@ const EntryForm = () => {
 
   const onSubmit: SubmitHandler<NewConnectionType> = async (data) => {
     try {
-      const db = await getDB();
-      const transaction = db.transaction("new_connections", "readwrite");
-      const store = transaction.objectStore("new_connections");
-      await store.put({
+      const newData ={
         ...data,
-        uuid: uniqueid,
+        uuid: crypto.randomUUID(),
         is_synced: false,
         is_deleted: false,
         datetime_synced: null,
         datetime_deleted: null,
-      });
-
-      await transaction.done;
+      }; 
+      dispatch(addNewConnection(newData));
       setSuccess(true);
     } catch (error) {
       console.error(error);
@@ -72,10 +66,10 @@ const EntryForm = () => {
     setSuccess(false);
     setStep(0);
     reset();
-    setUniqueid(crypto.randomUUID());
   };
-  const dispatch = useAppDispatch();
-  const previousPath = useAppSelector((state) => state.navigation.history.at(-1));
+
+
+  
   const handleSubmitCompletionReturnPath = () => {
     dispatch(popUrl());
   }

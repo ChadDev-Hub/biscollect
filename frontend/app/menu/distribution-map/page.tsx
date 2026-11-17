@@ -4,6 +4,7 @@ import Header from "@/app/common/components/header";
 import DownloadConsumerMeter from "./components/download-consumer-meter";
 import ConsumerMeterLayer from "./components/consumer-meter-layer";
 import { Suspense } from 'react';
+import MapProvider from '@/app/common/components/context/mapProvider';
 
 const DistributionMapPage = () => {
   return (
@@ -11,9 +12,12 @@ const DistributionMapPage = () => {
       <Header title="Distribution Map"
         tools={[<DownloadConsumerMeter key="consumer-meter" />]}
         returnMenu={<ReturnMenu />} />
-      <Suspense fallback={<div>Loading...</div>}>
+      <MapProvider>
+        
+      </MapProvider>
+      {/* <Suspense fallback={<div>Loading...</div>}>
         <ConsumerMeterLayer />
-      </Suspense>
+      </Suspense> */}
     </div>
   )
 }

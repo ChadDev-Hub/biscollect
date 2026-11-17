@@ -131,7 +131,7 @@ const ConstructionCardTask = ({
         <div className="divider my-1 opacity-60"></div>
         {/* CARD ACTIONS */}
         <div className="card-actions justify-end">
-          <DeleteRecord store="line_constructions" uuid={uuid} />
+         
           <Link
             onClick={handleNavigate}
             href={`${currentPath}/line-construction/full-detail?uuid=${uuid}`}

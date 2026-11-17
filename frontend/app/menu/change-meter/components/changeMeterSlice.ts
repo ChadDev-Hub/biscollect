@@ -205,14 +205,7 @@ export const ChangeMeterSlice = createSlice({
     .addCase(
       deleteChangeMeter.fulfilled,
       (state, action: PayloadAction<DeleteRecordType>) => {
-        state.data.map((item) => {
-          if(item.uuid === action.payload.uuid) {
-            item.is_deleted = true;
-            item.datetime_deleted = action.payload.datetime_deleted;
-          }
-          return item
-        })
-        state.data = state.data.filter((item) => item.is_deleted === false);
+        state.data = state.data.filter((item) => item.uuid !== action.payload.uuid);
         state.loading = false;
       }
     )

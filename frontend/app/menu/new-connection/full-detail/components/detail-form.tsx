@@ -1,10 +1,10 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { getDB } from "@/lib/db";
 import { useEffect, useState } from "react";
 import { NewConnectionType } from "../../../../../types/new-connection";
 import InputField from "../../../../common/components/form-field-components/input-field";
-
+import {editNewConnection, fetchNewConnectionDetails} from "../../components/newConnectionSlice";
+import {useAppDispatch} from '@/app/hooks';
 import {
   Calendar,
   User,
@@ -25,6 +25,8 @@ const DetailForm = () => {
   const searchParams = useSearchParams();
   const uuid = searchParams.get("uuid");
   const [editMode, setEditMode] = useState(false);
+  const dispatch = useAppDispatch();
+  
   const {
     register,
     formState: { errors },
@@ -35,29 +37,23 @@ const DetailForm = () => {
   } = useForm<NewConnectionType>({ mode: "all", shouldUnregister: false });
   useEffect(() => {
     const getEntry = async () => {
-      const idb = await getDB();
-      const transaction = idb.transaction("new_connections", "readwrite");
-      const store = transaction.objectStore("new_connections");
-      const index = store.index("uuid");
-      const result = await index.get(uuid ?? "");
-      reset(result);
+      const result  = await dispatch(fetchNewConnectionDetails(uuid ?? "")).unwrap();
+      if (result){
+        reset(result);
+      }
     };
     getEntry();
-  }, [reset, uuid]);
+  }, [dispatch, reset, uuid]);
 
 
   const onSubmit:SubmitHandler<NewConnectionType> = async (data) => {
     try {
-      const db = await getDB();
-      const transaction = db.transaction("new_connections", "readwrite");
-      const store = transaction.objectStore("new_connections");
-      await store.put({
+      const newData = {
         ...data,
         is_synced: false,
-      });
-      await transaction.done;
+      };
+      dispatch(editNewConnection(newData));
       setEditMode(false);
-      window.dispatchEvent(new Event("new_connections-updated"));
     } catch (error) {
       console.error(error);
     }

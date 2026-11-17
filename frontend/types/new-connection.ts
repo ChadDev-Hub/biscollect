@@ -1,6 +1,7 @@
 
 
 export type NewConnectionType = {
+    id?: number;
     uuid: string;
     date_accomplished: string;
     account_no: string;

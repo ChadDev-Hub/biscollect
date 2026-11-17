@@ -120,7 +120,7 @@ const TransformerInstallationCard = ({ data }: Props) => {
         <div className="divider my-1 opacity-60"></div>
 
         <div className="card-actions justify-end">
-          <DeleteRecord store="line_constructions" uuid={data.uuid} />
+         
           <Link
             onClick={handleNavigate}
             href={`${pathname}/transformer-installation/full-detail?uuid=${data.uuid}`}

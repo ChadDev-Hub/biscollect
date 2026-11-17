@@ -4,12 +4,14 @@ import constructionSlice from '@/app/menu/construction/components/construction-s
 import constructionTaskSlice from '@/app/menu/construction/project/components/constructionTaskSlice';
 import navigationSlice from './common/slice/navigationSlice';
 import ChangeMeterSlice from '@/app/menu/change-meter/components/changeMeterSlice';
+import NewConnectionSlice from './menu/new-connection/components/newConnectionSlice';
 export const store  = configureStore({
     reducer: {
         construction: constructionSlice,
         constructionTask: constructionTaskSlice,
         navigation: navigationSlice,
-        changeMeter: ChangeMeterSlice
+        changeMeter: ChangeMeterSlice,
+        newConnection: NewConnectionSlice
     },
     middleware: (getDefaultMiddleware) => 
         getDefaultMiddleware({
@@ -22,8 +24,11 @@ export const store  = configureStore({
                 ],
                 ignoredPaths: [
                     'constructionTask.construction_task',
+
                     'lineconstructionDetail.data',
                     'changeMeter.data',
+                    'newConnection.data',
+                    
                 ],
                 ignoredActionPaths: [
                     /meta.arg/,
