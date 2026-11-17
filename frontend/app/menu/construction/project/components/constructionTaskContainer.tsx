@@ -17,7 +17,7 @@ const ConstructionTaskContainer = () => {
     (state) => state.constructionTask,
   );
   const searchParams = useSearchParams();
-
+  
   const cuuid = searchParams.get("cuuid");
 
   useEffect(() => {

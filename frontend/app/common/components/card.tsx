@@ -11,7 +11,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAppDispatch } from "@/app/hooks";
 import { pushUrl } from "@/app/common/slice/navigationSlice";
-import Delete from "./delete";
+
 
 type Props = {
   uuid: string;
@@ -22,6 +22,7 @@ type Props = {
   type: Type;
   is_synced?: boolean;
   datetime_synced?: string;
+  children?: React.ReactNode;
 };
 
 type Type = "CM" | "NC";
@@ -35,21 +36,21 @@ export default function MeterAccomplishedCard({
   type,
   is_synced,
   datetime_synced,
+  children,
 }: Props) {
   const currentPath = usePathname();
   const params = new URLSearchParams({
     uuid: uuid,
   });
-  let store = "";
+
   let detailLink = "";
   switch (currentPath) {
     case "/menu/change-meter":
       detailLink = `/menu/change-meter/full-detail?${params.toString()}`;
-      store = "change_meters";
       break;
     case "/menu/new-connection":
       detailLink = `/menu/new-connection/full-detail?${params.toString()}`;
-      store = "new_connections";
+      
       break;
     default:
       break;
@@ -163,7 +164,7 @@ export default function MeterAccomplishedCard({
       {/* Action Button Option */}
       <div className="card-actions justify-end items-center mt-5">
         {/* DELETE BUTTON */}
-        <Delete store={store} uuid={uuid} />
+        {children}
         {/* FULL DETAIL BUTTON */}
         <Link
           onClick={handleClick}

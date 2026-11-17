@@ -15,5 +15,6 @@ export const OfflinePages = [
   "/menu/construction/project/line-construction",
   "/menu/construction/project/line-construction/full-detail",
   "/menu/construction/project/transformer-installation",
+  "/menu/construction/project/transformer-installation/full-detail",
   "/menu/distribution-map",
 ];

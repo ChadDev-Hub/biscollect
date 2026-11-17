@@ -8,7 +8,7 @@ import {
   UtilityPole,
   LineSquiggle,
 } from "lucide-react";
-import DeleteRecord from "@/app/common/components/delete";
+import DeleteRecord from "@/app/common/components/buttons/delete";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useAppDispatch } from "@/app/hooks";

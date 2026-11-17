@@ -6,8 +6,10 @@ import { useState, useEffect } from "react";
 
 const Hero = () => {
   const [serviceWorkerActive, setServiceWorkerActive] = useState(false);
+  const [precacheActive, setPrecacheActive] = useState(false);
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
+
     const handleMessage = (e: MessageEvent) => {
       if (e.data.type === "PRECACHE_COMPLETE") {
         setServiceWorkerActive(true);
@@ -19,17 +21,38 @@ const Hero = () => {
         const cache = await caches.open("cache-status");
         const response = await cache.match("cache-complete");
         if (response) {
-          setServiceWorkerActive(true);
+          setPrecacheActive(true);
         }
       } catch (err) {
         console.error("Failed:", "cache-status", err);
       }
-    }
-    checkPrecache();
+    };
+
+    const checkServiceWorker = async () => {
+      try {
+        const reg = navigator.serviceWorker.controller?.state === "activated";
+        if (reg) {
+          setServiceWorkerActive(true);
+        }
+      } catch (err) {
+        console.error("Failed:", "serviceWorker", err);
+      }
+    };
+
     navigator.serviceWorker.addEventListener("message", handleMessage);
+    navigator.serviceWorker.addEventListener(
+      "controllerchange",
+      checkServiceWorker,
+    );
+    checkPrecache();
+    checkServiceWorker();
 
     return () => {
       navigator.serviceWorker.removeEventListener("message", handleMessage);
+      navigator.serviceWorker.removeEventListener(
+        "controllerchange",
+        checkServiceWorker,
+      );
     };
   }, []);
   return (
@@ -46,7 +69,7 @@ const Hero = () => {
       </p>
       {/* CTA Button */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-        {serviceWorkerActive ? (
+        {serviceWorkerActive && precacheActive ? (
           <div className="aura">
             <Link
               href="/menu"

@@ -12,7 +12,7 @@ import {fetchTransformerType, AddTransformertoDb} from "@/app/menu/construction/
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { PhasingOptions } from '@/lib/phasing';
 import CoordinatesField from "@/app/common/components/form-field-components/coordinates-field";
-import {useSearchParams} from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 
 const EntryForm = () => {

@@ -2,6 +2,9 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { ChangeMeterType } from "@/types/change-meter";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { getDB } from "@/lib/db";
+import { DeleteRecordType } from '@/types/delete';
+
+
 
 // ASYNC THUNKS
 export const fetchChangeMeters = createAsyncThunk<ChangeMeterType[], void>(
@@ -13,7 +16,8 @@ export const fetchChangeMeters = createAsyncThunk<ChangeMeterType[], void>(
       .objectStore("change_meters");
     const result = await store.getAll();
     const reverse = result.reverse();
-    return reverse;
+    const filtered = reverse.filter((entry: ChangeMeterType) => !entry.is_deleted);
+    return filtered;
   },
 );
 
@@ -77,6 +81,30 @@ export const updateChangeMeterDetail = createAsyncThunk<
     }
   },
 )
+
+
+// DELETE CHANGE METER
+export const deleteChangeMeter = createAsyncThunk<DeleteRecordType, DeleteRecordType, {rejectValue: string}>(
+  "changeMeter/deleteChangeMeter",
+  async (data) => {
+    try {
+      const db = await getDB();
+      const transaction = db.transaction("change_meters", "readwrite");
+      const store = transaction.objectStore("change_meters");
+      const index = store.index("uuid");
+      const result = await index.get(data.uuid);
+      result.is_deleted = true;
+      result.datetime_deleted = data.datetime_deleted;
+      await store.put(result);
+      await transaction.done;
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error deleting change meter");
+    }
+  },
+)
+
 // INTERFACES
 type ChangeMeterState = {
   data: ChangeMeterType[];
@@ -173,6 +201,29 @@ export const ChangeMeterSlice = createSlice({
         state.loading = false;
         state.error = "Error updating change meter detail";
       })
+    //   DELETE THE CHANGE METER
+    .addCase(
+      deleteChangeMeter.fulfilled,
+      (state, action: PayloadAction<DeleteRecordType>) => {
+        state.data.map((item) => {
+          if(item.uuid === action.payload.uuid) {
+            item.is_deleted = true;
+            item.datetime_deleted = action.payload.datetime_deleted;
+          }
+          return item
+        })
+        state.data = state.data.filter((item) => item.is_deleted === false);
+        state.loading = false;
+      }
+    )
+    .addCase(deleteChangeMeter.pending, (state) => {
+      state.loading = true;
+      state.error = "";
+    })
+    .addCase(deleteChangeMeter.rejected, (state) => {
+      state.loading = false;
+      state.error = "Error deleting change meter";
+    })
   },
 });
 export const { filterChangeMeter } = ChangeMeterSlice.actions;

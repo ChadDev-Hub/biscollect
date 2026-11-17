@@ -2,14 +2,15 @@
 import Card from "@/app/common/components/card";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { fetchChangeMeters, filterChangeMeter } from "./changeMeterSlice";
+import { fetchChangeMeters, filterChangeMeter, deleteChangeMeter } from "./changeMeterSlice";
 import Search from "@/app/common/components/search";
 import NoItemsFound from "@/app/common/components/noItemFound";
+import Delete from "@/app/common/components/buttons/delete";
 
 const ChangeMeterContainer = () => {
   const dispatch = useAppDispatch();
   const { data, loading } = useAppSelector((state) => state.changeMeter);
-  console.log(data);
+  
 
   useEffect(() => {
     dispatch(fetchChangeMeters());
@@ -44,7 +45,11 @@ const ChangeMeterContainer = () => {
               type="CM"
               is_synced={entry.is_synced}
               datetime_synced={entry.datetime_synced}
-            />
+            >
+              <Delete
+                onClick={()=> dispatch(deleteChangeMeter({uuid: entry.uuid, datetime_deleted: new Date().toISOString(), is_deleted: true}))}
+              />
+            </Card>
           ))}
         </div>
       )}
