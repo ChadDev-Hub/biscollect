@@ -1,20 +1,15 @@
 "use client";
-import {
-  CalendarDays,
-  HardHat,
-  CloudCheck,
-  CloudAlert,
-} from "lucide-react";
+
 import type { ConstructionType } from "@/types/construction";
 import Link from "next/link";
-import { useAppDispatch } from '@/app/hooks';
-import {pushUrl} from '@/app/common/slice/navigationSlice'
-import { usePathname } from 'next/navigation';
-import {ArrowRightIcon} from 'lucide-react';
+import { useAppDispatch } from "@/app/hooks";
+import { pushUrl } from "@/app/common/slice/navigationSlice";
+import { usePathname } from "next/navigation";
+import { ArrowRightIcon, TruckIcon, HardHat,CalendarDays,  CloudCheck, CloudAlert } from "lucide-react";
 
 type Props = {
+  
   data: ConstructionType;
-  onClick?: (data: ConstructionType) => void;
 };
 
 const ConstructionCard = ({ data}: Props) => {
@@ -22,14 +17,16 @@ const ConstructionCard = ({ data}: Props) => {
   const currentPath = usePathname();
   const handleClick = () => {
     dispatch(pushUrl(currentPath));
-  }
+  };
 
   return (
-      <div className="card w-full min-w-sm hover:shadow-2xl 
+    <div
+      className="card w-full min-w-sm hover:shadow-2xl 
       active:shadow-2xl active:border-primary 
       focus-within:shadow-2xl focus-within:border-primary
-      max-w-md  p-4 bg-base-100 shadow-md border border-base-200 hover:border-primary transition-all duration-300 group">
-          <div className="card-body rounded-box p-5 gap-4">
+      max-w-md  p-4 bg-base-100 shadow-md border border-base-200 hover:border-primary transition-all duration-300 "
+    >
+      <div className="card-body rounded-box p-5 gap-4">
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3 min-w-0">
@@ -52,15 +49,31 @@ const ConstructionCard = ({ data}: Props) => {
 
           {/* Sync status */}
           {data.is_synced ? (
-            <span data-tip="Synced" className="badge hover:cursor-pointer badge-success tooltip tooltip-info tooltip-left badge-outline gap-1">
+            <span
+              data-tip="Synced"
+              className="badge hover:cursor-pointer badge-success tooltip tooltip-info tooltip-left badge-outline gap-1"
+            >
               <CloudCheck size={15} />
             </span>
           ) : (
-            <span data-tip="Not Synced" className="badge hover:cursor-pointer tooltip tooltip-info tooltip-left badge-warning badge-outline gap-1">
+            <span
+              data-tip="Not Synced"
+              className="badge hover:cursor-pointer tooltip tooltip-info tooltip-left badge-warning badge-outline gap-1"
+            >
               <CloudAlert size={15} />
-        
             </span>
           )}
+        </div>
+
+        <div className="flex items-center gap-2 text-xs text-base-content/50">
+          <CalendarDays size={15} />
+          <time dateTime={data.date}>
+            {new Date(data.date).toLocaleDateString("en-PH", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })}
+          </time>
         </div>
 
         {/* Description */}
@@ -72,28 +85,42 @@ const ConstructionCard = ({ data}: Props) => {
 
         {/* Footer */}
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 text-xs text-base-content/50">
-            <CalendarDays size={15} />
-            <time dateTime={data.date}>
-              {new Date(data.date).toLocaleDateString("en-PH", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
-            </time>
-          </div>
+          {/* VEHICLE ROUTES */}
 
-          <Link onClick={handleClick} href={`/menu/construction/project?cuuid=${data.uuid}`}
-            className="text-xs flex font-semibold text-primary
-              opacity-70 group-hover:opacity-100 transition-opacity group-active:opacity-100 group-focus-within:opacity-100"
+          <Link
+            onClick={handleClick}
+            href={`/menu/construction/vehicle?cuuid=${data.uuid}`}
+            className="btn btn-success text-xs group"
           >
-            View Task <span className="group-hover:translate-x-2 group-active:translate-x-2 transition-transform duration-500"><ArrowRightIcon size={15} /></span>
+            <TruckIcon size={20} className="group-hover:fill-primary-content group-hover:stroke-primary" /> Vehicle
+          </Link>
+            {/* PERSONEL ROUTES */}
+
+
+          <Link
+            onClick={handleClick}
+            href={`/menu/construction/personels?cuuid=${data.uuid}`}
+            className="btn btn-success text-xs group"
+          >
+            <HardHat size={20} className="group-hover:fill-primary-content group-hover:stroke-primary" /> Personel
+          </Link>
+
+
+            {/* TASK ROUTES */}
+          <Link
+            onClick={handleClick}
+            href={`/menu/construction/project?cuuid=${data.uuid}`}
+            className="text-xs flex font-semibold text-primary
+              opacity-70 group-hover:opacity-100 transition-opacity group group-active:opacity-100 group-focus-within:opacity-100"
+          >
+            View Task{" "}
+            <span className="group-hover:translate-x-2 group-active:translate-x-2 transition-transform duration-500">
+              <ArrowRightIcon size={15} />
+            </span>
           </Link>
         </div>
       </div>
-
-      </div>
-      
+    </div>
   );
 };
 

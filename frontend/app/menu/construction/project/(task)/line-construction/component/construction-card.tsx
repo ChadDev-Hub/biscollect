@@ -8,7 +8,7 @@ import {
   UtilityPole,
   LineSquiggle,
 } from "lucide-react";
-import DeleteRecord from "@/app/common/components/buttons/delete";
+
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useAppDispatch } from "@/app/hooks";
@@ -16,10 +16,12 @@ import { pushUrl } from "@/app/common/slice/navigationSlice";
 import { LineConstructionType } from "@/types/construction";
 
 type Props = {
+  children: React.ReactNode;
   data: LineConstructionType;
 };
 
 const ConstructionCardTask = ({
+  children,
   data: {
     uuid,
     date_accomplished,
@@ -38,6 +40,8 @@ const ConstructionCardTask = ({
   const handleNavigate = () => {
     dispatch(pushUrl(`${currentPath}?${params.toString()}`));
   };
+
+  
   return (
     <div
       className="
@@ -131,7 +135,7 @@ const ConstructionCardTask = ({
         <div className="divider my-1 opacity-60"></div>
         {/* CARD ACTIONS */}
         <div className="card-actions justify-end">
-         
+          {children}
           <Link
             onClick={handleNavigate}
             href={`${currentPath}/line-construction/full-detail?uuid=${uuid}`}

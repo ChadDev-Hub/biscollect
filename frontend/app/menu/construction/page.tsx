@@ -8,8 +8,8 @@ import AddProject from "@/app/common/components/buttons/add-project";
 import ConstructionContainer from "./components/constuction-project-containter";
 const Construction = () => {
   return (
-    <div className="bg-base-300 flex flex-col items-center min-h-screen justify-center">
-      <ToolsNavar>
+    <>
+     <ToolsNavar>
         <div className="flex-1">
           <ReturnMenu/>
         </div>
@@ -21,7 +21,10 @@ const Construction = () => {
       <main className="flex flex-1 w-full max-w-7xl flex-col items-center justify-between py-15 px-4">
         <ConstructionContainer />
       </main>
-    </div>
+    
+    </>
+     
+    
   );
 };
 

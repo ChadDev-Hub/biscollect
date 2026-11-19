@@ -1,4 +1,9 @@
+
 "use client"
+
+import TransformerDetailForm from './components/detail-form';
+import { Suspense } from 'react';
+
 
 
 
@@ -7,7 +12,9 @@
 
 const Page =()=> {
   return (
-    <div>Page</div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <TransformerDetailForm />
+    </Suspense>
   )
 }
 

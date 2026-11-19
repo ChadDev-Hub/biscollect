@@ -8,8 +8,8 @@ import { Suspense } from "react";
 
 const ProjectPage = () => {
   return (
-    <div className="bg-base-300 min-h-screen  flex flex-col items-center">
-      <ToolsNavar>
+    <>
+    <ToolsNavar>
         <div className="flex-1">
           <ReturnMenu />
         </div>
@@ -22,7 +22,10 @@ const ProjectPage = () => {
           <ConstructionTaskContainer />
         </Suspense>
       </div>
-    </div>
+    
+    </>
+      
+    
   );
 };
 

@@ -32,7 +32,7 @@ const SelectInputField = <T extends FieldValues>({
         {required && <span className=" text-red-500">*</span>}
       </label>
 
-      <label className="select space-x-2 w-full px-1">
+      <label className="select space-x-2 w-full px-1 ">
         
           <div className="bg-base-200 p-2 rounded-full">
             {Icon && <Icon className="text-primary size-4" />}
@@ -41,17 +41,18 @@ const SelectInputField = <T extends FieldValues>({
         <select
           disabled={disabled}
           defaultValue=""
-          className="grow"
+          className="text-center"
           {...register(name, {
             valueAsNumber: valueasNumber ?? false,
             required: { value: required, message: `${label} is required` },
           })}
         >
-          <option value="" disabled={true}>
+          <option className="list-row" value="" disabled={true}>
             Select {label}
           </option>
           {options.map((option, index) => (
             <option
+              className="list-row w-full"
               key={index}
               value={typeof option === "string" ? option : option.id}
             >

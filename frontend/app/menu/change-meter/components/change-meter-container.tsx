@@ -10,8 +10,6 @@ import Delete from "@/app/common/components/buttons/delete";
 const ChangeMeterContainer = () => {
   const dispatch = useAppDispatch();
   const { data, loading } = useAppSelector((state) => state.changeMeter);
-  
-
   useEffect(() => {
     dispatch(fetchChangeMeters());
   }, [dispatch]);

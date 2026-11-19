@@ -6,6 +6,7 @@ import { GetConductorName, GetNeutralName } from "@/lib/actions/conductor";
 import { getDB } from "@/lib/db";
 import { GetTransformerType } from '@/lib/actions/transformer';
 import type {TransformerType, TransformerInstallation} from "@/types/transformer";
+import { DeleteRecordType } from '@/types/delete';
 
 
 // FETCH CONSTRUCTION TASK 
@@ -31,6 +32,9 @@ export const fetchConstructionTask = createAsyncThunk<
       )?.name;
       line.neutral = neutralData?.find((item) => item.id === line.neutral)?.name;
     });
+    const filetere_line_construction = reverse.filter(
+      (line) => !line.is_deleted
+    )
 
     const transformer_type = await GetTransformerType();
     const transformerDataTransaction = (await db).transaction("transformer_constructions", "readonly");
@@ -44,7 +48,16 @@ export const fetchConstructionTask = createAsyncThunk<
         (item) => item.id === transformer.transformer_type,
       )?.name;
     })
-    return [...reverse, ...transformerReverse];
+
+    const transformerReverseFilter = transformerReverse.filter(
+      (transformer) => !transformer.is_deleted 
+    )
+    
+    return [...filetere_line_construction, ...transformerReverseFilter].sort((a, b) => {
+      const dateA = new Date(a.date_accomplished ?? a.date).getDate();
+      const dateB = new Date(b.date_accomplished ?? b.date).getDate();
+      return dateB - dateA;
+    });
   } catch (error) {
     console.error(error);
     throw error;
@@ -143,6 +156,32 @@ export const updateConstructionLineDetail = createAsyncThunk<
     }
   },
 )
+
+
+export const deleteConstructionLineDetail = createAsyncThunk<
+  DeleteRecordType,
+  DeleteRecordType,
+  { rejectValue: string }
+>(
+  "constructionTask/deleteConstructionLineDetail",
+  async (data) => {
+    try {
+      const db = await getDB();
+      const transaction = db.transaction("line_constructions", "readwrite");
+      const store = transaction.objectStore("line_constructions");
+      const index = store.index("uuid");
+      const result = await index.get(data.uuid);
+      result.is_deleted = true;
+      result.datetime_deleted = new Date().toISOString();
+      await store.put(result);
+      await transaction.done;
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error deleting construction line detail");
+    }
+  }
+)
 //  LINE CONSTRUCTION ----------------------------------------------------------
 
 
@@ -160,8 +199,6 @@ export const fetchTransformerType = createAsyncThunk<TransformerType[], void, { 
     }
   }
 )
-
-
 
 export const AddTransformertoDb = createAsyncThunk<
   TransformerInstallation,
@@ -188,6 +225,73 @@ export const AddTransformertoDb = createAsyncThunk<
     } catch (error) {
       console.error(error);
       throw new Error("Error adding transformer type");
+    }
+  }
+)
+
+export const editTransformerDetail = createAsyncThunk<
+  TransformerInstallation,
+  TransformerInstallation,
+  { rejectValue: string }
+>("constructionTask/editTransformerDetail", async (data) => {
+  try {
+    const db = await getDB();
+    const transaction = db.transaction("transformer_constructions", "readwrite");
+    const store = transaction.objectStore("transformer_constructions");
+    await store.put(data);
+    await transaction.done;
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error updating transformer detail");
+  }
+})
+
+
+export const fetchTransformerDetail= createAsyncThunk<
+  TransformerInstallation,
+  string,
+  { rejectValue: string }
+>("constructionTask/fetchTransformerDetail", async (uuid: string) => {
+  try {
+    const db = await getDB();
+    const transaction = db.transaction("transformer_constructions", "readonly");
+    const store = transaction.objectStore("transformer_constructions");
+    const index = store.index("uuid");
+    const result = await index.get(uuid);
+    const transformerTypeData = await GetTransformerType();
+    result.transformer_type = transformerTypeData?.find(
+      (item) => item.id === result.transformer_type,
+    )?.id;
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error fetching transformer detail");
+  }
+})
+
+
+export const deleteTransformer = createAsyncThunk<
+  DeleteRecordType,
+  DeleteRecordType,
+  { rejectValue: string }
+>(
+  "constructionTask/deleteTransformer",
+  async (data) => {
+    try {
+      const db = await getDB();
+      const transaction = db.transaction("transformer_constructions", "readwrite");
+      const store = transaction.objectStore("transformer_constructions");
+      const index = store.index("uuid");
+      const result = await index.get(data.uuid);
+      result.is_deleted = true;
+      result.datetime_deleted = new Date().toISOString();
+      await store.put(result);
+      await transaction.done;
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error deleting transformer");
     }
   }
 )
@@ -343,7 +447,22 @@ export const constructionTaskSlice = createSlice({
       .addCase(updateConstructionLineDetail.rejected, (state) => {
         state.loading = false;
         state.error = "Error updating construction line detail";
-      });
+      })
+      .addCase(deleteConstructionLineDetail.fulfilled, (state, action) => {
+        state.construction_task = state.construction_task.filter(
+          (item) => item.uuid !== action.payload.uuid,
+        );
+        state.loading = false;
+        state.error = "";
+      })
+      .addCase(deleteConstructionLineDetail.pending, (state) => {
+        state.loading = true;
+        state.error = "";
+      })
+      .addCase(deleteConstructionLineDetail.rejected, (state) => {
+        state.loading = false;
+        state.error = "Error deleting construction line";
+      })
 
       // TRANSFORMER DATA
       builder
@@ -360,6 +479,7 @@ export const constructionTaskSlice = createSlice({
         state.loading = false;
         state.error = "Error fetching transformer type";
       }) 
+      // ADD TRANSFORMER
       .addCase(AddTransformertoDb.fulfilled, (state, action) => {
         state.loading = false;
         state.error = "";
@@ -374,6 +494,63 @@ export const constructionTaskSlice = createSlice({
           id : maxId + 1,
         }
         state.construction_task = [newData, ...state.construction_task as TransformerInstallation[]];
+      })
+      .addCase(AddTransformertoDb.pending, (state) => {
+        state.loading = true;
+        state.error = "";
+      })
+      .addCase(AddTransformertoDb.rejected, (state) => {
+        state.loading = false;
+        state.error = "Error adding transformer";
+      })
+      // EDIT TRANSFORMER 
+      .addCase(editTransformerDetail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = "";
+
+        state.construction_task= state.construction_task.map((item) => {
+          if (item.id === action.payload.id) {
+            return action.payload;
+          }
+          return item;
+        })
+      })
+      .addCase(editTransformerDetail.pending, (state) => {
+        state.loading = true;
+        state.error = "";
+      })
+      .addCase(editTransformerDetail.rejected, (state) => {
+        state.loading = false;
+        state.error = "Error editing transformer";
+      })
+      // FETCH TRANSFORMER DETAIL
+      .addCase(fetchTransformerDetail.fulfilled, (state) => {
+        state.loading = false;
+        state.error = "";
+      })
+      .addCase(fetchTransformerDetail.pending, (state) => {
+        state.loading = true;
+        state.error = "";
+      })
+      .addCase(fetchTransformerDetail.rejected, (state) => {
+        state.loading = false;
+        state.error = "Error fetching transformer detail";
+      })
+      // DELETE TRANSFORMER
+      .addCase(deleteTransformer.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = "";
+        state.construction_task = state.construction_task.filter(
+          (item) => item.uuid !== action.payload.uuid,
+        );
+      })
+      .addCase(deleteTransformer.pending, (state) => {
+        state.loading = true;
+        state.error = "";
+      })
+      .addCase(deleteTransformer.rejected, (state) => {
+        state.loading = false;
+        state.error = "Error deleting transformer";
       })
   },
   

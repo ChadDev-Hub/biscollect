@@ -4,12 +4,13 @@ import { LineConstructionType } from "@/types/construction";
 import { useEffect } from "react";
 import ConstructionCardTask from "@/app/menu/construction/project/(task)/line-construction/component/construction-card";
 import { useAppDispatch, useAppSelector } from "../../../../hooks";
-import { fetchConstructionTask } from "./constructionTaskSlice";
+import { fetchConstructionTask, deleteConstructionLineDetail, deleteTransformer } from "./constructionTaskSlice";
 import { useSearchParams } from "next/navigation";
 import { filterData } from "./constructionTaskSlice";
 import Search from "@/app/common/components/search";
 import NoItemsFound from "../../../../common/components/noItemFound";
 import TransformerInstallationCard from "../(task)/transformer-installation/components/transformer-installation-card";
+import DeleteRecord from "@/app/common/components/buttons/delete";
 
 const ConstructionTaskContainer = () => {
   const dispatch = useAppDispatch();
@@ -52,11 +53,31 @@ const ConstructionTaskContainer = () => {
                   <ConstructionCardTask
                     key={index}
                     data={entry as LineConstructionType}
-                  />
+                  >
+                    <DeleteRecord
+                      onClick={() => {
+                        dispatch(deleteConstructionLineDetail({
+                          uuid: entry.uuid,
+                          datetime_deleted : new Date().toISOString(),
+                          is_deleted : true
+                        }));
+                      }}
+                    />
+                  </ConstructionCardTask>
                 );
 
               case "Transformer Installation":
-                return <TransformerInstallationCard key={index} data={entry} />;
+                return <TransformerInstallationCard key={index} data={entry} >
+                  <DeleteRecord
+                    onClick={() => {
+                      dispatch(deleteTransformer({
+                        uuid: entry.uuid,
+                        datetime_deleted : new Date().toISOString(),
+                        is_deleted : true
+                      }));
+                    }}
+                  />
+                </TransformerInstallationCard>;
               default:
                 return null;
             }

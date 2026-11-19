@@ -3,7 +3,7 @@
 import React from "react";
 import type { TransformerInstallation } from "@/types/transformer";
 import Link from "next/link";
-import DeleteRecord from "@/app/common/components/buttons/delete";
+
 import { usePathname } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useAppDispatch } from '@/app/hooks';
@@ -17,10 +17,11 @@ import {
   Zap,
 } from "lucide-react";
 type Props = {
+  children: React.ReactNode;
   data: TransformerInstallation;
 };
 
-const TransformerInstallationCard = ({ data }: Props) => {
+const TransformerInstallationCard = ({ data, children }: Props) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
@@ -120,7 +121,7 @@ const TransformerInstallationCard = ({ data }: Props) => {
         <div className="divider my-1 opacity-60"></div>
 
         <div className="card-actions justify-end">
-         
+          {children}
           <Link
             onClick={handleNavigate}
             href={`${pathname}/transformer-installation/full-detail?uuid=${data.uuid}`}

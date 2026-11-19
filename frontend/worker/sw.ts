@@ -116,7 +116,6 @@ self.addEventListener("install", (event) => {
 
       // GIS data
       const BASE_URL = process.env.NEXT_PUBLIC_BASESERVERURL;
-      console.log(BASE_URL);
       const datasets = [
         {
           url: `${BASE_URL}/v1/wire/conductor`,

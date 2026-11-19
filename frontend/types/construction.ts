@@ -9,7 +9,26 @@ export type ConstructionType = {
     date: string;
     is_synced?: boolean;
     is_deleted?: boolean;
+    
 }
+export type ManPowerStatus = {
+    id?: number;
+    uuid: string;
+    cuuid: string;
+    assigned_personnel: string;
+    attendance_status?: string | number;
+    reason_of_absence?: string;
+}
+
+export type VehicleReport = {
+    id?: number;
+    uuid: string;
+    cuuid: string;
+    vehicle_name: string;
+    mileage_start: string;
+    mileage_end: string;
+}
+
 
 
 export type LineConstructionType = {

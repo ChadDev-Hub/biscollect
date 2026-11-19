@@ -1,12 +1,14 @@
 "use client";
 import {  useEffect } from "react";
 import Card from "@/app/common/components/card";
-import {fetchNewConnection, deleteNewConnection} from "./newConnectionSlice";
+import {fetchNewConnection, deleteNewConnection, filterNewConnection} from "./newConnectionSlice";
 import {useAppDispatch, useAppSelector} from '@/app/hooks';
 import Delete from "@/app/common/components/buttons/delete";
+import Search from "@/app/common/components/search";
+import NoItemsFound from "@/app/common/components/noItemFound";
 const NewConnectionContainer = () => {
   const dispatch = useAppDispatch();
-  const entries = useAppSelector((state) => state.newConnection.data);
+  const{data, loading}= useAppSelector((state) => state.newConnection);
   
   
   useEffect(() => {
@@ -21,8 +23,25 @@ const NewConnectionContainer = () => {
   }, [dispatch]);
 
   return (
-    <div className="grid grid-cols-1 place-items-center md:grid-cols-2 lg:grid-cols-3 gap-2 w-full ">
-      {entries?.map((entry) => (
+
+    <div className="flex w-full max-w-6xl gap-4 flex-col justify-center  px-4">
+      <div>
+        <Search
+        loading={loading}
+        resetActions={() => dispatch(fetchNewConnection())}
+        data={data ?? []}
+        actions={filterNewConnection}/>
+      </div>
+      
+      {data.length === 0 ? (
+        <NoItemsFound
+          title="New Connection"
+          description="There are currently no new connections to display."
+          actionLabel="Search"
+        />
+      ) : (
+      <div className="grid grid-cols-1 place-items-center md:grid-cols-2 lg:grid-cols-3 gap-2 w-full ">
+      {data?.map((entry) => (
         <Card
           key={entry.uuid}
           uuid={entry.uuid}
@@ -39,7 +58,9 @@ const NewConnectionContainer = () => {
           />
         </Card>
       ))}
+    </div>)}
     </div>
+    
   );
 };
 
