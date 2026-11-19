@@ -7,9 +7,13 @@ import PersonelForm from "./components/personel-form";
 function PersonelPage() {
   return (
     <>
-    <ToolsNavar>
+    <ToolsNavar className="flex justify-between p-4 bg-base-200 w-full">
+    
         <ReturnMenu />
+        
         <PersonelForm />
+      
+        
     </ToolsNavar>
         <main className="flex flex-1">
 

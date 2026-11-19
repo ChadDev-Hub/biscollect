@@ -111,7 +111,7 @@ const ConstructionCard = ({ data}: Props) => {
             onClick={handleClick}
             href={`/menu/construction/project?cuuid=${data.uuid}`}
             className="text-xs flex font-semibold text-primary
-              opacity-70 group-hover:opacity-100 transition-opacity group group-active:opacity-100 group-focus-within:opacity-100"
+              opacity-70 hover:opacity-100 transition-opacity duration-500  group active:opacity-100 focus-within:opacity-100"
           >
             View Task{" "}
             <span className="group-hover:translate-x-2 group-active:translate-x-2 transition-transform duration-500">
